@@ -4,7 +4,7 @@
 | Nombre y Apellidos | Correo URJC | Usuario GitHub |
 |:--- |:--- |:--- |
 | Lázaro Martínez Medina | l.martinezm.2023@alumnos.urjc.es | Lazaro-123 |
-| [Nombre 2] | [email2]@alumnos.urjc.es | [User2] |
+| Pablo Leis Aguado | p.leis.2023@alumnos.urjc.es | pabloleis7 |
 | [Nombre 3] | [email3]@alumnos.urjc.es | [User3] |
 | [Nombre 4] | [email4]@alumnos.urjc.es | [User4] |
 
