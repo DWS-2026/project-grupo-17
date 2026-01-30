@@ -47,10 +47,10 @@ Describir los permisos de cada tipo de usuario e indicar de qué entidades es du
 ### **Imágenes**
 Indicar qué entidades tendrán asociadas una o varias imágenes:
 
-- **[Entidad con imágenes 1]**: [Ej: Una imagen de perfil o avatar]
-- **[Entidad con imágenes 2]**: [Ej: Evento - Cartel publicitario del evento (flyer) en alta resolución]
-- **[Entidad con imágenes 3]**: [Ej: Discoteca - Logo de la sala y fotos del recinto para generar confianza]
-- **[Entidad con imágenes 4]**: [Ej: Entrada - Miniatura del QR (solo visible tras la compra) o captura de pantalla del ticket original para validación interna del admin]
+- **[Entidad con imágenes 1]**:  Una imagen de perfil o avatar
+- **[Entidad con imágenes 2]**:  Evento - Cartel publicitario del evento (flyer) en alta resolución
+- **[Entidad con imágenes 3]**:  Discoteca - Logo de la sala y fotos del recinto para generar confianza
+- **[Entidad con imágenes 4]**:  Entrada - Miniatura del QR (solo visible tras la compra) o captura de pantalla del ticket original para validación interna del admin
 
 ---
 
