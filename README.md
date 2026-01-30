@@ -5,8 +5,8 @@
 |:--- |:--- |:--- |
 | Lázaro Martínez Medina | l.martinezm.2023@alumnos.urjc.es | Lazaro-123 |
 | Pablo Leis Aguado | p.leis.2023@alumnos.urjc.es | pabloleis7 |
-| [Nombre 3] | [email3]@alumnos.urjc.es | [User3] |
-| [Nombre 4] | [email4]@alumnos.urjc.es | [User4] |
+| Alejandro Cabello Manzanero | a.cabellom.2023@alumnos.urjc.es | cabeee |
+| Eduardo José Narros Sánchez | ej.narros.2023@alumnos.urjc.es | eeduunrrs2 |
 
 ---
 
@@ -47,9 +47,10 @@ Describir los permisos de cada tipo de usuario e indicar de qué entidades es du
 ### **Imágenes**
 Indicar qué entidades tendrán asociadas una o varias imágenes:
 
-- **[Entidad con imágenes 1]**: [Ej: Usuario - Una imagen de avatar por usuario]
-- **[Entidad con imágenes 2]**: [Ej: Producto - Múltiples imágenes por producto (galería)]
-- **[Entidad con imágenes 3]**: [Ej: Categoría - Una imagen representativa por categoría]
+- **[Entidad con imágenes 1]**: [Ej: Una imagen de perfil o avatar]
+- **[Entidad con imágenes 2]**: [Ej: Evento - Cartel publicitario del evento (flyer) en alta resolución]
+- **[Entidad con imágenes 3]**: [Ej: Discoteca - Logo de la sala y fotos del recinto para generar confianza]
+- **[Entidad con imágenes 4]**: [Ej: Entrada - Miniatura del QR (solo visible tras la compra) o captura de pantalla del ticket original para validación interna del admin]
 
 ---
 
