@@ -6,7 +6,7 @@
 | Lázaro Martínez Medina | l.martinezm.2023@alumnos.urjc.es | Lazaro-123 |
 | Pablo Leis Aguado | p.leis.2023@alumnos.urjc.es | pabloleis7 |
 | Alejandro Cabello Manzanero | a.cabellom.2023@alumnos.urjc.es | cabeee |
-| [Nombre 4] | [email4]@alumnos.urjc.es | [User4] |
+| Eduardo José Narros Sánchez | ej.narros.2023@alumnos.urjc.es | eeduunrrs2 |
 
 ---
 
