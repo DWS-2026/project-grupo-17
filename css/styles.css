@@ -1,0 +1,37 @@
+/* Configuración global para que el footer se quede abajo */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+main {
+    flex: 1;
+}
+
+/* Hero Section (Imagen principal del index) */
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://placehold.co/1200x400/1a1a1a/FFF?text=Nightlife');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 80px 0;
+    margin-bottom: 40px;
+    border-radius: 0 0 20px 20px;
+}
+
+/* Ajustes de tarjetas */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.2s;
+    border: none;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
