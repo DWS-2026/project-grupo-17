@@ -13,15 +13,15 @@
 ## 🎭 **Preparación: Definición del Proyecto**
 
 ### **Descripción del Tema**
-[Escribe aquí una descripción breve y concisa de qué trata tu aplicación, el sector al que pertenece y qué valor aporta al usuario].
+TicketFlow es una plataforma centralizada de gestión y venta directa de entradas para el sector del ocio nocturno. Su objetivo es conectar a las discotecas con su público objetivo a través de un proceso de compra simplificado, eliminando intermediarios innecesarios y ofreciendo una experiencia de usuario fluida y segura.
 
 ### **Entidades**
-Indicar las entidades principales que gestionará la aplicación y las relaciones entre ellas:
 
-1. **[Entidad 1]**: [Ej: Usuario]
-2. **[Entidad 2]**: [Ej: Producto]
-3. **[Entidad 3]**: [Ej: Pedido]
-4. **[Entidad 4]**: [Ej: Categoría]
+1. **[Entidad 1]**: Usuario (Compradores, vendedores y administradores).
+2. **[Entidad 2]**: Evento (La fiesta o sesión de la discoteca con fecha, lugar y descripción).
+3. **[Entidad 3]**: Entrada / Ticket (La unidad que se vende; incluye código QR/ID, precio y estado).
+4. **[Entidad 4]**: Discoteca / Sala (El recinto donde ocurren los eventos).
+5. **[Entidad 5]**: Transacción / Pedido (El registro del pago y cambio de propiedad).
 
 **Relaciones entre entidades:**
 - [Ej: Usuario - Pedido: Un usuario puede tener múltiples pedidos (1:N)]
