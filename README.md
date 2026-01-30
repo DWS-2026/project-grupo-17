@@ -24,33 +24,34 @@ TicketFlow es una plataforma centralizada de gestión y venta directa de entrada
 5. [Entidad 5]: Transacción / Pedido (El registro del pago y cambio de propiedad).
 
 **Relaciones entre entidades:**
-- [Ej: Usuario - Pedido: Un usuario puede tener múltiples pedidos (1:N)]
-- [Ej: Pedido - Producto: Un pedido puede contener múltiples productos y un producto puede estar en múltiples pedidos (N:M)]
-- [Ej: Producto - Categoría: Un producto pertenece a una categoría (N:1)]
-- [Descripción de otras relaciones relevantes]
+- [Usuario - Entrada: Un usuario puede poner a la venta múltiples entradas o haber comprado varias. (1:N)]
+- [Evento - Entrada: Un evento específico tiene muchas entradas asociadas. (1:N)]
+- [Discoteca - Evento: Una discoteca organiza muchos eventos a lo largo del tiempo. (1:N)]
+- [Usuario - Transaccion: Un usuario (comprador) genera una transacción al comprar, pero una transacción involucra a un comprador y un vendedor. (1:N)]
+- [Entrada - Transacción: En un modelo de reventa, cada transacción suele validar el traspaso de una entrada específica. (1:1)]
 
 ### **Permisos de los Usuarios**
 Describir los permisos de cada tipo de usuario e indicar de qué entidades es dueño:
 
 * **Usuario Anónimo**: 
-  - Permisos: [Ej: Visualización de catálogo, búsqueda de productos, registro]
-  - No es dueño de ninguna entidad
+  - Permisos: Visualización de próximos eventos, filtrado por discoteca o ciudad, ver precios de entradas disponibles y registro/login.
+  - Dueño de: Nada
 
 * **Usuario Registrado**: 
-  - Permisos: [Ej: Gestión de perfil, realizar pedidos, crear valoraciones]
-  - Es dueño de: [Ej: Sus propios Pedidos, su Perfil de Usuario, sus Valoraciones]
+  - Permisos: Comprar entradas, descargar entradas compradas, gestionar su perfil y ver historial de compras/ventas.
+  - Es dueño de: Sus entradas publicadas, sus transacciones (como comprador o vendedor) y sus datos de perfil.
 
 * **Administrador**: 
-  - Permisos: [Ej: Gestión completa de productos (CRUD), visualización de estadísticas, moderación de contenido]
-  - Es dueño de: [Ej: Productos, Categorías, puede gestionar todos los Pedidos y Usuarios]
+  - Permisos: Validación de autenticidad de entradas, banear usuarios fraudulentos, crear/editar discotecas y eventos y visualizar métricas de ventas.
+  - Es dueño de: La base de datos de Discotecas y Eventos, y tiene control total sobre el estado de las Entradas.
 
 ### **Imágenes**
 Indicar qué entidades tendrán asociadas una o varias imágenes:
 
-- **[Entidad con imágenes 1]**: [Ej: Una imagen de perfil o avatar]
-- **[Entidad con imágenes 2]**: [Ej: Evento - Cartel publicitario del evento (flyer) en alta resolución]
-- **[Entidad con imágenes 3]**: [Ej: Discoteca - Logo de la sala y fotos del recinto para generar confianza]
-- **[Entidad con imágenes 4]**: [Ej: Entrada - Miniatura del QR (solo visible tras la compra) o captura de pantalla del ticket original para validación interna del admin]
+- **[Entidad con imágenes 1]**:  Una imagen de perfil o avatar
+- **[Entidad con imágenes 2]**:  Evento - Cartel publicitario del evento (flyer) en alta resolución
+- **[Entidad con imágenes 3]**:  Discoteca - Logo de la sala y fotos del recinto para generar confianza
+- **[Entidad con imágenes 4]**:  Entrada - Miniatura del QR (solo visible tras la compra) o captura de pantalla del ticket original para validación interna del admin
 
 ---
 
