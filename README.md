@@ -17,11 +17,11 @@ TicketFlow es una plataforma centralizada de gestión y venta directa de entrada
 
 ### **Entidades**
 
-1. **[Entidad 1]**: Usuario (Compradores, vendedores y administradores).
-2. **[Entidad 2]**: Evento (La fiesta o sesión de la discoteca con fecha, lugar y descripción).
-3. **[Entidad 3]**: Entrada / Ticket (La unidad que se vende; incluye código QR/ID, precio y estado).
-4. **[Entidad 4]**: Discoteca / Sala (El recinto donde ocurren los eventos).
-5. **[Entidad 5]**: Transacción / Pedido (El registro del pago y cambio de propiedad).
+1. [Entidad 1]: Usuario (Compradores, vendedores y administradores).
+2. [Entidad 2]: Evento (La fiesta o sesión de la discoteca con fecha, lugar y descripción).
+3. [Entidad 3]: Entrada / Ticket (La unidad que se vende; incluye código QR/ID, precio y estado).
+4. [Entidad 4]: Discoteca / Sala (El recinto donde ocurren los eventos).
+5. [Entidad 5]: Transacción / Pedido (El registro del pago y cambio de propiedad).
 
 **Relaciones entre entidades:**
 - [Ej: Usuario - Pedido: Un usuario puede tener múltiples pedidos (1:N)]
