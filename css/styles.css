@@ -9,16 +9,23 @@ body {
 main {
     flex: 1;
 }
+.container{
 
+
+
+}
 /* Hero Section (Imagen principal del index) */
 .hero-section {
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://placehold.co/1200x400/1a1a1a/FFF?text=Nightlife');
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../images/DWEB.png');
     background-size: cover;
     background-position: center;
     color: white;
-    padding: 80px 0;
+    padding: 100px 0;
     margin-bottom: 40px;
     border-radius: 0 0 20px 20px;
+}
+.navbar-nav{
+    justify-content: center;
 }
 
 /* Ajustes de tarjetas */
