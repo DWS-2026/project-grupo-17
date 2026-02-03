@@ -16,7 +16,7 @@ main {
 }
 /* Hero Section (Imagen principal del index) */
 .hero-section {
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../images/DWEB.png');
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop');
     background-size: cover;
     background-position: center;
     color: white;
