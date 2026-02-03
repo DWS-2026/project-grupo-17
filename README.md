@@ -1,10 +1,10 @@
 # [Nombre de la Aplicación]
 
 ## 👥 Miembros del Equipo
-| Nombre y Apellidos | Correo URJC | Usuario GitHub |
-|:--- |:--- |:--- |
-| Lázaro Martínez Medina | l.martinezm.2023@alumnos.urjc.es | Lazaro-123 |
-| Pablo Leis Aguado | p.leis.2023@alumnos.urjc.es | pabloleis7 |
+| Nombre y Apellidos          | Correo URJC | Usuario GitHub |
+|:----------------------------|:--- |:--- |
+| Lázaro Martínez Medina      | l.martinezm.2023@alumnos.urjc.es | Lazaro-123 |
+| Pablo Leis Aguado           | p.leis.2023@alumnos.urjc.es | pabloleis7 |
 | Alejandro Cabello Manzanero | a.cabellom.2023@alumnos.urjc.es | cabeee |
 | Eduardo José Narros Sánchez | ej.narros.2023@alumnos.urjc.es | eeduunrrs2 |
 
