@@ -129,9 +129,12 @@ eventos.forEach(evento => {
 
                     <p class="card-text text-muted small">${evento.descripcion}</p>
 
+                    <!-- UBICACIÓN CLICABLE -->
                     <div class="mb-2 mt-auto">
                         <i class="bi bi-geo-alt-fill text-danger"></i> 
-                        <strong>${evento.lugar}</strong>
+                        <a href="https://www.google.com/maps?q=${lugarMapa}" target="_blank">
+                            <strong>${evento.lugar}</strong>
+                        </a>
                     </div>
 
                     <div class="mb-2 text-secondary">
