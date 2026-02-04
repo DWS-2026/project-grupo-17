@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketFlow - Crear Discoteca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-light">
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="index.html">TicketFlow</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Eventos</a></li>
+                        <li class="nav-item"><a class="nav-link active fw-bold" href="#">+ Publicar Local</a></li>
+                    </ul>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="profile.html">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                    </li>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-3">
+                    
+                    <div class="card-header bg-primary text-white p-4 text-center">
+                        <h3 class="fw-bold mb-0">Registrar Nueva Discoteca</h3>
+                        <p class="mb-0 text-white-50">Añade un nuevo local a la red TicketFlow</p>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form action="#">
+                            
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label fw-bold">Nombre del Local</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-music-note-beamed"></i></span>
+                                    <input type="text" class="form-control" id="nombre" placeholder="Ej: Sala Riviera" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label fw-bold">Ubicación</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                    <input type="text" class="form-control" id="direccion" placeholder="Calle, Ciudad..." required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label fw-bold">Descripción / Ambiente</label>
+                                <textarea class="form-control" id="descripcion" rows="3" placeholder="Describe el estilo de música..."></textarea>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="aforo" class="form-label fw-bold">Aforo Máx.</label>
+                                    <input type="number" class="form-control" id="aforo" placeholder="Ej: 500">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="precio" class="form-label fw-bold">Precio Medio (€)</label>
+                                    <input type="number" class="form-control" id="precio" placeholder="Ej: 20">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="imagen" class="form-label fw-bold">Foto del Local (URL)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                    <input type="url" class="form-control" id="imagen" placeholder="https://..." required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-dark btn-lg">Publicar Discoteca</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 TicketFlow</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

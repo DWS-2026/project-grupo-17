@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/styles.css">
 </head>
-<body>
+<body> 
+
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container position-relative">
 
             <div class="header1">
-                <a href="index.html" class="flecha">
+                <a href="discotecas.html" class="flecha">
                     🡰
                 </a>
                 <a class="navbar-brand" href="index.html">TicketFlow</a>
@@ -33,71 +34,105 @@
     </nav>
 </header>
 
-
 <main class="container py-5">
 
-    <div class="card shadow mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Listado de eventos</h5>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-1 text-white">Próximos Eventos</h2>
         </div>
-        <div class="card-body">
-            <section class="tabla-eventos">
-                <table class="table table-striped align-middle">
-                    <tr>
-                        <td><img src="../images/lariviera.png"
-                                 class="img-fluid evento-img"
-                                 alt="La Riviera">
-                        </td>
-                        <td>White Night</td>
-                        <td><a href="entradas.html" class="btn btn-sm btn-outline-primary">
-                            Ver detalles
-                        </a></td>
-                        <td>
-                            <button class="btn btn-sm btn-danger">Eliminar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><img src="../images/nuit.png"
-                                 class="img-fluid evento-img"
-                                 alt="La Nuit">
-                        </td>
-                        <td>Opening Party</td>
-                        <td><a href="entradas.html" class="btn btn-sm btn-outline-primary">
-                            Ver detalles
-                        </a></td>
-                        <td>
-                            <button class="btn btn-sm btn-danger">Eliminar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><img src="../images/jowke.webp"
-                                 class="img-fluid evento-img"
-                                 alt="Jowke">
-                        </td>
-                        <td>Ibiza Night</td>
-                        <td><a href="entradas.html" class="btn btn-sm btn-outline-primary">
-                            Ver detalles
-                        </a></td>
-                        <td>
-                            <button class="btn btn-sm btn-danger">Eliminar</button>
-                        </td>
-                    </tr>
-                </table>
-            </section>
-        </div>
-    </div>
-
-    <div>
-        <a href="create-event.html" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-1"></i>
-            Añadir Evento
+        <a href="create-event.html" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i>Añadir Evento
         </a>
-
     </div>
 
-</main>
-<footer class="bg-dark text-white text-center py-3">
-    <p class="mb-0">&copy; 2026 TicketFlow</p>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="position-relative">
+                    <img src="../images/imagen1.avif" class="card-img-top" alt="La Riviera" 
+                         style="height: 220px; object-fit: cover;">
+                    <span class="position-absolute top-0 end-0 m-3 badge bg-white text-dark shadow-sm rounded-pill">
+                        <i class="bi bi-star-fill text-warning"></i> Destacado
+                    </span>
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold">White Night</h4>
+                    
+                    
+                    <div class="d-grid gap-2">
+                        <a href="entradas.html" class="btn btn-outline-primary rounded-pill fw-semibold">
+                            Ver detalles
+                        </a>
+                        <a href="edit-event.html" class="btn btn-outline-primary rounded-pill fw-semibold">
+                            Editar evento
+                        </a>
+                        <button class="btn btn-light text-danger rounded-pill fw-semibold border-0">
+                            <i class="bi bi-trash me-1"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="position-relative">
+                    <img src="../images/imagen2.avif" class="card-img-top" alt="La Nuit" 
+                         style="height: 220px; object-fit: cover;">
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold">Opening Party</h4>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="entradas.html" class="btn btn-outline-primary rounded-pill fw-semibold">
+                            Ver detalles
+                        </a>
+                        <a href="edit-event.html" class="btn btn-outline-primary rounded-pill fw-semibold">
+                            Editar evento
+                        </a>
+                        <button class="btn btn-light text-danger rounded-pill fw-semibold border-0">
+                            <i class="bi bi-trash me-1"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="position-relative">
+                    <img src="../images/imagen3.avif" class="card-img-top" alt="Jowke" 
+                         style="height: 220px; object-fit: cover;">
+                    <span class="position-absolute top-0 end-0 m-3 badge bg-danger shadow-sm rounded-pill">
+                        Últimas entradas
+                    </span>
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold">Ibiza Night</h4>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="entradas.html" class="btn btn-outline-primary rounded-pill fw-semibold">
+                            Ver detalles
+                        </a>
+                        <a href="edit-event.html" class="btn btn-outline-primary rounded-pill fw-semibold">
+                            Editar evento
+                        </a>
+                        <button class="btn btn-light text-danger rounded-pill fw-semibold border-0">
+                            <i class="bi bi-trash me-1"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </main>
+
+<footer class="bg-dark text-white text-center py-4 mt-5">
+    <p class="mb-0 opacity-75">&copy; 2026 TicketFlow. Todos los derechos reservados.</p>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
