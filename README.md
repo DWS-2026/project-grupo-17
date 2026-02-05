@@ -66,16 +66,55 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 ![Diagrama de Navegación](images/navigation-diagram.png)
 
-> [Descripción opcional del flujo de navegación: Ej: "El usuario puede acceder desde la página principal a todas las secciones mediante el menú de navegación. Los usuarios anónimos solo tienen acceso a las páginas públicas, mientras que los registrados pueden acceder a su perfil y panel de usuario."]
+> 
 
 ### **Capturas de Pantalla y Descripción de Páginas**
 
 #### **1. Página Principal / Home**
-![Página Principal](images/home-page.png)
+![Página Principal](images/index.png)
 
-> [Descripción breve: Ej: "Página de inicio que muestra los productos destacados, categorías principales y un banner promocional. Incluye barra de navegación y acceso a registro/login para usuarios no autenticados."]
+> Maqueta de la página de aterrizaje que sirve como punto de entrada. Presenta un diseño oscuro con un banner hero que utiliza una imagen inmersiva y el eslogan "Vive la noche". En la parte inferior, se muestra una cuadrícula estática de "Próximos Eventos" con tarjetas que incluyen el nombre del evento, la sala y la fecha. Además cuenta con enlaces de login, registro y perfil, todo de forma estática.
 
-#### **AQUÍ AÑADIR EL RESTO DE PÁGINAS**
+#### **2. Login**
+![Login](images/inicioSesion.png)
+> Interfaz de autenticación diseñada con un enfoque minimalista. Contiene un contenedor central blanco sobre el fondo oscuro corporativo, con campos de texto para el Email y la Contraseña. Incluye un botón destacado de "Entrar" y un enlace de redirección para usuarios no registrados.
+
+#### **3. Registro de cuenta**
+![Registro de cuenta](images/crearCuenta.png)
+> Formulario estático para la creación de nuevos perfiles. Permite visualizar la disposición de los campos de Nombre Completo, Email, Contraseña y un selector de Fecha de Nacimiento. También integra una sección para la carga de archivos, destinada a la imagen de Avatar del usuario.
+
+#### **4. Perfil de Usuario y Edición**
+![Perfil de Usuario y Edición](images/profile.png)
+> El área personal se divide en dos vistas clave:
+
+    - Mi Perfil: Muestra cómo se visualizarán los datos del usuario, sus entradas activas (con etiquetas de estado como "Activa") y un historial de transacciones pasadas.
+
+    - Modificar Datos: Una interfaz de formulario pre-rellenada que simula la capacidad de actualizar la información personal, cambiar la contraseña o sustituir el avatar actual.
+
+#### **6.Panel de Administración de Usuarios**
+![Panel de Administración de Usuarios](images/paginaAdmin.png)
+> Vista centralizada para el administrador del sitio. Presenta una tabla de datos que organiza a los usuarios por nombre, correo electrónico y fecha de nacimiento. Incluye una columna de Rol con etiquetas visuales (ej. "Usuario") y un botón de acción para gestionar cada perfil de forma individual.
+
+
+#### **7. Gestión de Discotecas**
+![Gestión de Discotecas](images/discotecas.png)
+> Vistas administrativas para el control de los locales nocturnos:
+
+    - Registro: Formulario detallado que incluye campos para el Aforo Máximo, Precio Medio y una descripción del ambiente o estilo de música.
+
+    - Edición: Una versión simplificada de la interfaz diseñada para actualizar rápidamente el nombre o la imagen representativa de la discoteca.
+
+#### **8. Gestión de Eventos y entradas**
+![Gestión de Eventos](images/evento.png)
+> Visualización de la oferta comercial de un evento específico (ej. "White Night"):
+
+    - Vista de Detalle: Diseño que desglosa los diferentes tipos de pases disponibles (Early White, Main Night, White VIP) mostrando sus precios, qué incluyen (copas, zonas VIP) y botones de gestión.
+
+    - Gestión de Ticketing: Maquetas de los formularios para crear o modificar las condiciones de acceso y el coste de cada tipo de entrada.
+
+#### **9. Creación y Edición de Eventos**
+![Creación y Edición de Eventos](images/editarEvento.png)
+> Interfaces diseñadas para la planificación de fiestas. Permiten simular la vinculación de un evento a una discoteca existente del listado y la subida de la imagen promocional o cartel del evento.
 
 ### **Participación de Miembros en la Práctica 1**
 
