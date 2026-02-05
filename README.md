@@ -69,7 +69,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 > Leyenda: azul-todos los usuarios, verde-admin, amarillo-usuarios registrados. 
 > Aclaración 1: podemos ir desde todas las páginas a la página principal (index.png)
 > Aclaración 2: podemos ir desde cualquier página menos la de login y la de registro al perfil del usuario (profile.png) siempre y cuando se esté registrado o se sea admin
-
+> Aclaración 3: justo después de hacer el diagrama de navegación modificamos el html de añadir discoteca entonces la página que aparece en el diagrama es ligeramente distinta a la que tenemos ahora
 ### **Capturas de Pantalla y Descripción de Páginas**
 
 #### **1. Página Principal / Home**
