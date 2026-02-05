@@ -64,9 +64,11 @@ Indicar qué entidades tendrán asociadas una o varias imágenes:
 ### **Diagrama de Navegación**
 Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicación:
 
-![Diagrama de Navegación](images/navigation-diagram.png)
+![Diagrama de Navegación](images/diagramaNav.jpg)
 
-> 
+> Leyenda: azul-todos los usuarios, verde-admin, amarillo-usuarios registrados. 
+> Aclaración 1: podemos ir desde todas las páginas a la página principal (index.png)
+> Aclaración 2: podemos ir desde cualquier página menos la de login y la de registro al perfil del usuario (profile.png) siempre y cuando se esté registrado o se sea admin
 
 ### **Capturas de Pantalla y Descripción de Páginas**
 
