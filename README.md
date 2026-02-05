@@ -162,7 +162,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 ---
 
-#### **Alumno 4 - [Nombre Completo]**
+#### **Alumno 4 - [Alejandro Cabello Manzanero]**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
