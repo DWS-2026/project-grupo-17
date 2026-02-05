@@ -141,10 +141,10 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 | Nº    | Commits      | Files      |
 |:------------: |:------------:| :------------:|
 |1| [Creación del formulario login.html] (https://github.com/DWS-2026/project-grupo-17/commit/0402417b0ccca0fb6d4e81b7363366a6c2f7f353)  | [login.html](ProyectoTicketFlow/login.html)   |
-|2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
-|3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
-|4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |
-|5| [Descripción commit 5](URL_commit_5)  | [Archivo5](URL_archivo_5)   |
+|2| [Creación de admin.html] (https://github.com/DWS-2026/project-grupo-17/commit/0b7e4923355daff11c6cb6f2b53aad2eea6df95e)  | [admin.html](ProyectoTicketFlow/admin.html)   |
+|3| [Conexión entre index.html y profile.html] (https://github.com/DWS-2026/project-grupo-17/commit/933b0bac9ea1c46044fe27c9e6bd49dc1516c97f)  | [index.html](ProyectoTicketFlow/index.html)   |
+|4| [Añadir ubicación clickable] (https://github.com/DWS-2026/project-grupo-17/commit/63b99d63b0b62ccfb59e924adc0b7fa8906d2b0c)  | [index.html](ProyectoTicketFlow/index.html)   |
+|5| [Primer modelaje de edit-profile.html] (https://github.com/DWS-2026/project-grupo-17/commit/47c269099884816def2d16b974c88389c0bb36fd)  | [edit-profile.html](ProyectoTicketFlow/edit-profile.html)   |
 
 ---
 
