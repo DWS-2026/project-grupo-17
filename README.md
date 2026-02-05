@@ -148,17 +148,17 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 ---
 
-#### **Alumno 3 - [Nombre Completo]**
+#### **Alumno 3 - Pablo Leis**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
 | Nº    | Commits      | Files      |
 |:------------: |:------------:| :------------:|
-|1| [Descripción commit 1](URL_commit_1)  | [Archivo1](URL_archivo_1)   |
-|2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
-|3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
-|4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |
-|5| [Descripción commit 5](URL_commit_5)  | [Archivo5](URL_archivo_5)   |
+|1| [Creacion del index.html](https://github.com/DWS-2026/dws-2026-project-base/commit/911f8dd3f196b96567c1eaabf83388877b351250)  | [index.html](ProyectoTicketFlow/index.html)   |
+|2| [Creacion del html de la edicion del perfil ](https://github.com/DWS-2026/dws-2026-project-base/commit/c89c0ef87e18797c5fbd09df253b200c3e83a188)  | [ProyectoTicketFlow/edit-profile.html](URL_archivo_2)   |
+|3| [Añadir los proximos eventos en el index.html](https://github.com/DWS-2026/dws-2026-project-base/commit/65013f5e723f7c315198a46d76a312df05b125e6)  | [index.html](ProyectoTicketFlow/index.html)   |
+|4| [Cambio de edit-profile y he creado una pagina para crear discotecas](https://github.com/DWS-2026/dws-2026-project-base/commit/10b4f46e26c8a74c54ecb1530c13ee44accc69c1)  | [discotecas.html](ProyectoTicketFlow/discotecas.html)   |
+|5| [He reestructurado la navegacion de la pagina y he añadido dos html para editar tanto los eventos como las discotecas](https://github.com/DWS-2026/dws-2026-project-base/commit/7db76f52a42b8446c6f1288241ae3ddfa93a6a4a)  | [edit-discoteca edit-evento](ProyectoTicketFlow/edit-discoteca.html / ProyectoTicketFlow/edit-evento.html)   |
 
 ---
 
