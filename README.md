@@ -166,13 +166,13 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
-| Nº    | Commits      | Files      |
-|:------------: |:------------:| :------------:|
-|1| [Descripción commit 1](URL_commit_1)  | [Archivo1](URL_archivo_1)   |
-|2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
-|3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
-|4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |
-|5| [Descripción commit 5](URL_commit_5)  | [Archivo5](URL_archivo_5)   |
+| Nº |                                 Commits                                  |                         Files                          |
+|:--:|:------------------------------------------------------------------------:|:------------------------------------------------------:|
+| 1  |                [Creación de register.html](https://github.com/DWS-2026/dws-2026-project-base/commit/c7982c187b0f5c29d638be75919cf6d3ad77f445) |   [register.html](ProyectoTicketFlow/register.html)    |
+| 2  |                 [Creación de profile.html](https://github.com/DWS-2026/dws-2026-project-base/commit/ac68209714f1dfd304a4a035b810fd76c7e16c70) |    [profile.html](ProyectoTicketFlow/profile.html)     |
+| 3  |                 [Creación de eventos.html](https://github.com/DWS-2026/dws-2026-project-base/commit/3f852cf0ffabfce8626d5fafcceb2757013a23d4)  |    [eventos.html](ProyectoTicketFlow/eventos.html)     |
+| 4  | [Creación de formularios como el de crear o editar evento](https://github.com/DWS-2026/dws-2026-project-base/commit/7bb705dcb81da375daa70524e053e0a50de7fe55) |  [create-event](ProyectoTicketFlow/create-event.html)  | [edit-event](ProyectoTicketFlow/edit-event.html) |
+| 5  |  [Creación de formularios para crear o editar entradas ](https://github.com/DWS-2026/dws-2026-project-base/commit/36c0749676dfda11dc1e686accc34d9a8470e0af)   | [create-ticket](ProyectoTicketFlow/create-ticket.html) | [edit-ticket](ProyectoTicketFlow/edit-ticket.html) |
 
 ---
 
