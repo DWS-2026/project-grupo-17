@@ -26,6 +26,16 @@ public class HomeController {
         return "profile";
     }
 
+    @GetMapping("/edit-profile")
+    public String mostrarEditProfile() {
+        return "edit-profile";
+    }
+
+    @GetMapping("/admin")
+    public String mostrarAdmin() {
+        return "admin";
+    }
+
 
 
 
