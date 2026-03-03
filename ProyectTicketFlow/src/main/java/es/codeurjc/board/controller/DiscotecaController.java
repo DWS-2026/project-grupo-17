@@ -15,7 +15,6 @@ import es.codeurjc.board.service.DiscotecaService;
 
 @Controller
 public class DiscotecaController {
-
     @Autowired
     private DiscotecaService discotecaService;
 
