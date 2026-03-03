@@ -14,8 +14,8 @@
         <div class="container position-relative">
 
             <div class="header1">
-                <a href="index.html" class="flecha">🡰</a>
-                <a class="navbar-brand" href="index.html">TicketFlow</a>
+                <a href="/" class="flecha">🡰</a>
+                <a class="navbar-brand" href="/">TicketFlow</a>
             </div>
 
             <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
@@ -43,9 +43,9 @@
                     {{#discotecas}}
                     <tr>
                         <td>
-                            <img src="{{imagen}}" class="img-fluid evento-img" alt="{{nombre}}">
+                            <img src="/discotecas/{{id}}/image" class="img-fluid evento-img" alt="{{name}}">
                         </td>
-                        <td>{{nombre}}</td>
+                        <td>{{name}}</td>
                         <td>
                             <a href="/eventos/{{id}}" class="btn btn-sm btn-outline-primary">
                                 Eventos disponibles
@@ -69,7 +69,7 @@
     </div>
 
     <div>
-        <a href="/discotecas/create" class="btn btn-primary">
+        <a href="/discotecas/create-discotecas" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>
             Añadir Discoteca
         </a>
