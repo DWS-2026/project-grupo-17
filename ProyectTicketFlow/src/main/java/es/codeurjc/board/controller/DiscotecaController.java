@@ -92,7 +92,7 @@ public class DiscotecaController {
                 .body(d.getImage());
     }
 
-    @PostMapping("/discotecas/{id}/delete")
+    @PostMapping("/discotecas/delete/{id}")
     public String deleteDiscoteca(@PathVariable long id) {
         discotecaService.delete(id);
         return "redirect:/discotecas";
