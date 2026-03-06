@@ -31,22 +31,34 @@ public class DiscotecaController {
         return "create-discotecas";
     }
 
-    @GetMapping("/discotecas/{{id}}")
-    public String detailsDiscoteca() {
-        return "detalles-discotecas";
+    @GetMapping("/discotecas/{id}")
+    public String detailsDiscoteca(@PathVariable long id, Model model) {
+        Discoteca discoteca = discotecaService.findById(id);
+        model.addAttribute("discoteca", discoteca);
+        return "detalles-discoteca";
     }
 
-    @GetMapping("/discotecas/edit-discotecas/{{id}}")
-    public String editDiscotecaForm() {
-        return "edit-discotecas";
+    @GetMapping("/discotecas/edit-discoteca/{id}")
+    public String editDiscotecaForm(@PathVariable long id, Model model) {
+        Discoteca discoteca = discotecaService.findById(id);
+        model.addAttribute("discoteca", discoteca);
+        return "edit-discoteca";
     }
 
+    // --- AQUÍ ESTÁ EL CAMBIO PRINCIPAL ---
     @PostMapping("/discotecas/create-discotecas")
     public String createDiscoteca(@RequestParam String name,
-                                  @RequestParam MultipartFile image) throws IOException {
-        discotecaService.save(name, image);
+                                  @RequestParam MultipartFile image,
+                                  @RequestParam String calle,         // Nuevo parámetro
+                                  @RequestParam String descripcion)   // Nuevo parámetro
+                                  throws IOException {
+        
+        // Ahora pasamos los 4 datos al servicio
+        discotecaService.save(name, image, calle, descripcion);
+        
         return "redirect:/discotecas";
     }
+    // -------------------------------------
 
     @GetMapping("/discotecas/{id}/image")
     @ResponseBody
@@ -57,7 +69,7 @@ public class DiscotecaController {
         }
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg") // importante
+                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg") 
                 .body(d.getImage());
     }
 
@@ -68,6 +80,4 @@ public class DiscotecaController {
 
         return "redirect:/discotecas";
     }
-
-
 }

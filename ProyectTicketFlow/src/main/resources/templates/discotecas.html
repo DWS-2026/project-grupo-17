@@ -23,7 +23,7 @@
             </span>
 
             <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y"
-               href="profile.html">
+               href="/profile">
                 <i class="bi bi-person-circle"></i>
             </a>
 
@@ -48,12 +48,17 @@
                         </td>
                         <td>{{name}}</td>
                         <td>
+                            <a href="/discotecas/{{id}}" class="btn btn-sm btn-info text-white">
+                                <i class="bi bi-eye me-1"></i>Ver más
+                            </a>
+                        </td>
+                        <td>
                             <a href="/eventos/{{id}}" class="btn btn-sm btn-outline-primary">
                                 Eventos disponibles
                             </a>
                         </td>
                         <td>
-                            <a href="/discotecas/edit/{{id}}" class="btn btn-sm btn-outline-primary">
+                            <a href="/discotecas/edit-discoteca/{{id}}" class="btn btn-sm btn-outline-primary">
                                 Editar
                             </a>
                         </td>

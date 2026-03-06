@@ -23,9 +23,13 @@ public class DiscotecaService {
         return discotecas.get(id);
     }
 
-    public void save(String name, MultipartFile image) throws IOException {
+    // AÑADIMOS los parámetros 'calle' y 'descripcion' a la firma del método
+    public void save(String name, MultipartFile image, String calle, String descripcion) throws IOException {
         Long id = nextId.getAndIncrement();
-        Discoteca d = new Discoteca(id, name, image.getBytes());
+        
+        // ACTUALIZAMOS el constructor para pasarle todos los datos
+        Discoteca d = new Discoteca(id, name, image.getBytes(), calle, descripcion);
+        
         discotecas.put(id, d);
     }
 

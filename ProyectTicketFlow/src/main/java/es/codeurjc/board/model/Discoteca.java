@@ -5,13 +5,20 @@ public class Discoteca {
     private Long id;
     private String name;
     private byte[] image;
+    
+    // Nuevos atributos
+    private String calle;
+    private String descripcion;
 
     public Discoteca() {}
 
-    public Discoteca(Long id, String name, byte[] image) {
+    // Constructor actualizado
+    public Discoteca(Long id, String name, byte[] image, String calle, String descripcion) {
         this.id = id;
         this.name = name;
         this.image = image;
+        this.calle = calle;
+        this.descripcion = descripcion;
     }
 
     public Long getId() { return id; }
@@ -22,4 +29,11 @@ public class Discoteca {
 
     public byte[] getImage() { return image; }
     public void setImage(byte[] image) { this.image = image; }
+
+    // Nuevos Getters y Setters
+    public String getCalle() { return calle; }
+    public void setCalle(String calle) { this.calle = calle; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

@@ -44,7 +44,6 @@
                 </div>
 
                 <div class="card-body p-4">
-                    <!-- Formulario apunta a tu controlador Spring Boot -->
                     <form action="/discotecas/create-discotecas" method="post" enctype="multipart/form-data">
 
                         <div class="mb-3">
@@ -52,6 +51,22 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-music-note-beamed"></i></span>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Ej: Sala Riviera" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="calle" class="form-label fw-bold">Dirección</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                <input type="text" class="form-control" id="calle" name="calle" placeholder="Ej: Calle Atocha, 125" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label fw-bold">Descripción del Local</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe el estilo musical, el aforo, el ambiente..." required></textarea>
                             </div>
                         </div>
 
