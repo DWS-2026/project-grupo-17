@@ -28,8 +28,17 @@ public class DiscotecaController {
 
     @GetMapping("/discotecas/create-discotecas")
     public String newDiscotecaForm() {
-
         return "create-discotecas";
+    }
+
+    @GetMapping("/discotecas/detalles-discoteca")
+    public String detailsDiscoteca() {
+        return "detalles-discotecas";
+    }
+
+    @GetMapping("/discotecas/create-discotecas")
+    public String editDiscotecaForm() {
+        return "edit-discotecas";
     }
 
     @PostMapping("/discotecas/create-discotecas")
@@ -59,4 +68,6 @@ public class DiscotecaController {
 
         return "redirect:/discotecas";
     }
+
+
 }
