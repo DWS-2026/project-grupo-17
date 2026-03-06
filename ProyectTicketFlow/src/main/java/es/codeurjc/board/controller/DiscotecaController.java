@@ -53,6 +53,19 @@ public class DiscotecaController {
         return "edit-discoteca";
     }
 
+    @PostMapping("/discotecas/edit/{id}")
+    public String actualizarDiscoteca(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String calle,
+            @RequestParam String descripcion,
+            @RequestParam MultipartFile image) throws IOException {
+
+        discotecaService.update(id,name, image, calle, descripcion);
+
+        return "redirect:/discotecas";
+    }
+
     @PostMapping("/discotecas/create-discotecas")
     public String createDiscoteca(@RequestParam String name,
                                   @RequestParam MultipartFile image,

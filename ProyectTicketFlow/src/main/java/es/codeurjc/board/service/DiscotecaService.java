@@ -33,6 +33,21 @@ public class DiscotecaService {
         discotecas.put(id, d);
     }
 
+    public void update(long id, String name, MultipartFile image, String calle, String descripcion) throws IOException {
+
+        Discoteca d = discotecas.get(id);
+
+        if (d != null) {
+            d.setName(name);
+            d.setCalle(calle);
+            d.setDescripcion(descripcion);
+
+            if (!image.isEmpty()) {
+                d.setImage(image.getBytes());
+            }
+        }
+    }
+
     public void delete(long id) {
         discotecas.remove(id);
     }
