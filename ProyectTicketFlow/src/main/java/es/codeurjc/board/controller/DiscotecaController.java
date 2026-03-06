@@ -31,12 +31,12 @@ public class DiscotecaController {
         return "create-discotecas";
     }
 
-    @GetMapping("/discotecas/detalles-discoteca")
+    @GetMapping("/discotecas/{{id}}")
     public String detailsDiscoteca() {
         return "detalles-discotecas";
     }
 
-    @GetMapping("/discotecas/edit-discotecas")
+    @GetMapping("/discotecas/edit-discotecas/{{id}}")
     public String editDiscotecaForm() {
         return "edit-discotecas";
     }
