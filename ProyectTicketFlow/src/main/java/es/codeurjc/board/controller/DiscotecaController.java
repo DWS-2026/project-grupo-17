@@ -36,7 +36,7 @@ public class DiscotecaController {
         return "detalles-discotecas";
     }
 
-    @GetMapping("/discotecas/create-discotecas")
+    @GetMapping("/discotecas/edit-discotecas")
     public String editDiscotecaForm() {
         return "edit-discotecas";
     }
