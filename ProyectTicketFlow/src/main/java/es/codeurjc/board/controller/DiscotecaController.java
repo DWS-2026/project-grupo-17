@@ -7,16 +7,21 @@ import java.util.stream.Collectors;
 // Importaciones de tus modelos y servicios
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Evento;
+import es.codeurjc.board.repositories.DiscotecaRepository;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.EventoService;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import java.nio.file.Files;
+
 
 @Controller
 public class DiscotecaController {
@@ -27,6 +32,31 @@ public class DiscotecaController {
     // Inyectamos el EventoService para que el nuevo método funcione sin dar error rojo
     @Autowired
     private EventoService eventoService;
+
+    @Autowired
+    private DiscotecaRepository discotecaRepository;
+
+    @PostConstruct
+    public void init() throws IOException {
+        if (discotecaRepository.count() == 0) { // Evita duplicados
+
+            Discoteca d1 = new Discoteca();
+            d1.setName("Nuit");
+            d1.setCalle("Calle Mayor 10");
+            d1.setDescripcion("Discoteca con música electrónica");
+            d1.setImage(null);
+
+            Discoteca d2 = new Discoteca();
+            d2.setName("La Riviera");
+            d2.setCalle("Avenida del Sol 25");
+            d2.setDescripcion("Ambiente chill y cocktails");
+            d2.setImage(null);
+
+            discotecaRepository.save(d1);
+            discotecaRepository.save(d2);
+        }
+    }
+
 
     @GetMapping("/discotecas")
     public String showDiscotecas(Model model) {
