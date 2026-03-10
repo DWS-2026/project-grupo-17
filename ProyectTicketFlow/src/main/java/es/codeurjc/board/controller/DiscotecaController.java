@@ -128,18 +128,4 @@ public class DiscotecaController {
         return "redirect:/discotecas";
     }
 
-    // --- NUEVO MÉTODO: Mostrar eventos de una discoteca reutilizando eventos.html ---
-    @GetMapping("/discotecas/{id}/eventos")
-    public String showEventosDeDiscoteca(@PathVariable long id, Model model) {
-
-        // Buscamos todos los eventos y filtramos los que tengan la ID de esta discoteca
-        List<Evento> eventosDeLaDiscoteca = eventoService.findAll().stream()
-                .filter(evento -> evento.getDiscoteca() != null && evento.getDiscoteca().getId().equals(id))
-                .collect(Collectors.toList());
-
-        // Pasamos la lista filtrada a la vista "eventos"
-        model.addAttribute("eventos", eventosDeLaDiscoteca);
-
-        return "eventos";
-    }
 }
