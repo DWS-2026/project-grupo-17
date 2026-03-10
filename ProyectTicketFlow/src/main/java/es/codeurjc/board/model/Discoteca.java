@@ -1,9 +1,17 @@
 package es.codeurjc.board.model;
 
+
+import jakarta.persistence.*;
+
+@Entity
 public class Discoteca {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String name;
+    @Lob
     private byte[] image;
 
     // Nuevos atributos

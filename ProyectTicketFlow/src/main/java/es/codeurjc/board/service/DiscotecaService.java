@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import es.codeurjc.board.repositories.DiscotecaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,25 +14,31 @@ import es.codeurjc.board.model.Discoteca;
 @Service
 public class DiscotecaService {
 
+
+    @Autowired
+    private DiscotecaRepository discotecaRepository;
+
     private Map<Long, Discoteca> discotecas = new HashMap<>();
     private AtomicLong nextId = new AtomicLong(1);
 
     public Collection<Discoteca> findAll() {
-        return discotecas.values();
+        return discotecaRepository.findAll();
     }
 
     public Discoteca findById(long id) {
-        return discotecas.get(id);
+        return discotecaRepository.findById(id).orElse(null);
     }
 
     // AÑADIMOS los parámetros 'calle' y 'descripcion' a la firma del método
     public void save(String name, MultipartFile image, String calle, String descripcion) throws IOException {
-        Long id = nextId.getAndIncrement();
+        Discoteca d = new Discoteca();
+        d.setName(name);
+        d.setImage(image.getBytes());
+        d.setCalle(calle);
+        d.setDescripcion(descripcion);
 
-        // ACTUALIZAMOS el constructor para pasarle todos los datos
-        Discoteca d = new Discoteca(id, name, image.getBytes(), calle, descripcion);
 
-        discotecas.put(id, d);
+        discotecaRepository.save(d);
     }
 
     public void update(long id, String name, MultipartFile image, String calle, String descripcion) throws IOException {
@@ -49,6 +57,6 @@ public class DiscotecaService {
     }
 
     public void delete(long id) {
-        discotecas.remove(id);
+        discotecaRepository.deleteById(id);
     }
 }
