@@ -1,21 +1,30 @@
 package es.codeurjc.board.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Evento {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
     private String name;
+    
+    @Lob
     private byte[] image;
     
-    // --- CAMBIO CLAVE: Relacionamos con el objeto Discoteca ---
+    
+    @ManyToOne
     private Discoteca discoteca; 
     
-    // --- Otros atributos del evento ---
+    
     private String descripcion;
     private Integer edadRequerida;
 
     public Evento() {}
 
-    // Constructor actualizado recibiendo el objeto Discoteca completo
+    
     public Evento(Long id, String name, Discoteca discoteca, String descripcion, byte[] image, Integer edadRequerida) {
         this.id = id;
         this.name = name;
@@ -49,7 +58,7 @@ public class Evento {
         this.image = image; 
     }
 
-    // --- GETTER Y SETTER DE LA DISCOTECA ---
+    
     public Discoteca getDiscoteca() { 
         return discoteca; 
     }
