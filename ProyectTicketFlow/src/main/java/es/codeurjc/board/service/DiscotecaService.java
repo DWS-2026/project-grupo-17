@@ -17,9 +17,6 @@ public class DiscotecaService {
     @Autowired
     private DiscotecaRepository discotecaRepository;
 
-    private Map<Long, Discoteca> discotecas = new HashMap<>();
-    private AtomicLong nextId = new AtomicLong(1);
-
     public Collection<Discoteca> findAll() {
         return discotecaRepository.findAll();
     }
@@ -42,7 +39,7 @@ public class DiscotecaService {
 
     public void update(long id, String name, MultipartFile image, String calle, String descripcion) throws IOException {
 
-        Discoteca d = discotecas.get(id);
+        Discoteca d = discotecaRepository.findById(id).orElse(null);
 
         if (d != null) {
             d.setName(name);
@@ -52,6 +49,8 @@ public class DiscotecaService {
             if (!image.isEmpty()) {
                 d.setImage(image.getBytes());
             }
+
+            discotecaRepository.save(d);
         }
     }
 

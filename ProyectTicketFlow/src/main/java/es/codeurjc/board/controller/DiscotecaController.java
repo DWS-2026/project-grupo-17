@@ -38,7 +38,9 @@ public class DiscotecaController {
 
     @PostConstruct
     public void init() throws IOException {
-        if (discotecaRepository.count() == 0) { // Evita duplicados
+        if (discotecaRepository.count() == 0) { // Evita dup
+
+
 
             Discoteca d1 = new Discoteca();
             d1.setName("Nuit");
