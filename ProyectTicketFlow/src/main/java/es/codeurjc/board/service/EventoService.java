@@ -20,6 +20,21 @@ public class EventoService {
         return eventos.values();
     }
 
+    public Collection<Evento> findByDiscoteca(Long discotecaId) {
+
+        List<Evento> resultado = new ArrayList<>();
+
+        for (Evento evento : eventos.values()) {
+            if (evento.getDiscoteca() != null &&
+                    evento.getDiscoteca().getId().equals(discotecaId)) {
+
+                resultado.add(evento);
+            }
+        }
+
+        return resultado;
+    }
+
     public Evento findById(long id) {
         return eventos.get(id);
     }
