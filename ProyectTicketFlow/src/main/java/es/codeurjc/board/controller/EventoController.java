@@ -77,13 +77,15 @@ public class EventoController {
     @GetMapping("/eventos/{id}/edit")
     public String editEventoForm(@PathVariable long id, Model model) {
 
-        Evento evento = eventoService.findById(id);
+    Evento evento = eventoService.findById(id);
 
-        model.addAttribute("evento", evento);
-        model.addAttribute("discotecas", discotecaService.findAll());
+    model.addAttribute("discoteca", evento.getDiscoteca()); 
+    
+    model.addAttribute("evento", evento);
+    model.addAttribute("discotecas", discotecaService.findAll());
 
-        return "edit-event";
-    }
+    return "edit-event";
+}
 
     @PostMapping("/eventos/{id}/edit")
     public String updateEvento(@PathVariable long id,

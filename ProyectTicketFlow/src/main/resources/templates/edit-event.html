@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Evento - TicketFlow</title>
+    <title>TicketFlow - Editar Evento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/styles.css">
@@ -14,56 +13,102 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container position-relative">
 
-              <div class="header1">
-                <a href="eventos.html" class="flecha">
+            <div class="header1">
+                <a href="/discotecas/{{discoteca.id}}/eventos" class="flecha">
                     🡰
                 </a>
-                <a class="navbar-brand" href="index.html">TicketFlow</a>
+                <a class="navbar-brand" href="/">TicketFlow</a>
             </div>
 
             <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
-                Editar evento
+                Edita el evento
             </span>
 
             <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y"
-               href="profile.html">
+               href="/profile">
                 <i class="bi bi-person-circle"></i>
             </a>
 
         </div>
     </nav>
 </header>
+
 <main class="container py-5">
 
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
             <h4 class="mb-0">Editar evento</h4>
         </div>
+
         <div class="card-body">
-            <form>
+            <form action="/eventos/{{evento.id}}/edit" method="post" enctype="multipart/form-data">
+                
+                <input type="hidden" name="eventoId" value="{{evento.id}}">
 
                 <div class="mb-3">
-                    <label class="form-label">Cambia el nombre</label>
-                    <input type="text" class="form-control" value="White Night" required>
+                    <label class="form-label">Nombre</label>
+                    <input
+                            type="text"
+                            class="form-control"
+                            name="name"
+                            value="{{evento.name}}"
+                            placeholder="Ej: Noche Techno con DJ Marco"
+                            required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Dicoteca</label>
-                    <input type="text" class="form-control" value="Sala Riviera"required>
+                    <label class="form-label">Discoteca</label>
+
+                    <input
+                            type="text"
+                            class="form-control"
+                            value="{{discoteca.name}}"
+                            disabled>
+
+                    <input type="hidden" name="discotecaId" value="{{discoteca.id}}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea
+                            class="form-control"
+                            name="descripcion"
+                            rows="3"
+                            placeholder="Ej: Una noche de música electrónica con DJs invitados, pista principal abierta hasta las 6 AM y zona VIP disponible."
+                            required>{{evento.descripcion}}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Edad requerida</label>
+                    <input
+                            type="number"
+                            class="form-control"
+                            name="edadRequerida"
+                            value="{{evento.edadRequerida}}"
+                            min="0"
+                            placeholder="Ej: 18"
+                            required>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Cambia la imagen del evento</label>
-                    <input type="file" class="form-control" accept="image/*">
+                    <label class="form-label">Actualizar imagen del evento</label>
+                    <input
+                            type="file"
+                            class="form-control"
+                            name="image"
+                            accept="image/*">
+                    <div class="form-text">Si no subes ninguna imagen nueva, se mantendrá la imagen actual.</div>
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="eventos.html" class="btn btn-outline-secondary">
+                    <a href="/discotecas/{{discoteca.id}}/eventos" class="btn btn-outline-secondary">
                         Cancelar
                     </a>
+
                     <button type="submit" class="btn btn-primary">
                         Guardar Cambios
                     </button>
+
                 </div>
 
             </form>
