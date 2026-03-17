@@ -34,9 +34,44 @@ public class EventoService {
                 .toList();
     }
 
-    public void save(Evento evento) {
+    public void save(String name, Discoteca discoteca, String descripcion,
+                     MultipartFile image, Integer edadRequerida) throws IOException {
+
+        Evento evento = new Evento();
+
+        evento.setName(name);
+        evento.setDiscoteca(discoteca);
+        evento.setDescripcion(descripcion);
+        evento.setEdadRequerida(edadRequerida);
+
+        if (image != null && !image.isEmpty()) {
+            evento.setImage(image.getBytes());
+        }
+
         eventoRepository.save(evento);
     }
+
+    public void update(long id, String name, Discoteca discoteca,
+                       String descripcion, MultipartFile image,
+                       Integer edadRequerida) throws IOException {
+
+        Evento evento = eventoRepository.findById(id).orElse(null);
+
+        if (evento != null) {
+
+            evento.setName(name);
+            evento.setDiscoteca(discoteca);
+            evento.setDescripcion(descripcion);
+            evento.setEdadRequerida(edadRequerida);
+
+            if (image != null && !image.isEmpty()) {
+                evento.setImage(image.getBytes());
+            }
+
+            eventoRepository.save(evento);
+        }
+    }
+
     public void delete(long id) {
         eventoRepository.deleteById(id);
     }

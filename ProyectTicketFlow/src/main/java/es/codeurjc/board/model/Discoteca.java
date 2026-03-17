@@ -15,8 +15,7 @@ public class Discoteca {
 
     private String calle;
     private String descripcion;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Image image;
 
     @OneToMany(mappedBy = "discoteca", cascade = CascadeType.ALL, orphanRemoval = true)

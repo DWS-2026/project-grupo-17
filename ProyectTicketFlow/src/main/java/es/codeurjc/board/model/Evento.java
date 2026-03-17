@@ -21,6 +21,10 @@ public class Evento {
     @ManyToOne
     private Discoteca discoteca;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
     private String descripcion;
     private Integer edadRequerida;
 
@@ -35,6 +39,15 @@ public class Evento {
         this.descripcion = descripcion;
         this.image = image;
         this.edadRequerida = edadRequerida;
+    }
+
+    public Evento(String name, Discoteca discoteca, String descripcion, byte[] image, Integer edadRequerida, User owner) {
+        this.name = name;
+        this.discoteca = discoteca;
+        this.descripcion = descripcion;
+        this.image = image;
+        this.edadRequerida = edadRequerida;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -59,6 +72,14 @@ public class Evento {
 
     public void setDiscoteca(Discoteca discoteca) {
         this.discoteca = discoteca;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public String getDescripcion() {

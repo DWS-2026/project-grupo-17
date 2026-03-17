@@ -6,10 +6,12 @@ import java.sql.SQLException;
 
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Image;
+import es.codeurjc.board.model.User;
 import es.codeurjc.board.repositories.DiscotecaRepository;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.ImageService;
 import es.codeurjc.board.service.UserSession;
+import es.codeurjc.board.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +36,9 @@ public class DiscotecaController {
     @Autowired
     private UserSession userSession;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/discotecas")
     public String showDiscotecas(Model model) {
         model.addAttribute("discotecas", discotecaService.findAll());
@@ -44,8 +49,7 @@ public class DiscotecaController {
     @GetMapping("/discotecas/create-discotecas")
     public String newDiscotecaForm(Model model) {
         if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden crear discotecas");
-            return "redirect:/discotecas";
+            return "redirect:/error-403";
         }
         return "create-discotecas";
     }
@@ -59,11 +63,17 @@ public class DiscotecaController {
 
     @GetMapping("/discotecas/edit-discoteca/{id}")
     public String editDiscotecaForm(@PathVariable long id, Model model) {
-        if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden editar discotecas");
-            return "redirect:/discotecas";
-        }
         Discoteca discoteca = discotecaService.findById(id);
+        
+        if (discoteca == null) {
+            return "redirect:/error-403";
+        }
+
+        // Validar que sea el propietario o administrador
+        if (!userSession.isAdmin() && !isOwner(discoteca)) {
+            return "redirect:/error-403";
+        }
+
         model.addAttribute("discoteca", discoteca);
         return "edit-discoteca";
     }
@@ -76,15 +86,15 @@ public class DiscotecaController {
                                        @RequestParam("imageFile") MultipartFile imageFile)
             throws IOException, SQLException {
 
-        if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden editar discotecas");
-            return "redirect:/discotecas";
-        }
-
         Discoteca discoteca = discotecaService.findById(id);
 
         if (discoteca == null) {
-            return "redirect:/discotecas";
+            return "redirect:/error-403";
+        }
+
+        // Validar que sea el propietario o administrador
+        if (!userSession.isAdmin() && !isOwner(discoteca)) {
+            return "redirect:/error-403";
         }
 
         // Actualizar campos
@@ -111,9 +121,12 @@ public class DiscotecaController {
                                          @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
 
         if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden crear discotecas");
-            return "redirect:/discotecas";
+            return "redirect:/error-403";
         }
+
+        // Asignar el propietario actual
+        User currentUser = userService.findById(userSession.getUserId());
+        discoteca.setOwner(currentUser);
 
         if (!imageFile.isEmpty()) {
             Image img = imageService.createImage(imageFile.getInputStream());
@@ -147,12 +160,27 @@ public class DiscotecaController {
 
     @PostMapping("/discotecas/delete/{id}")
     public String deleteDiscoteca(@PathVariable long id, Model model) {
-        if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden eliminar discotecas");
-            return "redirect:/discotecas";
+        Discoteca discoteca = discotecaService.findById(id);
+
+        if (discoteca == null) {
+            return "redirect:/error-403";
         }
+
+        // Validar que sea el propietario o administrador
+        if (!userSession.isAdmin() && !isOwner(discoteca)) {
+            return "redirect:/error-403";
+        }
+
         discotecaService.delete(id);
         return "redirect:/discotecas";
+    }
+
+    /**
+     * Verifica si el usuario actual es el propietario de la discoteca
+     */
+    private boolean isOwner(Discoteca discoteca) {
+        Long currentUserId = userSession.getUserId();
+        return discoteca.getOwner() != null && discoteca.getOwner().getId().equals(currentUserId);
     }
 
 }
