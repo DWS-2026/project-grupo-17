@@ -15,8 +15,8 @@ public class Discoteca {
 
     private String calle;
     private String descripcion;
-    
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
     @ManyToOne(fetch = FetchType.EAGER)
