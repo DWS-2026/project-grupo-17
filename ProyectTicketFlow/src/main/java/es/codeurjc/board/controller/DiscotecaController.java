@@ -10,6 +10,7 @@ import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.repositories.DiscotecaRepository;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.EventoService;
+import es.codeurjc.board.service.UserSession;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class DiscotecaController {
 
     @Autowired
     private DiscotecaRepository discotecaRepository;
+
+    @Autowired
+    private UserSession userSession;
 
     @PostConstruct
     public void init() throws IOException {
@@ -63,11 +67,16 @@ public class DiscotecaController {
     @GetMapping("/discotecas")
     public String showDiscotecas(Model model) {
         model.addAttribute("discotecas", discotecaService.findAll());
+        model.addAttribute("isAdmin", userSession.isAdmin());
         return "discotecas";
     }
 
     @GetMapping("/discotecas/create-discotecas")
-    public String newDiscotecaForm() {
+    public String newDiscotecaForm(Model model) {
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden crear discotecas");
+            return "redirect:/discotecas";
+        }
         return "create-discotecas";
     }
 
@@ -80,6 +89,10 @@ public class DiscotecaController {
 
     @GetMapping("/discotecas/edit-discoteca/{id}")
     public String editDiscotecaForm(@PathVariable long id, Model model) {
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden editar discotecas");
+            return "redirect:/discotecas";
+        }
         Discoteca discoteca = discotecaService.findById(id);
         model.addAttribute("discoteca", discoteca);
         return "edit-discoteca";
@@ -91,7 +104,13 @@ public class DiscotecaController {
             @RequestParam String name,
             @RequestParam String calle,
             @RequestParam String descripcion,
-            @RequestParam MultipartFile image) throws IOException {
+            @RequestParam MultipartFile image,
+            Model model) throws IOException {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden editar discotecas");
+            return "redirect:/discotecas";
+        }
 
         discotecaService.update(id,name, image, calle, descripcion);
 
@@ -102,8 +121,14 @@ public class DiscotecaController {
     public String createDiscoteca(@RequestParam String name,
                                   @RequestParam MultipartFile image,
                                   @RequestParam String calle,
-                                  @RequestParam String descripcion)
+                                  @RequestParam String descripcion,
+                                  Model model)
             throws IOException {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden crear discotecas");
+            return "redirect:/discotecas";
+        }
 
         // Pasamos los 4 datos al servicio
         discotecaService.save(name, image, calle, descripcion);
@@ -125,7 +150,11 @@ public class DiscotecaController {
     }
 
     @PostMapping("/discotecas/delete/{id}")
-    public String deleteDiscoteca(@PathVariable long id) {
+    public String deleteDiscoteca(@PathVariable long id, Model model) {
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden eliminar discotecas");
+            return "redirect:/discotecas";
+        }
         discotecaService.delete(id);
         return "redirect:/discotecas";
     }
