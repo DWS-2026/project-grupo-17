@@ -13,20 +13,18 @@ public class Discoteca {
 
     private String name;
 
-    @Lob
-    private byte[] image;
-
     private String calle;
     private String descripcion;
+    @OneToOne
+    private Image image;
 
     @OneToMany(mappedBy = "discoteca", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Evento> eventos = new ArrayList<>();
 
     public Discoteca() {}
 
-    public Discoteca(String name, byte[] image, String calle, String descripcion) {
+    public Discoteca(String name,String calle, String descripcion) {
         this.name = name;
-        this.image = image;
         this.calle = calle;
         this.descripcion = descripcion;
     }
@@ -36,8 +34,13 @@ public class Discoteca {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public byte[] getImage() { return image; }
-    public void setImage(byte[] image) { this.image = image; }
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
 
     public String getCalle() { return calle; }
     public void setCalle(String calle) { this.calle = calle; }

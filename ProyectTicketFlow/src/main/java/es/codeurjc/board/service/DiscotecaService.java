@@ -25,35 +25,8 @@ public class DiscotecaService {
         return discotecaRepository.findById(id).orElse(null);
     }
 
-    public void save(String name, MultipartFile image, String calle, String descripcion) throws IOException {
-
-        Discoteca d = new Discoteca();
-        d.setName(name);
-        d.setCalle(calle);
-        d.setDescripcion(descripcion);
-
-        if (image != null && !image.isEmpty()) {
-            d.setImage(image.getBytes());
-        }
-
-        discotecaRepository.save(d);
-    }
-
-    public void update(long id, String name, MultipartFile image, String calle, String descripcion) throws IOException {
-
-        Discoteca d = discotecaRepository.findById(id).orElse(null);
-
-        if (d != null) {
-            d.setName(name);
-            d.setCalle(calle);
-            d.setDescripcion(descripcion);
-
-            if (image != null && !image.isEmpty()) {
-                d.setImage(image.getBytes());
-            }
-
-            discotecaRepository.save(d);
-        }
+    public void save(Discoteca discoteca) {
+        discotecaRepository.save(discoteca);
     }
 
     public void delete(long id) {
