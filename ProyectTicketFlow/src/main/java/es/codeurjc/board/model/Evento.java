@@ -1,6 +1,8 @@
 package es.codeurjc.board.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Evento {
@@ -19,8 +21,10 @@ public class Evento {
     private Discoteca discoteca;
 
     private String descripcion;
-
     private Integer edadRequerida;
+
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Entrada> entradas = new ArrayList<>();
 
     public Evento() {}
 
@@ -74,5 +78,13 @@ public class Evento {
 
     public void setEdadRequerida(Integer edadRequerida) {
         this.edadRequerida = edadRequerida;
+    }
+
+    public List<Entrada> getEntradas() {
+        return entradas;
+    }
+
+    public void setEntradas(List<Entrada> entradas) {
+        this.entradas = entradas;
     }
 }
