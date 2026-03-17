@@ -3,28 +3,20 @@ package es.codeurjc.board.controller;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
-// Importaciones de tus modelos y servicios
 import es.codeurjc.board.model.Discoteca;
-import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.Image;
 import es.codeurjc.board.repositories.DiscotecaRepository;
 import es.codeurjc.board.service.DiscotecaService;
-import es.codeurjc.board.service.EventoService;
-
 import es.codeurjc.board.service.ImageService;
-import jakarta.annotation.PostConstruct;
+import es.codeurjc.board.service.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import java.nio.file.Files;
 
 
 @Controller
@@ -39,15 +31,22 @@ public class DiscotecaController {
     @Autowired
     private DiscotecaRepository discotecaRepository;
 
+    @Autowired
+    private UserSession userSession;
 
     @GetMapping("/discotecas")
     public String showDiscotecas(Model model) {
         model.addAttribute("discotecas", discotecaService.findAll());
+        model.addAttribute("isAdmin", userSession.isAdmin());
         return "discotecas";
     }
 
     @GetMapping("/discotecas/create-discotecas")
-    public String newDiscotecaForm() {
+    public String newDiscotecaForm(Model model) {
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden crear discotecas");
+            return "redirect:/discotecas";
+        }
         return "create-discotecas";
     }
 
@@ -60,6 +59,10 @@ public class DiscotecaController {
 
     @GetMapping("/discotecas/edit-discoteca/{id}")
     public String editDiscotecaForm(@PathVariable long id, Model model) {
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden editar discotecas");
+            return "redirect:/discotecas";
+        }
         Discoteca discoteca = discotecaService.findById(id);
         model.addAttribute("discoteca", discoteca);
         return "edit-discoteca";
@@ -72,6 +75,11 @@ public class DiscotecaController {
                                        @RequestParam(required = false) boolean removeImage,
                                        @RequestParam("imageFile") MultipartFile imageFile)
             throws IOException, SQLException {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden editar discotecas");
+            return "redirect:/discotecas";
+        }
 
         Discoteca discoteca = discotecaService.findById(id);
 
@@ -101,6 +109,11 @@ public class DiscotecaController {
     public String createDiscotecaProcess(Model model,
                                          Discoteca discoteca,
                                          @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden crear discotecas");
+            return "redirect:/discotecas";
+        }
 
         if (!imageFile.isEmpty()) {
             Image img = imageService.createImage(imageFile.getInputStream());
@@ -133,7 +146,11 @@ public class DiscotecaController {
     }
 
     @PostMapping("/discotecas/delete/{id}")
-    public String deleteDiscoteca(@PathVariable long id) {
+    public String deleteDiscoteca(@PathVariable long id, Model model) {
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden eliminar discotecas");
+            return "redirect:/discotecas";
+        }
         discotecaService.delete(id);
         return "redirect:/discotecas";
     }
