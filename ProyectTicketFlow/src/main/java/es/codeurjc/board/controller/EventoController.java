@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Evento;
+import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.EventoService;
 import es.codeurjc.board.service.UserSession;
+import es.codeurjc.board.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +30,9 @@ public class EventoController {
     @Autowired
     private UserSession userSession;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/discotecas/{id}/eventos")
     public String showEventos(@PathVariable Long id, Model model) {
 
@@ -44,8 +49,7 @@ public class EventoController {
     public String newEventoForm(@PathVariable Long id, Model model) {
 
         if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden crear eventos");
-            return "redirect:/discotecas/" + id + "/eventos";
+            return "redirect:/error-403";
         }
 
         Discoteca discoteca = discotecaService.findById(id);
@@ -63,13 +67,14 @@ public class EventoController {
                                Model model) throws IOException {
 
         if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden crear eventos");
-            return "redirect:/discotecas/" + discotecaId + "/eventos";
+            return "redirect:/error-403";
         }
 
         Discoteca discoteca = discotecaService.findById(discotecaId);
 
-        eventoService.save(name, discoteca, descripcion, image, edadRequerida);
+        // Asignar el propietario actual
+        User currentUser = userService.findById(userSession.getUserId());
+        eventoService.save(name, discoteca, descripcion, image, edadRequerida, currentUser);
 
         return "redirect:/discotecas/" + discotecaId + "/eventos";
     }
@@ -93,16 +98,18 @@ public class EventoController {
     @GetMapping("/eventos/{id}/edit")
     public String editEventoForm(@PathVariable long id, Model model) {
 
-        if (!userSession.isAdmin()) {
-            Evento evento = eventoService.findById(id);
-            model.addAttribute("error", "Solo los administradores pueden editar eventos");
-            return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
-        }
-
         Evento evento = eventoService.findById(id);
 
+        if (evento == null) {
+            return "redirect:/error-403";
+        }
+
+        // Validar que sea el propietario o administrador
+        if (!userSession.isAdmin() && !isOwner(evento)) {
+            return "redirect:/error-403";
+        }
+
         model.addAttribute("discoteca", evento.getDiscoteca()); 
-        
         model.addAttribute("evento", evento);
         model.addAttribute("discotecas", discotecaService.findAll());
 
@@ -118,9 +125,15 @@ public class EventoController {
                                @RequestParam(required = false) MultipartFile image,
                                Model model) throws IOException {
 
-        if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden editar eventos");
-            return "redirect:/discotecas/" + discotecaId + "/eventos";
+        Evento evento = eventoService.findById(id);
+
+        if (evento == null) {
+            return "redirect:/error-403";
+        }
+
+        // Validar que sea el propietario o administrador
+        if (!userSession.isAdmin() && !isOwner(evento)) {
+            return "redirect:/error-403";
         }
 
         Discoteca discoteca = discotecaService.findById(discotecaId);
@@ -133,17 +146,28 @@ public class EventoController {
     @PostMapping("/eventos/{id}/delete")
     public String deleteEvento(@PathVariable long id, Model model) {
 
-        if (!userSession.isAdmin()) {
-            Evento evento = eventoService.findById(id);
-            model.addAttribute("error", "Solo los administradores pueden eliminar eventos");
-            return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
+        Evento evento = eventoService.findById(id);
+
+        if (evento == null) {
+            return "redirect:/error-403";
         }
 
-        Evento evento = eventoService.findById(id);
-        Long discotecaId = evento.getDiscoteca().getId();
+        // Validar que sea el propietario o administrador
+        if (!userSession.isAdmin() && !isOwner(evento)) {
+            return "redirect:/error-403";
+        }
 
+        Long discotecaId = evento.getDiscoteca().getId();
         eventoService.delete(id);
 
         return "redirect:/discotecas/" + discotecaId + "/eventos";
+    }
+
+    /**
+     * Verifica si el usuario actual es el propietario del evento
+     */
+    private boolean isOwner(Evento evento) {
+        Long currentUserId = userSession.getUserId();
+        return evento.getOwner() != null && evento.getOwner().getId().equals(currentUserId);
     }
 }
