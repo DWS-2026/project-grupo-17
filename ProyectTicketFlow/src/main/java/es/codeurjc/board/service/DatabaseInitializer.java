@@ -1,6 +1,8 @@
 package es.codeurjc.board.service;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,6 +17,8 @@ import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Image;
 import es.codeurjc.board.model.Evento;
 
+import javax.sql.rowset.serial.SerialBlob;
+
 @Service
 public class DatabaseInitializer {
 
@@ -27,7 +31,7 @@ public class DatabaseInitializer {
 
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() throws IOException, SQLException {
 
         // Crear discoteca
         Discoteca d1 = new Discoteca();
@@ -56,19 +60,48 @@ public class DatabaseInitializer {
         // Asignar eventos a la discoteca
         d1.getEventos().addAll(Arrays.asList(e1, e2));
 
+        Discoteca d2 = new Discoteca();
+        d2.setName("La Riviera");
+        d2.setCalle("Avenida del Sol 25");
+        d2.setDescripcion("Ambiente chill y cocktails");
+        setDiscotecaImage(d2, "/posts/lariviera.png");
+
+        // Crear eventos
+        Evento e3 = new Evento();
+        e3.setName("Noche Loca");
+        e3.setDescripcion("DJ Dembow");
+        e3.setEdadRequerida(16);
+        e3.setDiscoteca(d2); // asignar la discoteca
+        setEventoImage(e3, "/posts/Event_3.jpg");
+
+        Evento e4 = new Evento();
+        e4.setName("Fiesta Masónica");
+        e4.setDescripcion("Bailes de Máscaras");
+        e4.setEdadRequerida(23);
+        e4.setDiscoteca(d2);
+        setEventoImage(e4, "/posts/Event_4.jpg"); // CORRECTO: e2, no e1
+
+        // Asignar eventos a la discoteca
+        d2.getEventos().addAll(Arrays.asList(e3, e4));
+
         // Guardar la discoteca: Hibernate persiste todo junto
         discotecaService.save(d1);
+        discotecaService.save(d2);
     }
 
-    public void setDiscotecaImage(Discoteca discoteca, String classpathResource) throws IOException {
-        Resource image = new ClassPathResource(classpathResource);
-        Image img = imageService.createImage(image.getInputStream());
-        discoteca.setImage(img);
+    public void setDiscotecaImage(Discoteca discoteca, String classpathResource) throws IOException, SQLException {
+        Resource resource = new ClassPathResource(classpathResource);
+        byte[] bytes = resource.getInputStream().readAllBytes();
+        Blob blob = new SerialBlob(bytes);
+        Image img = new Image(blob);
+        discoteca.setImage(img); // Hibernate lo persistirá automáticamente
     }
 
-    public void setEventoImage(Evento evento, String classpathResource) throws IOException {
-        Resource image = new ClassPathResource(classpathResource);
-        Image img = imageService.createImage(image.getInputStream());
+    public void setEventoImage(Evento evento, String classpathResource) throws IOException, SQLException {
+        Resource resource = new ClassPathResource(classpathResource);
+        byte[] bytes = resource.getInputStream().readAllBytes();
+        Blob blob = new SerialBlob(bytes);
+        Image img = new Image(blob);
         evento.setImage(img);
     }
 

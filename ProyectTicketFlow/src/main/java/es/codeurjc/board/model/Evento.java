@@ -17,8 +17,8 @@ public class Evento {
     @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
-    // Discoteca a la que pertenece
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "discoteca_id")
     private Discoteca discoteca;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -39,15 +39,6 @@ public class Evento {
         this.descripcion = descripcion;
         this.image = image;
         this.edadRequerida = edadRequerida;
-    }
-
-    public Evento(String name, Discoteca discoteca, String descripcion, byte[] image, Integer edadRequerida, User owner) {
-        this.name = name;
-        this.discoteca = discoteca;
-        this.descripcion = descripcion;
-        this.image = image;
-        this.edadRequerida = edadRequerida;
-        this.owner = owner;
     }
 
     public Long getId() {

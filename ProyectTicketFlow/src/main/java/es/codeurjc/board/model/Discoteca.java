@@ -15,18 +15,30 @@ public class Discoteca {
 
     private String calle;
     private String descripcion;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
     private Image image;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     @OneToMany(mappedBy = "discoteca", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Evento> eventos = new ArrayList<>();
 
     public Discoteca() {}
 
-    public Discoteca(String name,String calle, String descripcion) {
+    public Discoteca(String name, String calle, String descripcion) {
         this.name = name;
         this.calle = calle;
         this.descripcion = descripcion;
+    }
+
+    public Discoteca(String name, String calle, String descripcion, User owner) {
+        this.name = name;
+        this.calle = calle;
+        this.descripcion = descripcion;
+        this.owner = owner;
     }
 
     public Long getId() { return id; }
@@ -47,6 +59,9 @@ public class Discoteca {
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public User getOwner() { return owner; }
+    public void setOwner(User owner) { this.owner = owner; }
 
     public List<Evento> getEventos() { return eventos; }
     public void setEventos(List<Evento> eventos) { this.eventos = eventos; }
