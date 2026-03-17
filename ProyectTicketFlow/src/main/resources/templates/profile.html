@@ -23,7 +23,7 @@
           Mi perfil
       </span>
 
-      <a href="/login" class="btn btn-outline-danger btn-sm">
+      <a href="/logout" class="btn btn-outline-danger btn-sm">
         Cerrar sesión
       </a>
 
@@ -49,13 +49,19 @@
 
         </div>
         <div class="col-md-6">
-          <h5>Juan Pérez</h5>
-          <p class="mb-1"><strong>Email:</strong> juan@email.com</p>
-          <p class="mb-1"><strong>Fecha de nacimiento:</strong> 15/04/2002</p>
+          <h5>{{user.nombre}}</h5>
+          <p class="mb-1"><strong>Email:</strong> {{user.email}}</p>
+          <p class="mb-1"><strong>Fecha de nacimiento:</strong> {{user.fechaNacimiento}}</p>
+          {{#user.admin}}
+          <span class="badge bg-danger">Administrador</span>
+          {{/user.admin}}
+          {{^user.admin}}
           <span class="badge bg-secondary">Usuario Registrado</span>
+          {{/user.admin}}
           <a href="/edit-profile" class="btn btn-primary">Editar perfil</a>
+          {{#user.admin}}
           <a href="/admin" class="btn btn-primary">Ver usuarios</a>
-
+          {{/user.admin}}
         </div>
       </div>
     </div>

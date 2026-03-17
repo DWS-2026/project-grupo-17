@@ -6,6 +6,7 @@ import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.EventoService;
+import es.codeurjc.board.service.UserSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class EventoController {
     @Autowired
     private DiscotecaService discotecaService;
 
+    @Autowired
+    private UserSession userSession;
+
     @GetMapping("/discotecas/{id}/eventos")
     public String showEventos(@PathVariable Long id, Model model) {
 
@@ -31,12 +35,18 @@ public class EventoController {
 
         model.addAttribute("discoteca", discoteca);
         model.addAttribute("eventos", eventoService.findByDiscoteca(id));
+        model.addAttribute("isAdmin", userSession.isAdmin());
 
         return "eventos";
     }
 
     @GetMapping("/discotecas/{id}/eventos/create")
     public String newEventoForm(@PathVariable Long id, Model model) {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden crear eventos");
+            return "redirect:/discotecas/" + id + "/eventos";
+        }
 
         Discoteca discoteca = discotecaService.findById(id);
         model.addAttribute("discoteca", discoteca);
@@ -49,7 +59,13 @@ public class EventoController {
                                @RequestParam Long discotecaId,
                                @RequestParam String descripcion,
                                @RequestParam Integer edadRequerida,
-                               @RequestParam MultipartFile image) throws IOException {
+                               @RequestParam MultipartFile image,
+                               Model model) throws IOException {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden crear eventos");
+            return "redirect:/discotecas/" + discotecaId + "/eventos";
+        }
 
         Discoteca discoteca = discotecaService.findById(discotecaId);
 
@@ -77,15 +93,21 @@ public class EventoController {
     @GetMapping("/eventos/{id}/edit")
     public String editEventoForm(@PathVariable long id, Model model) {
 
-    Evento evento = eventoService.findById(id);
+        if (!userSession.isAdmin()) {
+            Evento evento = eventoService.findById(id);
+            model.addAttribute("error", "Solo los administradores pueden editar eventos");
+            return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
+        }
 
-    model.addAttribute("discoteca", evento.getDiscoteca()); 
-    
-    model.addAttribute("evento", evento);
-    model.addAttribute("discotecas", discotecaService.findAll());
+        Evento evento = eventoService.findById(id);
 
-    return "edit-event";
-}
+        model.addAttribute("discoteca", evento.getDiscoteca()); 
+        
+        model.addAttribute("evento", evento);
+        model.addAttribute("discotecas", discotecaService.findAll());
+
+        return "edit-event";
+    }
 
     @PostMapping("/eventos/{id}/edit")
     public String updateEvento(@PathVariable long id,
@@ -93,7 +115,13 @@ public class EventoController {
                                @RequestParam Long discotecaId,
                                @RequestParam String descripcion,
                                @RequestParam Integer edadRequerida,
-                               @RequestParam(required = false) MultipartFile image) throws IOException {
+                               @RequestParam(required = false) MultipartFile image,
+                               Model model) throws IOException {
+
+        if (!userSession.isAdmin()) {
+            model.addAttribute("error", "Solo los administradores pueden editar eventos");
+            return "redirect:/discotecas/" + discotecaId + "/eventos";
+        }
 
         Discoteca discoteca = discotecaService.findById(discotecaId);
 
@@ -103,7 +131,13 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/{id}/delete")
-    public String deleteEvento(@PathVariable long id) {
+    public String deleteEvento(@PathVariable long id, Model model) {
+
+        if (!userSession.isAdmin()) {
+            Evento evento = eventoService.findById(id);
+            model.addAttribute("error", "Solo los administradores pueden eliminar eventos");
+            return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
+        }
 
         Evento evento = eventoService.findById(id);
         Long discotecaId = evento.getDiscoteca().getId();
