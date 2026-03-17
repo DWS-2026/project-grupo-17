@@ -30,10 +30,6 @@ public class DiscotecaController {
     @Autowired
     private DiscotecaService discotecaService;
 
-    // Inyectamos el EventoService para que el nuevo método funcione sin dar error rojo
-    @Autowired
-    private EventoService eventoService;
-
     @Autowired
     private DiscotecaRepository discotecaRepository;
 

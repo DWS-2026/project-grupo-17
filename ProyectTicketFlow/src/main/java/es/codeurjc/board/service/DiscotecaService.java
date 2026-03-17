@@ -25,14 +25,16 @@ public class DiscotecaService {
         return discotecaRepository.findById(id).orElse(null);
     }
 
-    // AÑADIMOS los parámetros 'calle' y 'descripcion' a la firma del método
     public void save(String name, MultipartFile image, String calle, String descripcion) throws IOException {
+
         Discoteca d = new Discoteca();
         d.setName(name);
-        d.setImage(image.getBytes());
         d.setCalle(calle);
         d.setDescripcion(descripcion);
 
+        if (image != null && !image.isEmpty()) {
+            d.setImage(image.getBytes());
+        }
 
         discotecaRepository.save(d);
     }
@@ -46,7 +48,7 @@ public class DiscotecaService {
             d.setCalle(calle);
             d.setDescripcion(descripcion);
 
-            if (!image.isEmpty()) {
+            if (image != null && !image.isEmpty()) {
                 d.setImage(image.getBytes());
             }
 
