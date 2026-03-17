@@ -53,17 +53,31 @@
                 </tr>
                 </thead>
                 <tbody>
+                {{#usuarios}}
                 <tr>
-                    <td>Juan Pérez</td>
-                    <td>juan@email.com</td>
-                    <td>15/04/2002</td>
-                    <td><span class="badge bg-secondary">Usuario</span></td>
+                    <td>{{nombre}}</td>
+                    <td>{{email}}</td>
+                    <td>{{fechaNacimiento}}</td>
+                    <td>
+                        {{#admin}}
+                        <span class="badge bg-danger">Administrador</span>
+                        {{/admin}}
+                        {{^admin}}
+                        <span class="badge bg-secondary">Usuario</span>
+                        {{/admin}}
+                    </td>
                     <td>
                         <a href="/profile" class="btn btn-sm btn-outline-primary">
                             Ver perfil
                         </a>
                     </td>
                 </tr>
+                {{/usuarios}}
+                {{^usuarios}}
+                <tr>
+                    <td colspan="5" class="text-center">No hay usuarios registrados</td>
+                </tr>
+                {{/usuarios}}
                 </tbody>
             </table>
         </div>
