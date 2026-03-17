@@ -42,7 +42,7 @@
 
         <div class="card-body">
             <form action="/eventos/create-event" method="post" enctype="multipart/form-data">
-
+                <input type="hidden" name="_csrf" value="{{_csrf.token}}">
                 <!-- Nombre del evento -->
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>

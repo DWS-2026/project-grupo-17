@@ -46,7 +46,7 @@
 
     <div class="card-body">
       <form action="/entradas/create-ticket" method="post">
-
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <!-- 🔥 Evento fijo -->
         <div class="mb-3">
           <label class="form-label">Evento</label>

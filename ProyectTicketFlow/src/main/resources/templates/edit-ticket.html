@@ -46,7 +46,7 @@
     <div class="card-body">
 
       <form action="/entradas/{{entrada.id}}/edit" method="post">
-
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <div class="mb-3">
           <label class="form-label">Nombre</label>
           <input type="text"
