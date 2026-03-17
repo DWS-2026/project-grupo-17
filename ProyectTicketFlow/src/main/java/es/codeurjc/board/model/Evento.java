@@ -13,11 +13,12 @@ public class Evento {
 
     private String name;
 
-    @Lob
-    private byte[] image;
+    // Imagen del evento
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image image;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "discoteca_id")
+    // Discoteca a la que pertenece
+    @ManyToOne
     private Discoteca discoteca;
 
     private String descripcion;
@@ -28,7 +29,7 @@ public class Evento {
 
     public Evento() {}
 
-    public Evento(String name, Discoteca discoteca, String descripcion, byte[] image, Integer edadRequerida) {
+    public Evento(String name, Discoteca discoteca, String descripcion, Image image, Integer edadRequerida) {
         this.name = name;
         this.discoteca = discoteca;
         this.descripcion = descripcion;
@@ -48,13 +49,9 @@ public class Evento {
         this.name = name;
     }
 
-    public byte[] getImage() {
-        return image;
-    }
+    public Image getImage() { return image; }
 
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
+    public void setImage(Image image) { this.image = image; }
 
     public Discoteca getDiscoteca() {
         return discoteca;
