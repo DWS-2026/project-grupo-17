@@ -1,60 +1,73 @@
 package es.codeurjc.board.service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.sql.SQLException;
 
+import javax.sql.rowset.serial.SerialBlob;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
+import es.codeurjc.board.model.Image;
+import es.codeurjc.board.repositories.ImageRepository;
 
 @Service
 public class ImageService {
 
-	private static final Path FILES_FOLDER = Paths.get(System.getProperty("user.dir"), "images");
+	@Autowired
+	private ImageRepository imageRepository;
 
-	private Path createFilePath(long imageId, Path folder) {
-		return folder.resolve("image-" + imageId + ".jpg");
-	}
-	
-	public void saveImage(String folderName, long imageId, MultipartFile image) throws IOException {
-
-		Path folder = FILES_FOLDER.resolve(folderName);
-
-		Files.createDirectories(folder);
-		
-		Path newFile = createFilePath(imageId, folder);
-
-		image.transferTo(newFile);
+	public Image getImage(long id) {
+		return imageRepository.findById(id).orElseThrow();
 	}
 
-	public ResponseEntity<Object> createResponseFromImage(String folderName, long imageId) throws MalformedURLException {
+	public Image createImage(InputStream inputStream) throws IOException {
 
-		Path folder = FILES_FOLDER.resolve(folderName);
-		
-		Path imagePath = createFilePath(imageId, folder);
-		
-		Resource file = new UrlResource(imagePath.toUri());
-		
-		if(!Files.exists(imagePath)) {
-			return ResponseEntity.notFound().build();
+		Image image = new Image();
+
+		try {
+			image.setImageFile(new SerialBlob(inputStream.readAllBytes()));
+		} catch (Exception e) {
+			throw new IOException("Failed to create image", e);
+		}
+
+		imageRepository.save(image);
+
+		return image;
+	}
+
+	public Resource getImageFile(long id) throws SQLException {
+
+		Image image = imageRepository.findById(id).orElseThrow();
+
+		if (image.getImageFile() != null) {
+			return new InputStreamResource(image.getImageFile().getBinaryStream());
 		} else {
-			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(file);
-		}		
+			throw new RuntimeException("Image file not found");
+		}
 	}
 
-	public void deleteImage(String folderName, long imageId) throws IOException {
+	public Image replaceImageFile(long id, InputStream inputStream) throws IOException {
 
-		Path folder = FILES_FOLDER.resolve(folderName);
+		Image image = imageRepository.findById(id).orElseThrow();
 
-		Path imageFile = createFilePath(imageId, folder);
-		
-		Files.deleteIfExists(imageFile);				
+		try {
+			image.setImageFile(new SerialBlob(inputStream.readAllBytes()));
+		} catch (Exception e) {
+			throw new IOException("Failed to create image", e);
+		}
+
+		imageRepository.save(image);
+
+		return image;
 	}
 
+	public Image deleteImage(long id) {
+		Image image = imageRepository.findById(id).orElseThrow();
+		imageRepository.deleteById(id);
+		return image;
+	}
 }
