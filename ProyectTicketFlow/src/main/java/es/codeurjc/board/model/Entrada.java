@@ -11,79 +11,38 @@ public class Entrada {
 
     private String name;
 
-    @Lob
-    private byte[] image;
+    private String acceso;     // NORMAL o VIP
+    private String incluye;    // lo que incluye la entrada
+    private Double precio;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "evento_id")
     private Evento evento;
 
-    private String descripcion;
-
-    private Double precio;
-
-    private Integer edadRequerida;
-
     public Entrada() {}
 
-    public Entrada(String name, Evento evento, String descripcion, byte[] image, Double precio, Integer edadRequerida) {
+    public Entrada(String name, String acceso, String incluye, Double precio, Evento evento) {
         this.name = name;
-        this.evento = evento;
-        this.descripcion = descripcion;
-        this.image = image;
+        this.acceso = acceso;
+        this.incluye = incluye;
         this.precio = precio;
-        this.edadRequerida = edadRequerida;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    public Evento getEvento() {
-        return evento;
-    }
-
-    public void setEvento(Evento evento) {
         this.evento = evento;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public Long getId() { return id; }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public Double getPrecio() {
-        return precio;
-    }
+    public String getAcceso() { return acceso; }
+    public void setAcceso(String acceso) { this.acceso = acceso; }
 
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
+    public String getIncluye() { return incluye; }
+    public void setIncluye(String incluye) { this.incluye = incluye; }
 
-    public Integer getEdadRequerida() {
-        return edadRequerida;
-    }
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 
-    public void setEdadRequerida(Integer edadRequerida) {
-        this.edadRequerida = edadRequerida;
-    }
+    public Evento getEvento() { return evento; }
+    public void setEvento(Evento evento) { this.evento = evento; }
 }
