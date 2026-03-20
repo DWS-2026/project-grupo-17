@@ -17,9 +17,7 @@
     <div class="container position-relative">
 
       <div class="header1">
-        <a href="/eventos/{{evento.id}}/entradas" class="flecha">
-          🡰
-        </a>
+        <a href="/eventos/{{evento.id}}/entradas" class="flecha">🡰</a>
         <a class="navbar-brand" href="/">TicketFlow</a>
       </div>
 
@@ -47,37 +45,53 @@
 
       <form action="/entradas/{{entrada.id}}/edit" method="post">
         <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+
+        <div class="mb-3">
+          <label class="form-label">Evento</label>
+          <input type="text"
+                 class="form-control"
+                 value="{{evento.name}}"
+                 disabled>
+        </div>
+
+
         <div class="mb-3">
           <label class="form-label">Nombre</label>
           <input type="text"
                  class="form-control"
                  name="name"
                  value="{{entrada.name}}"
+                 placeholder="{{entrada.name}}"
                  required>
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Descripción</label>
-          <textarea class="form-control"
-                    name="descripcion"
-                    rows="3"
-                    required>{{entrada.descripcion}}</textarea>
-        </div>
-
-        <div class="mb-3">
           <label class="form-label">Tipo de acceso</label>
-          <select class="form-select" name="tipoAcceso">
-            <option value="NORMAL">Normal</option>
+          <select name="acceso" class="form-control">
+            <option value="Normal">Normal</option>
             <option value="VIP">VIP</option>
           </select>
         </div>
 
         <div class="mb-3">
+          <label class="form-label">Incluye</label>
+          <input type="text"
+                 class="form-control"
+                 name="incluye"
+                 value="{{entrada.incluye}}"
+                 placeholder="{{entrada.incluye}}"
+                 required>
+        </div>
+
+        <div class="mb-4">
           <label class="form-label">Precio (€)</label>
           <input type="number"
                  class="form-control"
                  name="precio"
+                 step="0.01"
+                 min="0"
                  value="{{entrada.precio}}"
+                 placeholder="{{entrada.precio}}"
                  required>
         </div>
 
