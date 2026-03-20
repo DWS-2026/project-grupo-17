@@ -40,7 +40,7 @@ public class DatabaseInitializer {
         d1.setDescripcion("Discoteca con música electrónica");
 
         // Asignar imagen **sin guardarla antes**
-        setDiscotecaImage(d1, "/posts/nuit.png");
+        setDiscotecaImage(d1, "/posts/imagen1.avif");
 
         // Crear eventos
         Evento e1 = new Evento();
@@ -48,14 +48,14 @@ public class DatabaseInitializer {
         e1.setDescripcion("DJ internacional toda la noche");
         e1.setEdadRequerida(18);
         e1.setDiscoteca(d1); // asignar la discoteca
-        setEventoImage(e1, "/posts/Evento_1.png");
+        setEventoImage(e1, "/posts/imagen1.avif");
 
         Evento e2 = new Evento();
         e2.setName("Fiesta de Luces");
         e2.setDescripcion("Shows de luces y láser");
         e2.setEdadRequerida(18);
         e2.setDiscoteca(d1);
-        setEventoImage(e2, "/posts/Evento_2.jpg"); // CORRECTO: e2, no e1
+        setEventoImage(e2, "/posts/imagen2.avif"); // CORRECTO: e2, no e1
 
         // Asignar eventos a la discoteca
         d1.getEventos().addAll(Arrays.asList(e1, e2));
@@ -64,7 +64,7 @@ public class DatabaseInitializer {
         d2.setName("La Riviera");
         d2.setCalle("Avenida del Sol 25");
         d2.setDescripcion("Ambiente chill y cocktails");
-        setDiscotecaImage(d2, "/posts/lariviera.png");
+        setDiscotecaImage(d2, "/posts/imagen3.avif");
 
         // Crear eventos
         Evento e3 = new Evento();
@@ -72,14 +72,14 @@ public class DatabaseInitializer {
         e3.setDescripcion("DJ Dembow");
         e3.setEdadRequerida(16);
         e3.setDiscoteca(d2); // asignar la discoteca
-        setEventoImage(e3, "/posts/Event_3.jpg");
+        setEventoImage(e3, "/posts/imagen1.avif");
 
         Evento e4 = new Evento();
         e4.setName("Fiesta Masónica");
         e4.setDescripcion("Bailes de Máscaras");
         e4.setEdadRequerida(23);
         e4.setDiscoteca(d2);
-        setEventoImage(e4, "/posts/Event_4.jpg"); // CORRECTO: e2, no e1
+        setEventoImage(e4, "/posts/imagen2.avif"); // CORRECTO: e2, no e1
 
         // Asignar eventos a la discoteca
         d2.getEventos().addAll(Arrays.asList(e3, e4));

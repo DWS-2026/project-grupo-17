@@ -24,7 +24,7 @@ public class UserController {
     private UserSession userSession;
 
     @GetMapping("/login")
-    public String getLogin() {
+    public String getLogin(Model model) {
         return "login";
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String getRegister() {
+    public String getRegister(Model model) {
         return "register";
     }
 
