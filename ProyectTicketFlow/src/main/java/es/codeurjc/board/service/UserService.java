@@ -33,7 +33,7 @@ public class UserService {
         User user = new User();
         user.setNombre(nombre);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setEncodedPassword(password);
         user.setFechaNacimiento(fechaNacimiento);
         
         if (avatar != null && !avatar.isEmpty()) {
@@ -46,7 +46,7 @@ public class UserService {
     public boolean authenticate(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
-            return user.get().getPassword().equals(password);
+            return user.get().getEncodedPassword().equals(password);
         }
         return false;
     }

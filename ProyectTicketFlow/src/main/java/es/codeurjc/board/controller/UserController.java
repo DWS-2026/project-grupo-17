@@ -4,6 +4,7 @@ import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.UserService;
 import es.codeurjc.board.service.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,9 @@ public class UserController {
     @Autowired
     private UserSession userSession;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/login")
     public String getLogin(Model model) {
         return "login";
@@ -35,10 +39,16 @@ public class UserController {
             Model model) {
 
         Optional<User> user = userService.findByEmail(email);
-        if (user.isPresent() && user.get().getPassword().equals(password)) {
+        
+        // Comprobamos si el usuario existe y si la contraseña coincide usando el encoder
+        if (user.isPresent() && passwordEncoder.matches(password, user.get().getEncodedPassword())) {
             userSession.setUser(email);
             userSession.setUserId(user.get().getId());
-            userSession.setAdmin(user.get().isAdmin());
+            
+            // Verificamos si tiene el rol "ADMIN" en su lista de roles
+            boolean isAdmin = user.get().getRoles().contains("ADMIN");
+            userSession.setAdmin(isAdmin);
+            
             return "redirect:/";
         } else {
             model.addAttribute("error", "Email o contraseña incorrectos");
@@ -72,15 +82,19 @@ public class UserController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
 
-            // Guardar el usuario
+            // Guardar el usuario (el UserService ya se encarga de codificar la password)
             userService.save(nombre, email, password, fecha, avatar);
 
-            // Iniciar sesión automáticamente
+            // Iniciar sesión automáticamente tras el registro
             Optional<User> usuarioGuardado = userService.findByEmail(email);
             if (usuarioGuardado.isPresent()) {
                 userSession.setUser(email);
                 userSession.setUserId(usuarioGuardado.get().getId());
-                userSession.setAdmin(usuarioGuardado.get().isAdmin());
+                
+                // Un usuario recién registrado normalmente solo tiene rol "USER", 
+                // pero hacemos la comprobación por si acaso.
+                boolean isAdmin = usuarioGuardado.get().getRoles().contains("ADMIN");
+                userSession.setAdmin(isAdmin);
             }
 
             return "redirect:/";

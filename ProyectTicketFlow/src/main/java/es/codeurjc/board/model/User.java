@@ -2,6 +2,7 @@ package es.codeurjc.board.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "app_user")
@@ -13,32 +14,24 @@ public class User {
 
     private String nombre;
     private String email;
-    private String password;
+    private String encodedPassword;
     private LocalDate fechaNacimiento;
     
     @Lob
     private byte[] avatar;
 
-    private boolean admin = false;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
 
     public User() {}
 
-    public User(String nombre, String email, String password, LocalDate fechaNacimiento, byte[] avatar) {
+    public User(String nombre, String email, String encodedPassword, LocalDate fechaNacimiento, byte[] avatar, String... roles) {
         this.nombre = nombre;
         this.email = email;
-        this.password = password;
+        this.encodedPassword = encodedPassword;
         this.fechaNacimiento = fechaNacimiento;
         this.avatar = avatar;
-        this.admin = false;
-    }
-
-    public User(String nombre, String email, String password, LocalDate fechaNacimiento, byte[] avatar, boolean admin) {
-        this.nombre = nombre;
-        this.email = email;
-        this.password = password;
-        this.fechaNacimiento = fechaNacimiento;
-        this.avatar = avatar;
-        this.admin = admin;
+        this.roles = List.of(roles);
     }
 
     // Getters y Setters
@@ -66,12 +59,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getEncodedPassword() {
+        return encodedPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEncodedPassword(String encodedPassword) {
+        this.encodedPassword = encodedPassword;
     }
 
     public LocalDate getFechaNacimiento() {
@@ -90,12 +83,11 @@ public class User {
         this.avatar = avatar;
     }
 
-    public boolean isAdmin() {
-        return admin;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }
-

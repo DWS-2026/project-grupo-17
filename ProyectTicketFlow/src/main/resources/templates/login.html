@@ -32,9 +32,10 @@
             </div>
             {{/error}}
             <form method="post" action="/login">
+                <input type="hidden" name="_csrf" value="{{token}}" />
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" placeholder="usuario@ejemplo.com" required>
+                    <input type="email" name="username" class="form-control" placeholder="usuario@ejemplo.com" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Contraseña</label>
