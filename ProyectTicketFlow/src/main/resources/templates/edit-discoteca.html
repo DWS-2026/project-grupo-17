@@ -42,7 +42,7 @@
 
         <div class="card-body">
             <form action="/discotecas/edit/{{id}}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+
                 <div class="mb-3">
                     <label class="form-label">Cambia el nombre</label>
                     <input type="text" class="form-control" name="name" value="{{discoteca.name}}" required>
