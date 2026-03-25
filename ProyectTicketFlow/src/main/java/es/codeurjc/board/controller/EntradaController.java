@@ -3,7 +3,10 @@ package es.codeurjc.board.controller;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.Entrada;
 import es.codeurjc.board.service.EventoService;
+import jakarta.servlet.http.HttpServletRequest;
 import es.codeurjc.board.service.EntradaService;
+
+import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +21,22 @@ public class EntradaController {
 
     @Autowired
     private EventoService eventoService;
+
+    @ModelAttribute
+	public void addAttributes(Model model, HttpServletRequest request) {
+
+		Principal principal = request.getUserPrincipal();
+
+		if (principal != null) {
+
+			model.addAttribute("logged", true);
+			model.addAttribute("email", principal.getName());
+			model.addAttribute("admin", request.isUserInRole("ADMIN"));
+
+		} else {
+			model.addAttribute("logged", false);
+		}
+	}
 
 
     @GetMapping("/eventos/{id}/entradas")

@@ -3,6 +3,9 @@ package es.codeurjc.board.controller;
 import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.UserService;
 import es.codeurjc.board.service.UserSession;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -114,8 +118,10 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String getProfile(Model model) {
-        String email = userSession.getUser();
+    public String getProfile(Model model, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String email = (principal != null) ? principal.getName() : null;
+        // String email = userSession.getUser();
         if (email != null) {
             Optional<User> user = userService.findByEmail(email);
             if (user.isPresent()) {

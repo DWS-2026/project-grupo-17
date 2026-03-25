@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     public String handleException(Exception e, Model model) {
         model.addAttribute("error", e.getMessage());
         model.addAttribute("stackTrace", e.getStackTrace());
-        e.printStackTrace(); // Para ver en consola
+        //e.printStackTrace(); // Para ver en consola
         return "error";
     }
 }

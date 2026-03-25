@@ -1,6 +1,7 @@
 package es.codeurjc.board.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.Blob;
 import java.sql.SQLException;
 
@@ -11,6 +12,7 @@ import es.codeurjc.board.repositories.DiscotecaRepository;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.ImageService;
 import es.codeurjc.board.service.UserSession;
+import jakarta.servlet.http.HttpServletRequest;
 import es.codeurjc.board.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,22 @@ public class DiscotecaController {
 
     @Autowired
     private UserService userService;
+
+    @ModelAttribute
+	public void addAttributes(Model model, HttpServletRequest request) {
+
+		Principal principal = request.getUserPrincipal();
+
+		if (principal != null) {
+
+			model.addAttribute("logged", true);
+			model.addAttribute("email", principal.getName());
+			model.addAttribute("admin", request.isUserInRole("ADMIN"));
+
+		} else {
+			model.addAttribute("logged", false);
+		}
+	}
 
     @GetMapping("/discotecas")
     public String showDiscotecas(Model model) {
