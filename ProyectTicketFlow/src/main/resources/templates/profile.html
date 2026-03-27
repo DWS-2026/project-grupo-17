@@ -23,10 +23,10 @@
           Mi perfil
       </span>
 
-      <a href="/login" class="btn btn-outline-danger btn-sm">
-        Cerrar sesión
-      </a>
-
+      <form method="post" action="/logout">
+                <input type="hidden" name="_csrf" value="{{token}}" />
+                <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar Sesion</button>
+        </form>
 
     </div>
   </nav>
