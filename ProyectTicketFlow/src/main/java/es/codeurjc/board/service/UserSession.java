@@ -10,7 +10,7 @@ public class UserSession {
 	private String user;
 	private Long userId;
 	private boolean isAdmin;
-	private int numPosts;
+	
 
 	public void setUser(String user) {
 		this.user = user;
@@ -36,19 +36,11 @@ public class UserSession {
 		isAdmin = admin;
 	}
 
-	public int getNumPosts() {
-		return this.numPosts;
-	}
-
-	public void incNumPosts() {
-		this.numPosts++;
-	}
 
 	public void logout() {
 		this.user = null;
 		this.userId = null;
 		this.isAdmin = false;
-		this.numPosts = 0;
 	}
 
 }
