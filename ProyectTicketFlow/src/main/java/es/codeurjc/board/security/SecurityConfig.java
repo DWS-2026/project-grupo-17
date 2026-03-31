@@ -87,6 +87,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedPage("/error-403")
+                )
+
                 // 🔥 CSRF (IMPORTANTE PARA H2)
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/h2-console/**")
