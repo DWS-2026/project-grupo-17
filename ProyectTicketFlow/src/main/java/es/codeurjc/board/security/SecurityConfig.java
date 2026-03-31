@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/entradas/*/delete").hasRole("ADMIN")
 
                         .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/admin/users/*/profile").hasRole("ADMIN")
                         .requestMatchers("/user/*/avatar").permitAll()
 
 

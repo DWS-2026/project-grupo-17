@@ -116,6 +116,12 @@ public class UserController {
             Optional<User> user = userService.findByEmail(email);
             if (user.isPresent()) {
                 model.addAttribute("user", user.get());
+                boolean profileUserAdmin = user.get().getRoles() != null && user.get().getRoles().contains("ADMIN");
+                model.addAttribute("profileUserAdmin", profileUserAdmin);
+                model.addAttribute("canEditProfile", true);
+                model.addAttribute("canViewAdminPanel", profileUserAdmin);
+                model.addAttribute("showMisEntradasButton", !profileUserAdmin);
+                model.addAttribute("adminViewingOtherProfile", false);
 
                 model.addAttribute("entradas", user.get().getEntradasCompradas());
                 return "profile";
@@ -188,6 +194,7 @@ public class UserController {
         model.addAttribute("usuarios", userService.findAll().stream()
                 .filter(u -> !u.getEmail().equals(emailActual))
                 .map(u -> new UserDTO(
+                u.getId(),
                         u.getNombre(),
                         u.getEmail(),
                         u.getFechaNacimiento(),
@@ -196,6 +203,29 @@ public class UserController {
                 .toList());
 
         return "admin";
+    }
+
+    @GetMapping("/admin/users/{id}/profile")
+    public String verPerfilUsuarioDesdeAdmin(@PathVariable Long id, Model model) {
+
+        User user = userService.findById(id);
+
+        if (user == null) {
+            return "redirect:/admin";
+        }
+
+        boolean profileUserAdmin = user.getRoles() != null && user.getRoles().contains("ADMIN");
+
+        model.addAttribute("user", user);
+        model.addAttribute("profileUserAdmin", profileUserAdmin);
+        model.addAttribute("canEditProfile", false);
+        model.addAttribute("canViewAdminPanel", true);
+        model.addAttribute("showMisEntradasButton", false);
+        model.addAttribute("adminViewingOtherProfile", true);
+
+        model.addAttribute("entradas", user.getEntradasCompradas());
+
+        return "profile";
     }
 
     @GetMapping("/")

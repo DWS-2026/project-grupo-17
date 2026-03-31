@@ -4,16 +4,22 @@ import java.time.LocalDate;
 
 public class UserDTO {
 
+    private Long id;
     private String nombre;
     private String email;
     private LocalDate fechaNacimiento;
     private boolean admin;
 
-    public UserDTO(String nombre, String email, LocalDate fechaNacimiento, boolean admin) {
+    public UserDTO(Long id, String nombre, String email, LocalDate fechaNacimiento, boolean admin) {
+        this.id = id;
         this.nombre = nombre;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
         this.admin = admin;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getNombre() {
