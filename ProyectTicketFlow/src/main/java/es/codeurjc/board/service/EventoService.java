@@ -2,7 +2,10 @@ package es.codeurjc.board.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
+import es.codeurjc.board.model.Entrada;
+import es.codeurjc.board.model.User;
 import es.codeurjc.board.repositories.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,11 @@ public class EventoService {
 
     @Autowired
     private EventoRepository eventoRepository;
+    @Autowired
+    private EntradaService entradaService;
+
+    @Autowired
+    private UserService userService;
 
     public Collection<Evento> findAll() {
         return eventoRepository.findAll();
@@ -39,7 +47,33 @@ public class EventoService {
     }
 
 
-    public void delete(long id) {
+    public void delete(Long id) {
+
+        Evento evento = findById(id);
+
+        if (evento == null) return;
+
+        // 🔹 1. obtener entradas del evento
+        Collection<Entrada> entradas = entradaService.findByEvento(id);
+
+        // 🔹 2. quitar entradas de usuarios
+        for (Entrada entrada : entradas) {
+
+            for (User user : userService.findAll()) {
+
+                if (user.getEntradasCompradas() != null &&
+                        user.getEntradasCompradas().contains(entrada)) {
+
+                    user.getEntradasCompradas().remove(entrada);
+                    userService.saveUser(user);
+                }
+            }
+
+            // 🔹 3. borrar entrada
+            entradaService.delete(entrada.getId());
+        }
+
+        // 🔹 4. borrar evento
         eventoRepository.deleteById(id);
     }
 }

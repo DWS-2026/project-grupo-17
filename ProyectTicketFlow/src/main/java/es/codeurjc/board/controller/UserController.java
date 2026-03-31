@@ -1,13 +1,12 @@
 package es.codeurjc.board.controller;
 
+import es.codeurjc.board.UserDTO;
 import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.UserService;
-import es.codeurjc.board.service.UserSession;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,46 +24,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserSession userSession;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    // 🔹 LOGIN
     @GetMapping("/login")
-    public String getLogin(Model model) {
+    public String getLogin(@RequestParam(required = false) String error, Model model) {
+
+        if (error != null) {
+            model.addAttribute("error", "Usuario no registrado o contraseña incorrecta");
+        }
+
         return "login";
     }
 
-    @PostMapping("/login")
-    public String postLogin(
-            @RequestParam String email,
-            @RequestParam String password,
-            Model model) {
-
-        Optional<User> user = userService.findByEmail(email);
-        
-        // Comprobamos si el usuario existe y si la contraseña coincide usando el encoder
-        if (user.isPresent() && passwordEncoder.matches(password, user.get().getEncodedPassword())) {
-            userSession.setUser(email);
-            userSession.setUserId(user.get().getId());
-            
-            // Verificamos si tiene el rol "ADMIN" en su lista de roles
-            boolean isAdmin = user.get().getRoles().contains("ADMIN");
-            userSession.setAdmin(isAdmin);
-            
-            return "redirect:/";
-        } else {
-            model.addAttribute("error", "Email o contraseña incorrectos");
-            return "login";
-        }
-    }
-
+    // 🔹 REGISTER (GET)
     @GetMapping("/register")
-    public String getRegister(Model model) {
+    public String getRegister() {
         return "register";
     }
 
+    // 🔹 REGISTER (POST)
     @PostMapping("/register")
     public String postRegister(
             @RequestParam String nombre,
@@ -75,33 +53,50 @@ public class UserController {
             Model model) {
 
         try {
-            // Verificar si el email ya existe
+
+            //  VALIDACIONES BACKEND
+
+            if (nombre == null || nombre.isBlank()) {
+                model.addAttribute("error", "El nombre es obligatorio");
+                return "register";
+            }
+
+            if (email == null || email.isBlank()) {
+                model.addAttribute("error", "El email es obligatorio");
+                return "register";
+            }
+
+            if (!email.contains("@")) {
+                model.addAttribute("error", "El email no es válido");
+                return "register";
+            }
+
+            if (password == null || password.length() < 4) {
+                model.addAttribute("error", "La contraseña debe tener al menos 4 caracteres");
+                return "register";
+            }
+
+            if (fechaNacimiento == null || fechaNacimiento.isBlank()) {
+                model.addAttribute("error", "La fecha de nacimiento es obligatoria");
+                return "register";
+            }
+
+            //  EMAIL YA EXISTE
             Optional<User> usuarioExistente = userService.findByEmail(email);
             if (usuarioExistente.isPresent()) {
                 model.addAttribute("error", "El email ya está registrado");
                 return "register";
             }
 
-            // Convertir string a LocalDate
+            //  PARSE FECHA
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
 
-            // Guardar el usuario (el UserService ya se encarga de codificar la password)
+            //  GUARDAR
             userService.save(nombre, email, password, fecha, avatar);
 
-            // Iniciar sesión automáticamente tras el registro
-            Optional<User> usuarioGuardado = userService.findByEmail(email);
-            if (usuarioGuardado.isPresent()) {
-                userSession.setUser(email);
-                userSession.setUserId(usuarioGuardado.get().getId());
-                
-                // Un usuario recién registrado normalmente solo tiene rol "USER", 
-                // pero hacemos la comprobación por si acaso.
-                boolean isAdmin = usuarioGuardado.get().getRoles().contains("ADMIN");
-                userSession.setAdmin(isAdmin);
-            }
+            return "redirect:/login";
 
-            return "redirect:/";
         } catch (IOException e) {
             model.addAttribute("error", "Error al guardar la imagen");
             return "register";
@@ -111,49 +106,145 @@ public class UserController {
         }
     }
 
-    @GetMapping("/logout")
-    public String logout() {
-        userSession.logout();
-        return "redirect:/";
-    }
-
+    // 🔹 PERFIL
     @GetMapping("/profile")
-    public String getProfile(Model model, HttpServletRequest request) {
-        Principal principal = request.getUserPrincipal();
-        String email = (principal != null) ? principal.getName() : null;
-        // String email = userSession.getUser();
-        if (email != null) {
+    public String getProfile(Model model, Principal principal) {
+
+        if (principal != null && !principal.getName().equals("anonymousUser")) {
+            String email = principal.getName();
+
             Optional<User> user = userService.findByEmail(email);
             if (user.isPresent()) {
                 model.addAttribute("user", user.get());
+
+                model.addAttribute("entradas", user.get().getEntradasCompradas());
                 return "profile";
             }
         }
+
         return "redirect:/login";
     }
 
-    @PostMapping("/profile/update")
+    // 🔹 EDIT PROFILE (GET)
+    @GetMapping("/edit-profile")
+    public String mostrarEditProfile(Model model, Principal principal) {
+
+        if (principal != null && !principal.getName().equals("anonymousUser")) {
+            String email = principal.getName();
+
+            Optional<User> user = userService.findByEmail(email);
+            if (user.isPresent()) {
+                model.addAttribute("user", user.get());
+                return "edit-profile";
+            }
+        }
+
+        return "redirect:/login";
+    }
+
+    // 🔹 EDIT PROFILE (POST) ✅ MÉTODO BUENO (SEGURO)
+    @PostMapping("/edit-profile")
     public String updateProfile(
-            @RequestParam Long id,
             @RequestParam String nombre,
             @RequestParam String email,
             @RequestParam String fechaNacimiento,
             @RequestParam(required = false) MultipartFile avatar,
-            Model model) {
+            Model model,
+            Principal principal) {
 
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
+            String emailActual = principal.getName();
 
-            userService.update(id, nombre, email, fecha, avatar);
+            Optional<User> user = userService.findByEmail(emailActual);
 
-            return "redirect:/profile";
+            if (user.isPresent()) {
+                Long userId = user.get().getId();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
+
+                userService.update(userId, nombre, email, fecha, avatar);
+
+                return "redirect:/profile";
+            }
+
         } catch (IOException e) {
             model.addAttribute("error", "Error al guardar la imagen");
-            return "profile";
         } catch (Exception e) {
             model.addAttribute("error", "Error al actualizar el perfil");
-            return "profile";
         }
+
+        return "redirect:/edit-profile";
     }
+
+    // 🔹 ADMIN PANEL
+    @GetMapping("/admin")
+    public String mostrarAdmin(Model model, Principal principal, HttpServletRequest request) {
+
+
+
+        String emailActual = principal.getName();
+
+        model.addAttribute("usuarios", userService.findAll().stream()
+                .filter(u -> !u.getEmail().equals(emailActual))
+                .map(u -> new UserDTO(
+                        u.getNombre(),
+                        u.getEmail(),
+                        u.getFechaNacimiento(),
+                        u.getRoles() != null && u.getRoles().contains("ADMIN")
+                ))
+                .toList());
+
+        return "admin";
+    }
+
+    @GetMapping("/")
+    public String mostrarIndex(Model model, HttpServletRequest request) {
+
+        Principal principal = request.getUserPrincipal();
+
+        if (principal != null && !principal.getName().equals("anonymousUser")) {
+            model.addAttribute("email", principal.getName());
+            model.addAttribute("admin", request.isUserInRole("ADMIN"));
+        }
+
+        return "index";
+    }
+    @GetMapping("/mis-entradas")
+    public String verMisEntradas(Model model, Principal principal) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        String email = principal.getName();
+        User user = userService.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("entradas", user.getEntradasCompradas());
+
+        return "mis-entradas";
+    }
+
+    @GetMapping("/user/{id}/avatar")
+    @ResponseBody
+    public ResponseEntity<byte[]> getAvatar(@PathVariable Long id) {
+
+        User user = userService.findById(id);
+
+        if (user == null || user.getAvatar() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity
+                .ok()
+                .header("Content-Type", "image/jpeg") // o image/png
+                .body(user.getAvatar());
+    }
+
+
+
 }

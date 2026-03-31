@@ -26,7 +26,7 @@
       <form method="post" action="/logout">
                 <input type="hidden" name="_csrf" value="{{token}}" />
                 <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar Sesion</button>
-        </form>
+      </form>
 
     </div>
   </nav>
@@ -42,93 +42,41 @@
     <div class="card-body">
       <div class="row align-items-center">
         <div class="col-md-3 text-center">
-          <img src="../images/avatar.png"
+          <img src="/user/{{user.id}}/avatar"
                class="img-fluid rounded-circle shadow"
-               style="width:150px; height:150px; object-fit:cover;"
-               alt="Avatar">
+               style="width:150px; height:150px; object-fit:cover;">
 
         </div>
         <div class="col-md-6">
           <h5>{{user.nombre}}</h5>
           <p class="mb-1"><strong>Email:</strong> {{user.email}}</p>
           <p class="mb-1"><strong>Fecha de nacimiento:</strong> {{user.fechaNacimiento}}</p>
-          {{#user.admin}}
+
+          {{#admin}}
           <span class="badge bg-danger">Administrador</span>
-          {{/user.admin}}
-          {{^user.admin}}
+          {{/admin}}
+          {{^admin}}
           <span class="badge bg-secondary">Usuario Registrado</span>
-          {{/user.admin}}
+          {{/admin}}
+
           <a href="/edit-profile" class="btn btn-primary">Editar perfil</a>
-          {{#user.admin}}
-          <a href="/admin" class="btn btn-primary">Ver usuarios</a>
-          {{/user.admin}}
+
+          {{#admin}}
+          <a href="/admin" class="btn btn-warning">Ver usuarios</a>
+          {{/admin}}
         </div>
       </div>
     </div>
   </div>
 
   <!-- ENTRADAS COMPRADAS -->
-  <div class="card shadow mb-4">
-    <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">Mis Entradas Compradas</h5>
-    </div>
-    <div class="card-body">
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>Evento</th>
-          <th>Discoteca</th>
-          <th>Fecha</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>Fiesta Halloween</td>
-          <td>Opium Madrid</td>
-          <td>31/10/2026</td>
-          <td><span class="badge bg-success">Activa</span></td>
-          <td>
-            <a href="ticket-detail.html" class="btn btn-sm btn-outline-primary">Ver</a>
-            <button class="btn btn-sm btn-outline-secondary">Descargar</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-
-  <!-- HISTORIAL DE TRANSACCIONES -->
-  <div class="card shadow">
-    <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">Historial de Transacciones</h5>
-    </div>
-    <div class="card-body">
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Evento</th>
-          <th>Importe</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>20/09/2026</td>
-          <td>Opening Party</td>
-          <td>40€</td>
-        </tr>
-        <tr>
-          <td>10/08/2026</td>
-          <td>White Night</td>
-          <td>50€</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  {{#email}}
+  {{^admin}}
+  <a href="/mis-entradas" class="btn btn-success">
+    Ver mis entradas
+  </a>
+  {{/admin}}
+  {{/email}}
 
 </main>
 

@@ -6,7 +6,14 @@ import es.codeurjc.board.service.EventoService;
 import jakarta.servlet.http.HttpServletRequest;
 import es.codeurjc.board.service.EntradaService;
 
+import es.codeurjc.board.model.User;
+import es.codeurjc.board.service.UserService;
+
+import java.util.Collection;
+import java.util.ArrayList;
+
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class EntradaController {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private EntradaService entradaService;
@@ -109,10 +119,68 @@ public class EntradaController {
     public String deleteEntrada(@PathVariable long id) {
 
         Entrada entrada = entradaService.findById(id);
-        Long eventoId = entrada.getEvento().getId();
 
-        entradaService.delete(id);
+        if (entrada != null) {
 
-        return "redirect:/eventos/" + eventoId + "/entradas";
+            Collection<User> users = userService.findAll();
+
+            for (User user : users) {
+                if (user.getEntradasCompradas() != null) {
+                    user.getEntradasCompradas().remove(entrada);
+                    userService.saveUser(user);
+                }
+            }
+
+
+            entradaService.delete(id);
+        }
+
+        return "redirect:/eventos/" + entrada.getEvento().getId() + "/entradas";
+    }
+
+    @GetMapping("/entradas/{id}/pago")
+    public String comprarEntrada(@PathVariable Long id, Principal principal, Model model) {
+
+        if (principal == null || principal.getName().equals("anonymousUser")) {
+            return "redirect:/login";
+        }
+
+        Entrada entrada = entradaService.findById(id);
+
+        if (entrada == null) {
+            return "redirect:/";
+        }
+
+        User user = userService.findByEmail(principal.getName()).orElse(null);
+
+        if (user != null) {
+
+            List<Entrada> entradas = user.getEntradasCompradas();
+
+            if (entradas == null) {
+                entradas = new ArrayList<>();
+            }
+
+            boolean yaComprada = entradas.stream()
+                    .anyMatch(e -> e.getId().equals(entrada.getId()));
+
+            if (yaComprada) {
+                // MENSAJE
+                model.addAttribute("error", "Ya has comprado esta entrada");
+
+                // volver a la misma vista de entradas
+                model.addAttribute("evento", entrada.getEvento());
+                model.addAttribute("discoteca", entrada.getEvento().getDiscoteca());
+                model.addAttribute("entradas", entradaService.findByEvento(entrada.getEvento().getId()));
+
+                return "entradas";
+            }
+
+            entradas.add(entrada);
+            user.setEntradasCompradas(entradas);
+            userService.saveUser(user);
+        }
+
+        return "redirect:/profile";
     }
 }

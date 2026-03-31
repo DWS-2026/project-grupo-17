@@ -11,7 +11,7 @@ import es.codeurjc.board.model.Image;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.EventoService;
 import es.codeurjc.board.service.ImageService;
-import es.codeurjc.board.service.UserSession;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,60 +34,57 @@ public class EventoController {
     @Autowired
     private DiscotecaService discotecaService;
 
-    @Autowired
-    private UserSession userSession;
-
-    @ModelAttribute
-	public void addAttributes(Model model, HttpServletRequest request) {
-
-		Principal principal = request.getUserPrincipal();
-
-		if (principal != null) {
-
-			model.addAttribute("logged", true);
-			model.addAttribute("email", principal.getName());
-			model.addAttribute("admin", request.isUserInRole("ADMIN"));
-
-		} else {
-			model.addAttribute("logged", false);
-		}
-	}
 
 
     @GetMapping("/discotecas/{id}/eventos")
-    public String showEventos(@PathVariable Long id, Model model) {
+    public String showEventos(@PathVariable Long id, Model model, HttpServletRequest request) {
 
         Discoteca discoteca = discotecaService.findById(id);
 
         model.addAttribute("discoteca", discoteca);
         model.addAttribute("eventos", eventoService.findByDiscoteca(id));
-        model.addAttribute("isAdmin", userSession.isAdmin());
+        model.addAttribute("admin", request.isUserInRole("ADMIN"));
 
         return "eventos";
     }
-    @PostMapping("/discotecas/{id}/eventos/create")
-    public String createEventoProcess(@PathVariable Long id,
-                                      Evento evento,
-                                      @RequestParam MultipartFile image,
-                                      Model model) throws IOException, SQLException {
 
-        if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden crear eventos");
-            return "redirect:/discotecas/" + id + "/eventos";
-        }
+
+    @GetMapping("/discotecas/{id}/eventos/create")
+    public String createEventoForm(@PathVariable Long id, Model model) {
 
         Discoteca discoteca = discotecaService.findById(id);
+
+        model.addAttribute("discoteca", discoteca);
+
+        return "create-event";
+    }
+
+    @PostMapping("/discotecas/{id}/eventos/create")
+    public String createEventoProcess(@PathVariable Long id,
+                                      @ModelAttribute Evento evento,
+                                      @RequestParam("imageFile") MultipartFile imageFile)
+            throws IOException, SQLException {
+
+        // 🔥 1. Obtener discoteca
+        Discoteca discoteca = discotecaService.findById(id);
+
+        if (discoteca == null) {
+            return "redirect:/error-403";
+        }
+
         evento.setDiscoteca(discoteca);
 
-        // Manejo de imagen con Blob
-        if (!image.isEmpty()) {
-            byte[] bytes = image.getInputStream().readAllBytes();
+        // 🔥 2. Procesar imagen (manual)
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+            byte[] bytes = imageFile.getBytes();
             Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+
             Image img = new Image(blob);
             evento.setImage(img);
         }
 
-        // Guardar evento
+        // 🔥 3. Guardar evento
         eventoService.save(evento);
 
         return "redirect:/discotecas/" + id + "/eventos";
@@ -103,13 +100,10 @@ public class EventoController {
             return ResponseEntity.notFound().build();
         }
 
-        // Obtener bytes de la entidad Image
         Blob blob = e.getImage().getImageFile();
-        int blobLength = (int) blob.length();
-        byte[] bytes = blob.getBytes(1, blobLength);// o e.getImage().getBytes() si adaptas ImageService
+        byte[] bytes = blob.getBytes(1, (int) blob.length());
 
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
                 .body(bytes);
     }
@@ -117,16 +111,9 @@ public class EventoController {
     @GetMapping("/eventos/{id}/edit")
     public String editEventoForm(@PathVariable long id, Model model) {
 
-        if (!userSession.isAdmin()) {
-            Evento evento = eventoService.findById(id);
-            model.addAttribute("error", "Solo los administradores pueden editar eventos");
-            return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
-        }
-
         Evento evento = eventoService.findById(id);
 
-        model.addAttribute("discoteca", evento.getDiscoteca()); 
-        
+        model.addAttribute("discoteca", evento.getDiscoteca());
         model.addAttribute("evento", evento);
         model.addAttribute("discotecas", discotecaService.findAll());
 
@@ -136,30 +123,25 @@ public class EventoController {
     @PostMapping("/eventos/{id}/edit")
     public String updateEventoProcess(@PathVariable long id,
                                       Evento eventoForm,
-                                      @RequestParam(required = false) MultipartFile image,
-                                      Model model) throws IOException {
+                                      @RequestParam(required = false) MultipartFile image)
+            throws IOException, SQLException {
 
-        if (!userSession.isAdmin()) {
-            model.addAttribute("error", "Solo los administradores pueden editar eventos");
-            return "redirect:/discotecas/" + eventoForm.getDiscoteca().getId() + "/eventos";
-        }
-
-        // Obtener evento original
         Evento evento = eventoService.findById(id);
 
-        // Actualizar campos básicos
+        // 🔹 actualizar campos normales
         evento.setName(eventoForm.getName());
         evento.setDescripcion(eventoForm.getDescripcion());
         evento.setEdadRequerida(eventoForm.getEdadRequerida());
 
-        // Actualizar discoteca si se cambió
         if (eventoForm.getDiscoteca() != null) {
             evento.setDiscoteca(eventoForm.getDiscoteca());
         }
 
-        // Actualizar imagen si se subió nueva
+        // 🔹 manejar imagen MANUALMENTE
         if (image != null && !image.isEmpty()) {
-            Image img = imageService.createImage(image.getInputStream());
+            byte[] bytes = image.getInputStream().readAllBytes();
+            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+            Image img = new Image(blob);
             evento.setImage(img);
         }
 
@@ -169,13 +151,7 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/{id}/delete")
-    public String deleteEvento(@PathVariable long id, Model model) {
-
-        if (!userSession.isAdmin()) {
-            Evento evento = eventoService.findById(id);
-            model.addAttribute("error", "Solo los administradores pueden eliminar eventos");
-            return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
-        }
+    public String deleteEvento(@PathVariable long id) {
 
         Evento evento = eventoService.findById(id);
         Long discotecaId = evento.getDiscoteca().getId();

@@ -24,7 +24,8 @@ public class SecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider authProvider =
+                new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
@@ -35,34 +36,65 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider());
 
         http
-            .authorizeHttpRequests(authorize -> authorize
-                
-                // 1. ZONA EXCLUSIVA PARA ADMINISTRADORES (Crear y editar)
-                // Usamos hasAuthority en lugar de hasRole para evitar el problema del prefijo ROLE_
-                .requestMatchers("/admin").hasAnyRole("ADMIN")
-                
-                //.requestMatchers("/create-discotecas", "/create-event", "/entradas/create-ticket").hasAuthority("ADMIN")
-                .requestMatchers("/entradas/create-ticket").hasAnyRole("ADMIN")
-				// Añadimos "/**" por si las URLs de edición llevan una ID al final, ej: /edit-event/5
-                .requestMatchers("/edit-discoteca/**", "/edit-event/**", "/edit-ticket/**").hasAuthority("ADMIN")
-                .requestMatchers("/favicon.ico").permitAll()
-                // 2. ZONA PARA USUARIOS REGISTRADOS (Cualquiera que haya hecho login)
-                .requestMatchers("/profile", "/edit-profile").authenticated()
-                
-                // 3. ZONA PÚBLICA (Cualquiera, incluso sin hacer login)
-                .anyRequest().permitAll()
-            )
-            .formLogin(formLogin -> formLogin
-                .loginPage("/login")
-                .failureUrl("/loginerror") // O donde manejes tu error
-                .defaultSuccessUrl("/")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .permitAll()
-            );
+                .authorizeHttpRequests(authorize -> authorize
+
+                        // 🔥 H2 CONSOLE
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        // 🔴 ADMIN - DISCOTECAS
+                        .requestMatchers("/discotecas/create-discotecas").hasRole("ADMIN")
+                        .requestMatchers("/discotecas/edit/**").hasRole("ADMIN")
+                        .requestMatchers("/discotecas/delete/**").hasRole("ADMIN")
+
+                        // 🔴 ADMIN - EVENTOS
+                        .requestMatchers("/discotecas/*/eventos/create").hasRole("ADMIN")
+                        .requestMatchers("/eventos/*/edit").hasRole("ADMIN")
+                        .requestMatchers("/eventos/*/delete").hasRole("ADMIN")
+
+                        // 🔴 ADMIN - ENTRADAS
+                        .requestMatchers("/eventos/*/entradas/create").hasRole("ADMIN")
+                        .requestMatchers("/entradas/create-ticket").hasRole("ADMIN")
+                        .requestMatchers("/entradas/*/edit").hasRole("ADMIN")
+                        .requestMatchers("/entradas/*/delete").hasRole("ADMIN")
+
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/user/*/avatar").permitAll()
+
+
+                        // 🔵 USUARIO LOGUEADO
+                        .requestMatchers("/profile", "/edit-profile", "/entradas/*/pago", "/mis-entradas").authenticated()
+
+                        // 🟢 PÚBLICO
+                        .requestMatchers("/", "/login", "/register", "/css/**", "/images/**").permitAll()
+
+                        // RESTO
+                        .anyRequest().permitAll()
+                )
+
+                // 🔐 LOGIN
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+
+                // 🚪 LOGOUT
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                )
+
+                // 🔥 CSRF (IMPORTANTE PARA H2)
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/h2-console/**")
+                )
+
+                // 🔥 H2 necesita iframes
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable())
+                );
 
         return http.build();
     }

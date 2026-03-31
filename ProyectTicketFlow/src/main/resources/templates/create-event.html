@@ -41,8 +41,8 @@
         </div>
 
         <div class="card-body">
-            <form action="/eventos/create-event" method="post" enctype="multipart/form-data">
-
+            <form action="/discotecas/{{discoteca.id}}/eventos/create" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="{{token}}">
                 <!-- Nombre del evento -->
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
@@ -98,7 +98,7 @@
                     <input
                             type="file"
                             class="form-control"
-                            name="image"
+                            name="imageFile"
                             accept="image/*">
                 </div>
 

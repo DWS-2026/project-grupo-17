@@ -3,6 +3,7 @@ package es.codeurjc.board.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "app_user")
@@ -16,12 +17,20 @@ public class User {
     private String email;
     private String encodedPassword;
     private LocalDate fechaNacimiento;
-    
+
     @Lob
     private byte[] avatar;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_entradas",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "entrada_id")
+    )
+    private List<Entrada> entradasCompradas = new ArrayList<>();
 
     public User() {}
 
@@ -32,9 +41,11 @@ public class User {
         this.fechaNacimiento = fechaNacimiento;
         this.avatar = avatar;
         this.roles = List.of(roles);
+        this.entradasCompradas = new ArrayList<>();
     }
 
-    // Getters y Setters
+    // ===== GETTERS Y SETTERS =====
+
     public Long getId() {
         return id;
     }
@@ -89,5 +100,15 @@ public class User {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    // 🔥 NUEVOS GETTERS/SETTERS
+
+    public List<Entrada> getEntradasCompradas() {
+        return entradasCompradas;
+    }
+
+    public void setEntradasCompradas(List<Entrada> entradasCompradas) {
+        this.entradasCompradas = entradasCompradas;
     }
 }

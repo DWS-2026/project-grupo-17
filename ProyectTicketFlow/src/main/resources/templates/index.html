@@ -31,7 +31,7 @@
                 </ul>
 
                 <ul class="navbar-nav align-items-center">
-
+                    {{^email}}
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
@@ -39,12 +39,14 @@
                     <li class="nav-item">
                         <a class="btn btn-primary ms-2" href="/register">Registro</a>
                     </li>
-
+                    {{/email}}
+                    {{#email}}
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-2" href="/profile">
                             <i class="bi bi-person-circle"></i>
                         </a>
                     </li>
+                    {{/email}}
 
                 </ul>
 

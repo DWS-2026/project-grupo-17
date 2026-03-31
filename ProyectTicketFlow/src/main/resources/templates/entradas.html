@@ -17,13 +17,11 @@
         <div class="container position-relative">
 
             <div class="header1">
-
                 <a href="/discotecas/{{discoteca.id}}/eventos" class="flecha">
                     🡰
                 </a>
                 <a class="navbar-brand" href="/">TicketFlow</a>
             </div>
-
 
             <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
                 {{evento.name}}
@@ -43,9 +41,14 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
 
+            <!--  MENSAJE DE ERROR -->
+            {{#error}}
+            <div class="alert alert-danger text-center">
+                {{error}}
+            </div>
+            {{/error}}
 
             <img src="/eventos/{{evento.id}}/image" class="img-fluid rounded mb-4">
-
 
             <h2 class="fw-bold text-white">{{evento.name}}</h2>
             <p class="text-white-50">{{evento.descripcion}}</p>
@@ -57,8 +60,12 @@
 
                     <h5 class="card-title fw-bold">{{name}}</h5>
 
+                    <p class="small text-muted mb-1">
+                        <strong>Tipo:</strong> {{acceso}}
+                    </p>
+
                     <p class="small text-muted">
-                        Edad mínima: +
+                        <strong>Incluye:</strong> {{incluye}}
                     </p>
 
                     <div class="d-flex justify-content-between align-items-center">
@@ -67,21 +74,28 @@
 
                         <div class="d-flex gap-2">
 
+                            {{#email}}
+                            {{^admin}}
                             <a href="/entradas/{{id}}/pago" class="btn btn-success btn-sm">
                                 Comprar
                             </a>
+                            {{/admin}}
+                            {{/email}}
 
-
+                            {{#admin}}
                             <a href="/entradas/{{id}}/edit" class="btn btn-outline-primary btn-sm">
                                 Editar
                             </a>
+                            {{/admin}}
 
-                            <!-- 🗑 Eliminar -->
+                            {{#admin}}
                             <form action="/entradas/{{id}}/delete" method="post">
+                                <input type="hidden" name="_csrf" value="{{token}}">
                                 <button type="submit" class="btn btn-outline-danger btn-sm">
                                     Eliminar
                                 </button>
                             </form>
+                            {{/admin}}
 
                         </div>
 
@@ -90,18 +104,23 @@
                 </div>
             </div>
             {{/entradas}}
+
             {{^entradas}}
             <div class="text-center text-white mt-4">
                 <h4>No hay entradas disponibles</h4>
+                {{#admin}}
                 <p class="text-white-50">Crea la primera entrada para este evento</p>
+                {{/admin}}
             </div>
             {{/entradas}}
 
+            {{#admin}}
             <div class="text-center mt-4">
                 <a href="/eventos/{{evento.id}}/entradas/create" class="btn btn-primary">
                     <i class="bi bi-plus-lg"></i> Añadir entrada
                 </a>
             </div>
+            {{/admin}}
 
         </div>
     </div>

@@ -30,11 +30,11 @@
 <main class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
         <h2 class="fw-bold text-white mb-0">Próximos Eventos</h2>
-        {{#isAdmin}}
+        {{#admin}}
         <a href="/discotecas/{{discoteca.id}}/eventos/create" class="btn btn-primary shadow-sm">
             <i class="bi bi-plus-lg me-1"></i> Crear Evento
         </a>
-        {{/isAdmin}}
+        {{/admin}}
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -62,16 +62,17 @@
                     <a href="/eventos/{{id}}/entradas" class="btn btn-sm btn-success">
                         <i class="bi bi-ticket-perforated"></i> Comprar entradas
                     </a>
-                    {{#isAdmin}}
+                    {{#admin}}
                     <a href="/eventos/{{id}}/edit" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-pencil-square"></i> Editar
                     </a>
                     <form action="/eventos/{{id}}/delete" method="post" class="m-0">
+                        <input type="hidden" name="_csrf" value="{{token}}">
                         <button type="submit" class="btn btn-sm btn-outline-danger">
                             <i class="bi bi-trash3"></i> Eliminar
                         </button>
                     </form>
-                    {{/isAdmin}}
+                    {{/admin}}
                 </div>
             </div>
         </div>

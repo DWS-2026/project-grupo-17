@@ -57,7 +57,7 @@
                                 Eventos disponibles
                             </a>
                         </td>
-                        {{#isAdmin}}
+                        {{#admin}}
                         <td>
                             <a href="/discotecas/edit-discoteca/{{id}}" class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-pencil-square"></i>Editar
@@ -65,12 +65,13 @@
                         </td>
                         <td>
                             <form action="/discotecas/delete/{{id}}" method="post" style="display:inline;">
+                                <input type="hidden" name="_csrf" value="{{token}}" />
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-trash3"></i>Eliminar
                                 </button>
                             </form>
                         </td>
-                        {{/isAdmin}}
+                        {{/admin}}
                     </tr>
                     {{/discotecas}}
                 </table>
@@ -79,12 +80,12 @@
     </div>
 
     <div>
-        {{#isAdmin}}
+        {{#admin}}
         <a href="/discotecas/create-discotecas" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i>
             Añadir Discoteca
         </a>
-        {{/isAdmin}}
+        {{/admin}}
     </div>
 
 </main>
