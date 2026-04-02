@@ -47,33 +47,43 @@ public class DatabaseInitializer {
         // ==========================================
         
         // Crear usuario admin (Codificamos la password y le asignamos los roles "USER" y "ADMIN")
-        userRepository.save(new User(
+        User admin= new User(
             "Admin User", 
             "admin@example.com", 
             passwordEncoder.encode("admin"), 
             LocalDate.of(1990, 1, 10), 
             null, 
             "USER", "ADMIN"
-        ));
+        );
+
+
         
         // Crear usuarios de prueba normales (Codificamos la password y le asignamos solo el rol "USER")
-        userRepository.save(new User(
+        User juan= new User(
             "Juan García", 
             "juan@example.com", 
             passwordEncoder.encode("12345"), 
             LocalDate.of(1995, 5, 15), 
             null, 
             "USER"
-        ));
-        
-        userRepository.save(new User(
+        );
+
+        User maria= new User(
             "María López", 
             "maria@example.com", 
             passwordEncoder.encode("password123"), 
             LocalDate.of(1998, 8, 20), 
             null, 
             "USER"
-        ));
+        );
+
+        setUserAvatar(admin,"/posts/avatar.png");
+        setUserAvatar(juan,"/posts/avatar.png");
+        setUserAvatar(maria,"/posts/avatar.png");
+
+        userRepository.save(admin);
+        userRepository.save(juan);
+        userRepository.save(maria);
 
         // ==========================================
         // INICIALIZACIÓN DE DISCOTECAS Y EVENTOS
@@ -86,7 +96,7 @@ public class DatabaseInitializer {
         d1.setDescripcion("Discoteca con música electrónica");
 
         // Asignar imagen sin guardarla antes
-        setDiscotecaImage(d1, "/posts/imagen1.avif");
+        setDiscotecaImage(d1, "/posts/nuit.png");
 
         // Crear eventos
         Evento e1 = new Evento();
@@ -111,7 +121,7 @@ public class DatabaseInitializer {
         d2.setName("La Riviera");
         d2.setCalle("Avenida del Sol 25");
         d2.setDescripcion("Ambiente chill y cocktails");
-        setDiscotecaImage(d2, "/posts/imagen3.avif");
+        setDiscotecaImage(d2, "/posts/lariviera.png");
 
         // Crear eventos
         Evento e3 = new Evento();
@@ -150,5 +160,12 @@ public class DatabaseInitializer {
         Blob blob = new SerialBlob(bytes);
         Image img = new Image(blob);
         evento.setImage(img);
+    }
+    public void setUserAvatar(User user, String classpathResource) throws IOException, SQLException {
+        Resource resource = new ClassPathResource(classpathResource);
+        byte[] bytes = resource.getInputStream().readAllBytes();
+        Blob blob = new SerialBlob(bytes);
+        Image img = new Image(blob);
+        user.setAvatar(img); // o setAvatar dependiendo de tu modelo
     }
 }

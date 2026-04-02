@@ -6,6 +6,8 @@ import es.codeurjc.board.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -259,20 +263,20 @@ public class UserController {
         return "mis-entradas";
     }
 
-    @GetMapping("/user/{id}/avatar")
+    @GetMapping("/users/{id}/avatar")
     @ResponseBody
-    public ResponseEntity<byte[]> getAvatar(@PathVariable Long id) {
-
+    public byte[] getUserAvatar(@PathVariable Long id) throws SQLException, IOException {
         User user = userService.findById(id);
 
-        if (user == null || user.getAvatar() == null) {
-            return ResponseEntity.notFound().build();
+        if (user != null && user.getAvatar() != null) {
+            // Obtenemos los bytes de la imagen
+            Blob blob = user.getAvatar().getImageFile(); // o getImage() según tu clase Image
+            return blob.getBytes(1, (int) blob.length());
         }
 
-        return ResponseEntity
-                .ok()
-                .header("Content-Type", "image/jpeg") // o image/png
-                .body(user.getAvatar());
+        // Imagen por defecto si el usuario no tiene avatar
+        Resource resource = new ClassPathResource("/posts/avatar.png");
+        return resource.getInputStream().readAllBytes();
     }
 
 

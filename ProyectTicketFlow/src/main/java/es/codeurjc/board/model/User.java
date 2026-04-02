@@ -18,8 +18,8 @@ public class User {
     private String encodedPassword;
     private LocalDate fechaNacimiento;
 
-    @Lob
-    private byte[] avatar;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image avatar;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
@@ -34,7 +34,7 @@ public class User {
 
     public User() {}
 
-    public User(String nombre, String email, String encodedPassword, LocalDate fechaNacimiento, byte[] avatar, String... roles) {
+    public User(String nombre, String email, String encodedPassword, LocalDate fechaNacimiento,  Image avatar, String... roles) {
         this.nombre = nombre;
         this.email = email;
         this.encodedPassword = encodedPassword;
@@ -86,11 +86,11 @@ public class User {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public byte[] getAvatar() {
+    public Image getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(Image avatar) {
         this.avatar = avatar;
     }
 
