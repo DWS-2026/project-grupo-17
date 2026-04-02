@@ -6,6 +6,7 @@ import es.codeurjc.board.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,9 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -37,11 +41,11 @@ public class UserService {
     }
 
     // Guardar un usuario con avatar opcional
-    public void save(String nombre, String email, String encodedPassword, LocalDate fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
+    public void save(String nombre, String email, String password, LocalDate fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
         User user = new User();
         user.setNombre(nombre);
         user.setEmail(email);
-        user.setEncodedPassword(encodedPassword);
+        user.setEncodedPassword(passwordEncoder.encode(password));
         user.setFechaNacimiento(fechaNacimiento);
         user.setRoles(List.of("USER"));
 
