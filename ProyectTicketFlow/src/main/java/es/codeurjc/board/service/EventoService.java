@@ -76,4 +76,7 @@ public class EventoService {
         // 🔹 4. borrar evento
         eventoRepository.deleteById(id);
     }
+    public List<Evento> findFirst3() {
+        return eventoRepository.findTop3By();
+    }
 }

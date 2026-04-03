@@ -1,7 +1,10 @@
 package es.codeurjc.board.controller;
 
 import es.codeurjc.board.UserDTO;
+import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.User;
+import es.codeurjc.board.repositories.EventoRepository;
+import es.codeurjc.board.service.EventoService;
 import es.codeurjc.board.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,6 +23,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,6 +31,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EventoService eventoService;
 
 
     // 🔹 LOGIN
@@ -241,6 +248,11 @@ public class UserController {
             model.addAttribute("email", principal.getName());
             model.addAttribute("admin", request.isUserInRole("ADMIN"));
         }
+
+        // 🔹 Obtener próximos eventos desde el service
+        List<Evento> eventos = eventoService.findFirst3();
+        model.addAttribute("eventos", eventos);
+
 
         return "index";
     }
