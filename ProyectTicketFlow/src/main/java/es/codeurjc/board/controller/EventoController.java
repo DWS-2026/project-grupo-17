@@ -62,7 +62,8 @@ public class EventoController {
     @PostMapping("/discotecas/{id}/eventos/create")
     public String createEventoProcess(@PathVariable Long id,
                                       @ModelAttribute Evento evento,
-                                      @RequestParam("imageFile") MultipartFile imageFile)
+                                      @RequestParam("imageFile") MultipartFile imageFile,
+                                      Model model)
             throws IOException, SQLException {
 
         // 🔥 1. Obtener discoteca
@@ -70,6 +71,12 @@ public class EventoController {
 
         if (discoteca == null) {
             return "redirect:/error-403";
+        }
+
+        if (isBlank(evento.getName()) || isBlank(evento.getDescripcion()) || evento.getEdadRequerida() == null || evento.getEdadRequerida() < 0) {
+            model.addAttribute("error", "Revisa los campos: nombre, descripcion y edad requerida");
+            model.addAttribute("discoteca", discoteca);
+            return "create-event";
         }
 
         evento.setDiscoteca(discoteca);
@@ -123,10 +130,23 @@ public class EventoController {
     @PostMapping("/eventos/{id}/edit")
     public String updateEventoProcess(@PathVariable long id,
                                       Evento eventoForm,
-                                      @RequestParam(required = false) MultipartFile image)
+                                      @RequestParam(required = false) MultipartFile image,
+                                      Model model)
             throws IOException, SQLException {
 
         Evento evento = eventoService.findById(id);
+
+        if (evento == null) {
+            return "redirect:/error-403";
+        }
+
+        if (isBlank(eventoForm.getName()) || isBlank(eventoForm.getDescripcion()) || eventoForm.getEdadRequerida() == null || eventoForm.getEdadRequerida() < 0) {
+            model.addAttribute("error", "Revisa los campos: nombre, descripcion y edad requerida");
+            model.addAttribute("evento", evento);
+            model.addAttribute("discoteca", evento.getDiscoteca());
+            model.addAttribute("discotecas", discotecaService.findAll());
+            return "edit-event";
+        }
 
         // 🔹 actualizar campos normales
         evento.setName(eventoForm.getName());
@@ -159,5 +179,9 @@ public class EventoController {
         eventoService.delete(id);
 
         return "redirect:/discotecas/" + discotecaId + "/eventos";
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

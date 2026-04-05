@@ -41,6 +41,9 @@
         </div>
 
         <div class="card-body">
+            {{#error}}
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+            {{/error}}
             <form action="/discotecas/{{discoteca.id}}/eventos/create" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="_csrf" value="{{token}}">
                 <!-- Nombre del evento -->

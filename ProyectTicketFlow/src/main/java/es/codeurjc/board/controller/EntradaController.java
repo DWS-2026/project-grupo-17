@@ -77,9 +77,20 @@ public class EntradaController {
                                 @RequestParam String acceso,
                                 @RequestParam String incluye,
                                 @RequestParam Double precio,
-                                @RequestParam Long eventoId) {
+                                @RequestParam Long eventoId,
+                                Model model) {
 
         Evento evento = eventoService.findById(eventoId);
+
+        if (evento == null) {
+            return "redirect:/error-403";
+        }
+
+        if (isBlank(name) || isBlank(acceso) || isBlank(incluye) || precio == null || precio < 0) {
+            model.addAttribute("error", "Revisa los campos obligatorios y el precio");
+            model.addAttribute("evento", evento);
+            return "create-ticket";
+        }
 
         entradaService.save(name, acceso, incluye, precio, evento);
 
@@ -104,10 +115,23 @@ public class EntradaController {
                                 @RequestParam String name,
                                 @RequestParam String acceso,
                                 @RequestParam String incluye,
-                                @RequestParam Double precio) {
+                                @RequestParam Double precio,
+                                Model model) {
 
         Entrada entrada = entradaService.findById(id);
+
+        if (entrada == null) {
+            return "redirect:/error-403";
+        }
+
         Evento evento = entrada.getEvento();
+
+        if (isBlank(name) || isBlank(acceso) || isBlank(incluye) || precio == null || precio < 0) {
+            model.addAttribute("error", "Revisa los campos obligatorios y el precio");
+            model.addAttribute("entrada", entrada);
+            model.addAttribute("evento", evento);
+            return "edit-ticket";
+        }
 
         entradaService.update(id, name, acceso, incluye, precio, evento);
 
@@ -182,5 +206,9 @@ public class EntradaController {
         }
 
         return "redirect:/profile";
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

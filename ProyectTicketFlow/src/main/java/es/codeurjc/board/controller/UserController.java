@@ -170,6 +170,24 @@ public class UserController {
             Principal principal) {
 
         try {
+            if (nombre == null || nombre.isBlank()) {
+                model.addAttribute("error", "El nombre es obligatorio");
+                model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+                return "edit-profile";
+            }
+
+            if (email == null || email.isBlank() || !email.contains("@")) {
+                model.addAttribute("error", "El email no es valido");
+                model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+                return "edit-profile";
+            }
+
+            if (fechaNacimiento == null || fechaNacimiento.isBlank()) {
+                model.addAttribute("error", "La fecha de nacimiento es obligatoria");
+                model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+                return "edit-profile";
+            }
+
             String emailActual = principal.getName();
 
             Optional<User> user = userService.findByEmail(emailActual);
@@ -187,8 +205,12 @@ public class UserController {
 
         } catch (IOException e) {
             model.addAttribute("error", "Error al guardar la imagen");
+            model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+            return "edit-profile";
         } catch (Exception e) {
             model.addAttribute("error", "Error al actualizar el perfil");
+            model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+            return "edit-profile";
         }
 
         return "redirect:/edit-profile";

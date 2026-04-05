@@ -39,6 +39,9 @@
             <h4 class="mb-0">Modificar Datos de Usuario</h4>
         </div>
         <div class="card-body">
+            {{#error}}
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+            {{/error}}
             <form method="post" action="/edit-profile" enctype="multipart/form-data">
                 <input type="hidden" name="_csrf" value="{{token}}">
                 <div class="mb-3">

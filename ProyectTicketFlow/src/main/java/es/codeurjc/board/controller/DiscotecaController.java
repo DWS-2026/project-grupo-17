@@ -71,13 +71,21 @@ public class DiscotecaController {
     public String editDiscotecaProcess(@PathVariable Long id,
                                        Discoteca discotecaForm,
                                        @RequestParam(required = false) boolean removeImage,
-                                       @RequestParam("imageFile") MultipartFile imageFile)
+                                       @RequestParam("imageFile") MultipartFile imageFile,
+                                       Model model)
             throws IOException, SQLException {
 
         Discoteca discoteca = discotecaService.findById(id);
 
         if (discoteca == null) {
             return "redirect:/error-403";
+        }
+
+        if (isBlank(discotecaForm.getName()) || isBlank(discotecaForm.getCalle()) || isBlank(discotecaForm.getDescripcion())) {
+            model.addAttribute("error", "Todos los campos obligatorios deben estar rellenos");
+            model.addAttribute("discoteca", discoteca);
+            model.addAttribute("id", id);
+            return "edit-discoteca";
         }
 
         discoteca.setName(discotecaForm.getName());
@@ -99,7 +107,13 @@ public class DiscotecaController {
     @PostMapping("/discotecas/create-discotecas")
     public String createDiscotecaProcess(Discoteca discoteca,
                                          @RequestParam("imageFile") MultipartFile imageFile,
-                                         Principal principal) throws IOException {
+                                         Principal principal,
+                                         Model model) throws IOException {
+
+        if (isBlank(discoteca.getName()) || isBlank(discoteca.getCalle()) || isBlank(discoteca.getDescripcion())) {
+            model.addAttribute("error", "Todos los campos obligatorios deben estar rellenos");
+            return "create-discotecas";
+        }
 
         String email = principal.getName();
         User currentUser = userService.findByEmail(email).orElse(null);
@@ -143,5 +157,9 @@ public class DiscotecaController {
 
         discotecaService.delete(id);
         return "redirect:/discotecas";
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }
