@@ -77,7 +77,7 @@
 **AuthenticationFilter (Orden 0)** - Se ejecuta primero
 - Verifica: ¿Está el usuario logueado?
 - Si NO: Redirige a /login
-- Rutas públicas permitidas: /, /login, /register, /logout, /css/*, /images/*, /js/*, /h2-console
+- Rutas públicas permitidas: /, /login, /register, /logout, /css/*, /images/*, /js/*
 
 **AdminFilter (Orden 1)** - Se ejecuta después
 - Verifica: ¿Es el usuario admin?

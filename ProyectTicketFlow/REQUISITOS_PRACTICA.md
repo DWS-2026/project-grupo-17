@@ -198,9 +198,9 @@ Resultado: Página carga (navegador muestra certificado autofirmado) ✓
 - Las credenciales de admin están hardcodeadas en Application.java
 
 ### **Base de Datos:**
-- H2 en memoria (create-drop)
-- Datos se pierden al reiniciar
-- Para producción: usar PostgreSQL, MySQL, etc.
+- MySQL (configurada en application.properties)
+- Persistencia en base de datos real
+- Para producción: usar credenciales seguras y gestión de secretos
 
 ### **Validaciones:**
 - Email único: validado en registro
