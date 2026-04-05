@@ -38,9 +38,6 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
 
-                        // 🔥 H2 CONSOLE
-                        .requestMatchers("/h2-console/**").permitAll()
-
                         // 🔴 ADMIN - DISCOTECAS
                         .requestMatchers("/discotecas/create-discotecas").hasRole("ADMIN")
                         .requestMatchers("/discotecas/edit/**").hasRole("ADMIN")
@@ -91,15 +88,8 @@ public class SecurityConfig {
                         .accessDeniedPage("/error-403")
                 )
 
-                // 🔥 CSRF (IMPORTANTE PARA H2)
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
-                )
-
-                // 🔥 H2 necesita iframes
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
-                );
+                .csrf(csrf -> {
+                });
 
         return http.build();
     }
