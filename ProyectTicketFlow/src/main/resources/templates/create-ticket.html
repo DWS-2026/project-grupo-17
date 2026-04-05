@@ -45,6 +45,9 @@
     </div>
 
     <div class="card-body">
+      {{#error}}
+      <div class="alert alert-danger" role="alert">{{error}}</div>
+      {{/error}}
       <form action="/entradas/create-ticket" method="post">
         <input type="hidden" name="_csrf" value="{{token}}" />
         <div class="mb-3">
