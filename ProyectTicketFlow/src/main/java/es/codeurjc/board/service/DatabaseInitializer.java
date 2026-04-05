@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Image;
 import es.codeurjc.board.model.Evento;
-import es.codeurjc.board.model.User; // Asegúrate de que esta ruta sea correcta
-import es.codeurjc.board.repositories.UserRepository; // Asegúrate de que esta ruta sea correcta
+import es.codeurjc.board.model.User; 
+import es.codeurjc.board.model.Entrada; // ¡NUEVO! Importamos el modelo Entrada
+import es.codeurjc.board.repositories.UserRepository; 
+import es.codeurjc.board.repositories.EntradaRepository; // ¡NUEVO! Importamos el repositorio de Entrada
 
 import javax.sql.rowset.serial.SerialBlob;
 
@@ -31,9 +33,12 @@ public class DatabaseInitializer {
     @Autowired
     private ImageService imageService;
 
-    // 1. Inyectamos los servicios necesarios para la creación de usuarios
     @Autowired
     private UserRepository userRepository;
+
+    // ¡NUEVO! Inyectamos el repositorio para poder guardar la entrada en la base de datos
+    @Autowired
+    private EntradaRepository entradaRepository; 
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,7 +51,6 @@ public class DatabaseInitializer {
         // INICIALIZACIÓN DE USUARIOS
         // ==========================================
         
-        // Crear usuario admin (Codificamos la password y le asignamos los roles "USER" y "ADMIN")
         User admin= new User(
             "Admin User", 
             "admin@example.com", 
@@ -56,9 +60,6 @@ public class DatabaseInitializer {
             "USER", "ADMIN"
         );
 
-
-        
-        // Crear usuarios de prueba normales (Codificamos la password y le asignamos solo el rol "USER")
         User juan= new User(
             "Juan García", 
             "juan@example.com", 
@@ -89,21 +90,17 @@ public class DatabaseInitializer {
         // INICIALIZACIÓN DE DISCOTECAS Y EVENTOS
         // ==========================================
 
-        // Crear discoteca Nuit
         Discoteca d1 = new Discoteca();
         d1.setName("Nuit");
         d1.setCalle("Calle Mayor 10");
         d1.setDescripcion("Discoteca con música electrónica");
-
-        // Asignar imagen sin guardarla antes
         setDiscotecaImage(d1, "/posts/nuit.png");
 
-        // Crear eventos
         Evento e1 = new Evento();
         e1.setName("Noche Electrónica");
         e1.setDescripcion("DJ internacional toda la noche");
         e1.setEdadRequerida(18);
-        e1.setDiscoteca(d1); // asignar la discoteca
+        e1.setDiscoteca(d1); 
         setEventoImage(e1, "/posts/imagen1.avif");
 
         Evento e2 = new Evento();
@@ -113,22 +110,19 @@ public class DatabaseInitializer {
         e2.setDiscoteca(d1);
         setEventoImage(e2, "/posts/imagen2.avif"); 
 
-        // Asignar eventos a la discoteca
         d1.getEventos().addAll(Arrays.asList(e1, e2));
 
-        // Crear discoteca La Riviera
         Discoteca d2 = new Discoteca();
         d2.setName("La Riviera");
         d2.setCalle("Avenida del Sol 25");
         d2.setDescripcion("Ambiente chill y cocktails");
         setDiscotecaImage(d2, "/posts/lariviera.png");
 
-        // Crear eventos
         Evento e3 = new Evento();
         e3.setName("Noche Loca");
         e3.setDescripcion("DJ Dembow");
         e3.setEdadRequerida(16);
-        e3.setDiscoteca(d2); // asignar la discoteca
+        e3.setDiscoteca(d2); 
         setEventoImage(e3, "/posts/Event_3.jpg");
 
         Evento e4 = new Evento();
@@ -138,7 +132,6 @@ public class DatabaseInitializer {
         e4.setDiscoteca(d2);
         setEventoImage(e4, "/posts/Event_4.jpg");
 
-        // Asignar eventos a la discoteca
         d2.getEventos().addAll(Arrays.asList(e3, e4));
 
         Discoteca d3 = new Discoteca();
@@ -151,14 +144,14 @@ public class DatabaseInitializer {
         e5.setName("Noche inolvidable");
         e5.setDescripcion("DJ Hardcore");
         e5.setEdadRequerida(16);
-        e5.setDiscoteca(d3); // asignar la discoteca
+        e5.setDiscoteca(d3); 
         setEventoImage(e5, "/posts/Event_5.jpg");
 
         Evento e6 = new Evento();
         e6.setName("Noche final");
         e6.setDescripcion("DJ Theo");
         e6.setEdadRequerida(18);
-        e6.setDiscoteca(d3); // asignar la discoteca
+        e6.setDiscoteca(d3); 
         setEventoImage(e6, "/posts/Event_6.jpg");
 
         d3.getEventos().addAll(Arrays.asList(e5,e6));
@@ -167,6 +160,22 @@ public class DatabaseInitializer {
         discotecaService.save(d1);
         discotecaService.save(d2);
         discotecaService.save(d3);
+
+        // ==========================================
+        // INICIALIZACIÓN DE ENTRADAS
+        // ==========================================
+        
+        // Creamos la entrada usando el constructor de tu clase Entrada
+        Entrada entradaPrueba = new Entrada(
+            "Entrada General Anticipada", // name
+            "NORMAL",                     // acceso
+            "Incluye 1 consumición",      // incluye
+            15.50,                        // precio
+            e1                            // evento al que pertenece (Noche Electrónica)
+        );
+        
+        // Guardamos la entrada en la base de datos
+        entradaRepository.save(entradaPrueba);
     }
 
     public void setDiscotecaImage(Discoteca discoteca, String classpathResource) throws IOException, SQLException {
@@ -184,11 +193,12 @@ public class DatabaseInitializer {
         Image img = new Image(blob);
         evento.setImage(img);
     }
+    
     public void setUserAvatar(User user, String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();
         Blob blob = new SerialBlob(bytes);
         Image img = new Image(blob);
-        user.setAvatar(img); // o setAvatar dependiendo de tu modelo
+        user.setAvatar(img); 
     }
 }
