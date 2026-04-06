@@ -179,7 +179,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 ## 🛠 **Práctica 2: Web con HTML generado en servidor**
 
 ### **Vídeo de Demostración**
-📹 **[Enlace al vídeo en YouTube](https://www.youtube.com/watch?v=x91MPoITQ3I)**
+📹 **[Enlace al vídeo en YouTube](https://youtu.be/7f5-w5AV2Vk)**
 > Vídeo mostrando las principales funcionalidades de la aplicación web.
 
 ### **Navegación y Capturas de Pantalla**
