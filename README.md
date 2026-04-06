@@ -253,7 +253,7 @@ Diagrama mostrando las entidades, sus campos y relaciones:
 
 ![Diagrama Entidad-Relación](./ProyectTicketFlow/src/main/resources/posts/database.png)
 
-> [Descripción opcional: Ej: "El diagrama muestra las 4 entidades principales: Usuario, Producto, Pedido y Categoría, con sus respectivos atributos y relaciones 1:N y N:M."]
+
 
 ### **Diagrama de Clases y Templates**
 
@@ -261,7 +261,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 ![Diagrama de Clases](./ProyectTicketFlow/src/main/resources/posts/diagrama.png)
 
-> [Descripción opcional del diagrama y relaciones principales]
+
 
 ### **Participación de Miembros en la Práctica 2**
 
@@ -279,15 +279,15 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 ---
 
-#### **Alumno 2 - [Nombre Completo]**
+#### **Alumno 2 - Eduardo Narros Sánchez**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
 | Nº    | Commits      | Files      |
 |:------------: |:------------:| :------------:|
-|1| [Descripción commit 1](URL_commit_1)  | [Archivo1](URL_archivo_1)   |
-|2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
-|3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
+|1| [Primer diseño de EventoController](https://github.com/DWS-2026/project-grupo-17/commit/386075e2d79e0cd8833ac502519c7a85908a9d6c)  | [EventoController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/EventoController.java)   |
+|2| [Primer diseño de seguridad con spring](https://github.com/DWS-2026/project-grupo-17/commit/72cc1f5b8bf6becfa43d488300c94632ff5fe35a#diff-970c32efad32a670394e4f89ea15fa090ebedda71a63e3733518f7cc7f46914f)  | [Security](ProyectTicketFlow/src/main/java/es/codeurjc/board/security)   |
+|3| [Botón ver perfil en el listado de usuarios que ve el admin](https://github.com/DWS-2026/project-grupo-17/commit/399e4cb96e938fe12cac29350148b8a09191bad3)  | [UserDTO.java UserController.java SecurityConfig.java admin.html profile.html ](ProyectTicketFlow/src/main/java/es/codeurjc/board/UserDTO.java ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/UserController.java ProyectTicketFlow/src/main/java/es/codeurjc/board/security/SecurityConfig.java ProyectTicketFlow/src/main/resources/templates/admin.html ProyectTicketFlow/src/main/resources/templates/profile.html)   |
 |4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |
 |5| [Descripción commit 5](URL_commit_5)  | [Archivo5](URL_archivo_5)   |
 
