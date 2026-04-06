@@ -25,6 +25,10 @@ import es.codeurjc.board.repositories.EntradaRepository; // ¡NUEVO! Importamos 
 import javax.sql.rowset.serial.SerialBlob;
 
 @Service
+/**
+ * Servicio de arranque que precarga datos iniciales en la base de datos.
+ * Se ejecuta una sola vez al levantar la aplicacion.
+ */
 public class DatabaseInitializer {
 
     @Autowired
@@ -36,7 +40,7 @@ public class DatabaseInitializer {
     @Autowired
     private UserRepository userRepository;
 
-    // ¡NUEVO! Inyectamos el repositorio para poder guardar la entrada en la base de datos
+    // Se usa repositorio directo para crear una entrada de ejemplo inicial.
     @Autowired
     private EntradaRepository entradaRepository; 
 
@@ -45,11 +49,10 @@ public class DatabaseInitializer {
 
 
     @PostConstruct
+    // Metodo ejecutado automaticamente tras crear el bean: genera usuarios, discotecas, eventos y entrada demo.
     public void init() throws IOException, SQLException {
 
-        // ==========================================
-        // INICIALIZACIÓN DE USUARIOS
-        // ==========================================
+        // 1) Inicializacion de usuarios base del sistema.
         
         User admin= new User(
             "Admin User", 
@@ -86,9 +89,7 @@ public class DatabaseInitializer {
         userRepository.save(juan);
         userRepository.save(maria);
 
-        // ==========================================
-        // INICIALIZACIÓN DE DISCOTECAS Y EVENTOS
-        // ==========================================
+        // 2) Inicializacion de discotecas y sus eventos asociados.
 
         Discoteca d1 = new Discoteca();
         d1.setName("Nuit");
@@ -156,28 +157,25 @@ public class DatabaseInitializer {
 
         d3.getEventos().addAll(Arrays.asList(e5,e6));
 
-        // Guardar la discoteca: Hibernate persiste todo junto
+        // Al guardar discotecas, Hibernate persiste tambien eventos asociados por cascada.
         discotecaService.save(d1);
         discotecaService.save(d2);
         discotecaService.save(d3);
 
-        // ==========================================
-        // INICIALIZACIÓN DE ENTRADAS
-        // ==========================================
+        // 3) Inicializacion de una entrada de prueba para facilitar tests manuales.
         
-        // Creamos la entrada usando el constructor de tu clase Entrada
         Entrada entradaPrueba = new Entrada(
-            "Entrada General Anticipada", // name
-            "NORMAL",                     // acceso
-            "Incluye 1 consumición",      // incluye
-            15.50,                        // precio
-            e1                            // evento al que pertenece (Noche Electrónica)
+            "Entrada General Anticipada",
+            "NORMAL",
+            "Incluye 1 consumición",
+            15.50,
+            e1
         );
         
-        // Guardamos la entrada en la base de datos
         entradaRepository.save(entradaPrueba);
     }
 
+    // Carga imagen desde recursos y la asigna a una discoteca.
     public void setDiscotecaImage(Discoteca discoteca, String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();
@@ -186,6 +184,7 @@ public class DatabaseInitializer {
         discoteca.setImage(img); 
     }
 
+    // Carga imagen desde recursos y la asigna a un evento.
     public void setEventoImage(Evento evento, String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();
@@ -194,6 +193,7 @@ public class DatabaseInitializer {
         evento.setImage(img);
     }
     
+    // Carga imagen desde recursos y la asigna como avatar de usuario.
     public void setUserAvatar(User user, String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();

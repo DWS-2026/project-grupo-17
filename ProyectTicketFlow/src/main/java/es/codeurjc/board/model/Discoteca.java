@@ -5,10 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+/**
+ * Entidad Discoteca.
+ * Representa una sala/local y actua como agregador de sus eventos.
+ */
 public class Discoteca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    // Identificador unico generado automaticamente.
     private Long id;
 
     private String name;
@@ -16,16 +21,20 @@ public class Discoteca {
     private String calle;
     private String descripcion;
 
+    // Imagen principal de la discoteca (logo o foto).
     @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
+    // Usuario propietario de la discoteca (modelo de ownership).
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     private User owner;
 
+    // Lista de eventos de la discoteca. orphanRemoval borra hijos huerfanos.
     @OneToMany(mappedBy = "discoteca", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Evento> eventos = new ArrayList<>();
 
+    // Constructor vacio requerido por JPA.
     public Discoteca() {}
 
     public Discoteca(String name, String calle, String descripcion) {
@@ -41,6 +50,7 @@ public class Discoteca {
         this.owner = owner;
     }
 
+    // Getters y setters de persistencia y uso en formularios/controladores.
     public Long getId() { return id; }
 
     public String getName() { return name; }

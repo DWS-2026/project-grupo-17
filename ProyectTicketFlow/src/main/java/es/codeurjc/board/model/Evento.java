@@ -5,22 +5,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+/**
+ * Entidad Evento.
+ * Representa una fiesta/sesion publicada por una discoteca.
+ */
 public class Evento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    // Identificador unico del evento.
     private Long id;
 
     private String name;
 
-    // Imagen del evento
+    // Cartel o imagen principal del evento.
     @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
+    // Discoteca a la que pertenece el evento.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discoteca_id")
     private Discoteca discoteca;
 
+    // Propietario del evento para control de permisos.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -28,9 +35,11 @@ public class Evento {
     private String descripcion;
     private Integer edadRequerida;
 
+    // Entradas disponibles para este evento.
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Entrada> entradas = new ArrayList<>();
 
+    // Constructor vacio requerido por JPA.
     public Evento() {}
 
     public Evento(String name, Discoteca discoteca, String descripcion, Image image, Integer edadRequerida) {
@@ -41,6 +50,7 @@ public class Evento {
         this.edadRequerida = edadRequerida;
     }
 
+    // Getters y setters usados por JPA, servicios y formularios.
     public Long getId() {
         return id;
     }

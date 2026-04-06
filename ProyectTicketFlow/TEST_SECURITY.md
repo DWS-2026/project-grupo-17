@@ -1,12 +1,12 @@
-## Test Plan para Spring Security Filters
+﻿## Test Plan para Spring Security Filters
 
 ### URLs de Prueba
 
 #### 1. **Rutas Públicas (Sin Autenticación Requerida)**
-- ✅ GET `http://localhost:8080/` → Debe mostrar página de inicio
-- ✅ GET `http://localhost:8080/login` → Formulario de login
-- ✅ GET `http://localhost:8080/register` → Formulario de registro
-- ✅ GET `http://localhost:8080/css/styles.css` → CSS estático
+-  GET `http://localhost:8080/` → Debe mostrar página de inicio
+-  GET `http://localhost:8080/login` → Formulario de login
+-  GET `http://localhost:8080/register` → Formulario de registro
+-  GET `http://localhost:8080/css/styles.css` → CSS estático
 
 #### 2. **Usuario No Autenticado - Debe Redirigir a /login**
 - GET `http://localhost:8080/profile` → Debe redirigir a /login
@@ -95,9 +95,9 @@
 
 ### Comportamiento Esperado
 
-✅ **Antes**: Los controladores tenían validaciones manuales que se podían evitar
-✅ **Ahora**: Los filtros interceptan antes de que llegue al controlador
-✅ **Seguridad**: No importa si el usuario manipula la URL, los filtros lo protegen
+ **Antes**: Los controladores tenían validaciones manuales que se podían evitar
+ **Ahora**: Los filtros interceptan antes de que llegue al controlador
+ **Seguridad**: No importa si el usuario manipula la URL, los filtros lo protegen
 
 ### Notas de Depuración
 
@@ -106,3 +106,4 @@ Si algo no funciona:
 2. Abre DevTools (F12) → Network → busca redirecciones (HTTP 302)
 3. Verifica que UserSession tenga los valores correctos después de login
 4. Confirma que el valor `isAdmin` es true después de login como admin
+

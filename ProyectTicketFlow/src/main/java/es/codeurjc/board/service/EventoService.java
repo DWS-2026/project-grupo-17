@@ -15,6 +15,10 @@ import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.Discoteca;
 
 @Service
+/**
+ * Servicio de eventos:
+ * ofrece consultas, guardado y borrado seguro eliminando relaciones con entradas.
+ */
 public class EventoService {
 
     @Autowired
@@ -25,14 +29,17 @@ public class EventoService {
     @Autowired
     private UserService userService;
 
+    // Devuelve todos los eventos.
     public Collection<Evento> findAll() {
         return eventoRepository.findAll();
     }
 
+    // Busca evento por id; si no existe devuelve null.
     public Evento findById(long id) {
         return eventoRepository.findById(id).orElse(null);
     }
 
+    // Filtra eventos por discoteca.
     public Collection<Evento> findByDiscoteca(Long discotecaId) {
 
         return eventoRepository.findAll()
@@ -42,11 +49,13 @@ public class EventoService {
                 .toList();
     }
 
+    // Guarda o actualiza un evento.
     public void save(Evento evento) {
         eventoRepository.save(evento);
     }
 
 
+    // Elimina evento y limpia primero entradas asociadas y sus referencias en usuarios.
     public void delete(Long id) {
 
         Evento evento = findById(id);
@@ -76,6 +85,8 @@ public class EventoService {
         // 4. Borrar evento
         eventoRepository.deleteById(id);
     }
+
+    // Obtiene tres eventos para la portada.
     public List<Evento> findFirst3() {
         return eventoRepository.findTop3By();
     }

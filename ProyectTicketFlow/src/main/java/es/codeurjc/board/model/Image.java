@@ -9,15 +9,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 
 @Entity
+/**
+ * Entidad Image.
+ * Guarda contenido binario (Blob) para avatars, carteles y fotos.
+ */
 public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    // Identificador unico de la imagen.
     private Long id;
 
     @Lob
+    // Binario de imagen persistido como objeto grande en BD.
     private Blob imageFile;
 
+    // Constructor vacio requerido por JPA.
     public Image() {
     }
 
@@ -25,6 +32,7 @@ public class Image {
         this.imageFile = imageFile;
     }
 
+    // Getters y setters de la entidad.
     public Long getId() {
         return id;
     }
@@ -42,6 +50,7 @@ public class Image {
     }
 
     @Override
+    // toString reducido para no imprimir el Blob completo en logs.
     public String toString() {
         return "Image [id=" + id + "]";
     }

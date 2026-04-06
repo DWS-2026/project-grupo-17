@@ -1,4 +1,4 @@
-package es.codeurjc.board.controller;
+﻿package es.codeurjc.board.controller;
 
 import es.codeurjc.board.UserDTO;
 import es.codeurjc.board.model.Evento;
@@ -159,7 +159,7 @@ public class UserController {
         return "redirect:/login";
     }
 
-    // 🔹 EDIT PROFILE (POST) ✅ MÉTODO BUENO (SEGURO)
+    // 🔹 EDIT PROFILE (POST)  MÉTODO BUENO (SEGURO)
     @PostMapping("/edit-profile")
     public String updateProfile(
             @RequestParam String nombre,

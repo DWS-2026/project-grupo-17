@@ -1,49 +1,49 @@
-# Implementación de Spring Security y Requisitos de Práctica
+﻿# Implementación de Spring Security y Requisitos de Práctica
 
-## ✅ Requisitos Cubiertos
+##  Requisitos Cubiertos
 
 ### 1. **Gestión de Usuarios con Spring Security**
-- ✅ Implementado sistema de autenticación con UserSession
-- ✅ Filtros de seguridad personalizados (AuthenticationFilter, AdminFilter)
-- ✅ Validación de permisos en controladores
+-  Implementado sistema de autenticación con UserSession
+-  Filtros de seguridad personalizados (AuthenticationFilter, AdminFilter)
+-  Validación de permisos en controladores
 
 ### 2. **Control de Acceso a Recursos**
-- ✅ Página de error 403 para acceso denegado (`/error-403`)
-- ✅ Redirección automática cuando usuario no tiene permisos
-- ✅ Validación de propiedad de registros (ownership)
+-  Página de error 403 para acceso denegado (`/error-403`)
+-  Redirección automática cuando usuario no tiene permisos
+-  Validación de propiedad de registros (ownership)
 
 ### 3. **Gestión de Registros por Propietario**
-- ✅ Un usuario solo puede editar sus propios registros
-- ✅ Discotecas tienen campo `owner` (propietario)
-- ✅ Eventos tienen campo `owner` (propietario)
-- ✅ Error 403 si intenta editar/eliminar registro ajeno
+-  Un usuario solo puede editar sus propios registros
+-  Discotecas tienen campo `owner` (propietario)
+-  Eventos tienen campo `owner` (propietario)
+-  Error 403 si intenta editar/eliminar registro ajeno
 
 ### 4. **Administrador con Contraseña Especificada**
-- ✅ Usuario admin precargado: `admin@example.com` / `admin`
-- ✅ Contraseña especificada en código: `Application.java`
-- ✅ Campo `admin=true` en modelo User
+-  Usuario admin precargado: `admin@example.com` / `admin`
+-  Contraseña especificada en código: `Application.java`
+-  Campo `admin=true` en modelo User
 
 ### 5. **Usuarios Precargados en Base de Datos**
-- ✅ Usuario Admin: admin@example.com / admin
-- ✅ Usuario 1: juan@example.com / 12345
-- ✅ Usuario 2: maria@example.com / password123
-- ✅ Se crean automáticamente al iniciar la aplicación
+-  Usuario Admin: admin@example.com / admin
+-  Usuario 1: juan@example.com / 12345
+-  Usuario 2: maria@example.com / password123
+-  Se crean automáticamente al iniciar la aplicación
 
 ### 6. **Formulario de Registro**
-- ✅ Ruta: `/register`
-- ✅ POST: `/register` → crea nuevo usuario
-- ✅ Validación de email único
-- ✅ Usuario se registra automáticamente logueado
+-  Ruta: `/register`
+-  POST: `/register` → crea nuevo usuario
+-  Validación de email único
+-  Usuario se registra automáticamente logueado
 
 ### 7. **HTTPS en Puerto 8443**
-- ✅ Certificado SSL autofirmado generado (`keystore.p12`)
-- ✅ Tomcat configurado para HTTPS en puerto 8443
-- ✅ `application.properties` actualizado con configuración SSL
-- ✅ Validez del certificado: 365 días
+-  Certificado SSL autofirmado generado (`keystore.p12`)
+-  Tomcat configurado para HTTPS en puerto 8443
+-  `application.properties` actualizado con configuración SSL
+-  Validez del certificado: 365 días
 
 ---
 
-## 📊 Cambios Implementados
+## Cambios Implementados
 
 ### **Nuevos Archivos Creados:**
 
@@ -95,7 +95,7 @@
 
 ---
 
-## 🔐 Sistema de Seguridad en Capas
+##  Sistema de Seguridad en Capas
 
 ### **Capa 1: Autenticación (AuthenticationFilter)**
 ```
@@ -128,7 +128,7 @@ En el método del controlador (editDiscotecaForm, deleteDiscoteca, etc.)
 
 ---
 
-## 🧪 Casos de Prueba
+##  Casos de Prueba
 
 ### **Test 1: Usuario No Autenticado**
 ```
@@ -174,7 +174,7 @@ Resultado: Página carga (navegador muestra certificado autofirmado) ✓
 
 ---
 
-## 🔑 Credenciales de Prueba
+##  Credenciales de Prueba
 
 | Email | Contraseña | Rol | Permisos |
 |-------|-----------|-----|----------|
@@ -184,7 +184,7 @@ Resultado: Página carga (navegador muestra certificado autofirmado) ✓
 
 ---
 
-## ⚠️ Notas Importantes
+##  Notas Importantes
 
 ### **Certificado SSL:**
 - Es **autofirmado** (no es de una CA reconocida)
@@ -210,7 +210,7 @@ Resultado: Página carga (navegador muestra certificado autofirmado) ✓
 
 ---
 
-## 🚀 Cómo Ejecutar
+##  Cómo Ejecutar
 
 ```bash
 cd ProyectTicketFlow
@@ -219,22 +219,23 @@ mvn clean spring-boot:run
 
 Acceder a: **https://localhost:8443**
 
-> ⚠️ El navegador puede mostrar advertencia de certificado autofirmado. Es normal. Aceptar/Continuar.
+>  El navegador puede mostrar advertencia de certificado autofirmado. Es normal. Aceptar/Continuar.
 
 ---
 
-## 📝 Requisitos de Práctica - Estado Final
+## Requisitos de Práctica - Estado Final
 
 | Requisito | Estado | Detalles |
 |-----------|--------|----------|
-| Gestión usuarios con Spring Security | ✅ | Filtros + Session + Validaciones |
-| Error acceso (403) | ✅ | Página error-403.html |
-| Restricción edición registros ajenos | ✅ | Validación propiedad + owner field |
-| Admin con contraseña en código | ✅ | admin@example.com / admin |
-| Dos usuarios precargados | ✅ | juan + maria (+ admin) |
-| Formulario registro | ✅ | POST /register |
-| **HTTPS puerto 8443** | ✅ | Tomcat configured + keystore.p12 |
+| Gestión usuarios con Spring Security |  | Filtros + Session + Validaciones |
+| Error acceso (403) |  | Página error-403.html |
+| Restricción edición registros ajenos |  | Validación propiedad + owner field |
+| Admin con contraseña en código |  | admin@example.com / admin |
+| Dos usuarios precargados |  | juan + maria (+ admin) |
+| Formulario registro |  | POST /register |
+| **HTTPS puerto 8443** |  | Tomcat configured + keystore.p12 |
 
 ---
 
-**Todos los requisitos de la práctica han sido implementados correctamente.** ✅
+**Todos los requisitos de la práctica han sido implementados correctamente.** 
+

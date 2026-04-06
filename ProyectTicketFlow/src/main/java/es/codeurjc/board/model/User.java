@@ -7,10 +7,15 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "app_user")
+/**
+ * Entidad User.
+ * Almacena datos de autenticacion, perfil, roles y entradas compradas.
+ */
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    // Identificador unico del usuario.
     private Long id;
 
     private String nombre;
@@ -18,12 +23,15 @@ public class User {
     private String encodedPassword;
     private LocalDate fechaNacimiento;
 
+        // Avatar del usuario.
     @OneToOne(cascade = CascadeType.ALL)
     private Image avatar;
 
+        // Roles de seguridad (ejemplo: USER, ADMIN).
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
+        // Relacion de compra: un usuario puede tener multiples entradas compradas.
     @ManyToMany
     @JoinTable(
             name = "user_entradas",
@@ -32,6 +40,7 @@ public class User {
     )
     private List<Entrada> entradasCompradas = new ArrayList<>();
 
+        // Constructor vacio requerido por JPA.
     public User() {}
 
     public User(String nombre, String email, String encodedPassword, LocalDate fechaNacimiento,  Image avatar, String... roles) {
@@ -44,7 +53,7 @@ public class User {
         this.entradasCompradas = new ArrayList<>();
     }
 
-    // ===== GETTERS Y SETTERS =====
+    // Getters y setters de persistencia y uso en controladores/servicios.
 
     public Long getId() {
         return id;

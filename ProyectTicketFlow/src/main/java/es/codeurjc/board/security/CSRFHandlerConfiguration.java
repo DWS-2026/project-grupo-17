@@ -11,17 +11,25 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+/**
+ * Registra un interceptor MVC para exponer el token CSRF en las vistas.
+ */
 public class CSRFHandlerConfiguration implements WebMvcConfigurer {
 
 	@Override
+	// Anade el interceptor al pipeline MVC para todas las rutas.
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new CSRFHandlerInterceptor());
 	}
 }
 
+/**
+ * Interceptor que copia el token CSRF desde la request al modelo de la vista.
+ */
 class CSRFHandlerInterceptor implements HandlerInterceptor {
 
 	@Override
+	// Se ejecuta despues del controlador y antes de renderizar la plantilla.
 	public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
 			final ModelAndView modelAndView) throws Exception {
 

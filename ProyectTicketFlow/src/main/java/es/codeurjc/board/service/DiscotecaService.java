@@ -15,6 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import es.codeurjc.board.model.Discoteca;
 
 @Service
+/**
+ * Servicio de discotecas:
+ * gestiona consultas, guardado y borrado completo de discoteca con su grafo de datos.
+ */
 public class DiscotecaService {
 
     @Autowired
@@ -29,18 +33,22 @@ public class DiscotecaService {
     @Autowired
     private DiscotecaRepository discotecaRepository;
 
+    // Devuelve todas las discotecas.
     public Collection<Discoteca> findAll() {
         return discotecaRepository.findAll();
     }
 
+    // Busca discoteca por id; si no existe devuelve null.
     public Discoteca findById(long id) {
         return discotecaRepository.findById(id).orElse(null);
     }
 
+    // Guarda o actualiza una discoteca.
     public void save(Discoteca discoteca) {
         discotecaRepository.save(discoteca);
     }
 
+    // Elimina discoteca limpiando antes eventos, entradas y compras asociadas.
     public void delete(Long id) {
 
         Discoteca discoteca = findById(id);

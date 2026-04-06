@@ -15,17 +15,23 @@ import java.util.List;
 
 
 @Service
+/**
+ * Adaptador entre la tabla de usuarios y Spring Security.
+ * Carga el usuario por email y transforma sus roles al formato ROLE_ requerido.
+ */
 public class RepositoryUserDetails implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
 
 	@Override
+	// Metodo que Spring Security invoca durante el login.
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+		// Convierte roles de dominio (ej: ADMIN) en authorities de Spring (ROLE_ADMIN).
 		List<GrantedAuthority> roles = new ArrayList<>();
 		if (user.getRoles() != null) {
 			for (String role : user.getRoles()) {

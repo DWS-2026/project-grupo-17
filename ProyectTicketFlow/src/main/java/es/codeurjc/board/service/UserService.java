@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+/**
+ * Servicio de usuarios:
+ * centraliza la logica de consulta, alta, edicion y borrado de usuarios,
+ * junto con la gestion de avatar por defecto o subido por formulario.
+ */
 public class UserService {
 
     @Autowired
@@ -28,19 +33,22 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    // Devuelve todos los usuarios persistidos.
     public Collection<User> findAll() {
         return userRepository.findAll();
     }
 
+    // Busca usuario por id; si no existe devuelve null.
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
+    // Busca usuario por email (clave principal de login funcional).
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // Guardar un usuario con avatar opcional
+    // Crea y guarda usuario nuevo: cifra password, asigna rol USER y avatar (subido o por defecto).
     public void save(String nombre, String email, String password, LocalDate fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
         User user = new User();
         user.setNombre(nombre);
@@ -59,7 +67,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // Actualizar usuario
+    // Actualiza campos de perfil de un usuario existente y reemplaza avatar si llega uno nuevo.
     public void update(Long id, String nombre, String email, LocalDate fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
         User user = userRepository.findById(id).orElse(null);
 
@@ -77,14 +85,14 @@ public class UserService {
         }
     }
 
-    // Crear Image desde MultipartFile
+    // Convierte archivo multipart en entidad Image para persistirla en BD.
     public Image createImageFromMultipart(MultipartFile file) throws IOException, SQLException {
         byte[] bytes = file.getBytes();
         Blob blob = new SerialBlob(bytes);
         return new Image(blob);
     }
 
-    // Obtener imagen por defecto
+    // Carga una imagen por defecto desde classpath para usuarios sin avatar propio.
     public Image getDefaultImage(String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();
@@ -92,10 +100,12 @@ public class UserService {
         return new Image(blob);
     }
 
+    // Guarda una entidad User ya construida o modificada.
     public void saveUser(User user) {
         userRepository.save(user);
     }
 
+    // Elimina usuario por id.
     public void delete(Long id) {
         userRepository.deleteById(id);
     }

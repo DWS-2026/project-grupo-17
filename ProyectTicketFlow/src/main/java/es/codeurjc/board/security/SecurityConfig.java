@@ -12,17 +12,23 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+/**
+ * Configuracion principal de Spring Security.
+ * Define autenticacion, autorizacion por rutas, login/logout y manejo de acceso denegado.
+ */
 public class SecurityConfig {
 
     @Autowired
     RepositoryUserDetails userDetailsService;
 
     @Bean
+        // Encoder usado para cifrar y verificar contrasenas.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
+        // Proveedor de autenticacion basado en UserDetailsService + PasswordEncoder.
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider =
                 new DaoAuthenticationProvider(userDetailsService);
@@ -31,6 +37,7 @@ public class SecurityConfig {
     }
 
     @Bean
+        // Cadena de filtros HTTP: reglas de acceso, formulario de login y logout.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authenticationProvider(authenticationProvider());
@@ -38,17 +45,17 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
 
-                        // 🔴 ADMIN - DISCOTECAS
+                        // ADMIN - DISCOTECAS
                         .requestMatchers("/discotecas/create-discotecas").hasRole("ADMIN")
                         .requestMatchers("/discotecas/edit/**").hasRole("ADMIN")
                         .requestMatchers("/discotecas/delete/**").hasRole("ADMIN")
 
-                        // 🔴 ADMIN - EVENTOS
+                        // ADMIN - EVENTOS
                         .requestMatchers("/discotecas/*/eventos/create").hasRole("ADMIN")
                         .requestMatchers("/eventos/*/edit").hasRole("ADMIN")
                         .requestMatchers("/eventos/*/delete").hasRole("ADMIN")
 
-                        // 🔴 ADMIN - ENTRADAS
+                        // ADMIN - ENTRADAS
                         .requestMatchers("/eventos/*/entradas/create").hasRole("ADMIN")
                         .requestMatchers("/entradas/create-ticket").hasRole("ADMIN")
                         .requestMatchers("/entradas/*/edit").hasRole("ADMIN")
@@ -59,17 +66,17 @@ public class SecurityConfig {
                         .requestMatchers("/user/*/avatar").permitAll()
 
 
-                        // 🔵 USUARIO LOGUEADO
+                        // USUARIO LOGUEADO
                         .requestMatchers("/profile", "/edit-profile", "/entradas/*/pago", "/mis-entradas").authenticated()
 
-                        // 🟢 PÚBLICO
+                        // PUBLICO
                         .requestMatchers("/", "/login", "/register", "/css/**", "/images/**").permitAll()
 
                         // RESTO
                         .anyRequest().permitAll()
                 )
 
-                // 🔐 LOGIN
+                // LOGIN
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
@@ -77,7 +84,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
-                // 🚪 LOGOUT
+                // LOGOUT
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
