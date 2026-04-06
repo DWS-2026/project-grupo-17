@@ -73,7 +73,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 ### **Capturas de Pantalla y Descripción de Páginas**
 
 #### **1. Página Principal / Home**
-![Página Principal](./ProyectTicketFlow/src/main/resources/posts/index.png) NO VA PORQUE HAY QUE AÑADIR IMAGEN
+![Página Principal](./ProyectTicketFlow/src/main/resources/posts/index.png) 
 
 > Maqueta de la página de aterrizaje que sirve como punto de entrada. Presenta un diseño oscuro con un banner hero que utiliza una imagen inmersiva y el eslogan "Vive la noche". En la parte inferior, se muestra una cuadrícula estática de "Próximos Eventos" con tarjetas que incluyen el nombre del evento, la sala y la fecha. Además cuenta con enlaces de login, registro y perfil, todo de forma estática.
 
@@ -115,7 +115,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
     - Gestión de Ticketing: Maquetas de los formularios para crear o modificar las condiciones de acceso y el coste de cada tipo de entrada.
 
 #### **9. Creación y Edición de Eventos**
-![Creación y Edición de Eventos](./ProyectTicketFlow/src/main/resources/posts/editarEvento.png) NO VA PORQUE HAY QUE AÑADIR IMAGEN
+![Creación y Edición de Eventos](./ProyectTicketFlow/src/main/resources/posts/editarEvento.png) 
 > Interfaces diseñadas para la planificación de fiestas. Permiten simular la vinculación de un evento a una discoteca existente del listado y la subida de la imagen promocional o cartel del evento.
 
 ### **Participación de Miembros en la Práctica 1**
@@ -204,15 +204,48 @@ Solo si han cambiado.
 
 1. **Clonar el repositorio**
    ```bash
-   git clone https://github.com/[usuario]/[nombre-repositorio].git
-   cd [nombre-repositorio]
+   git clone https://github.com/DWS-2026/project-grupo-17.git
+   cd project-grupo-17
    ```
 
-2. **AQUÍ INDICAR LO SIGUIENTES PASOS**
+2. **Crear la base de datos en MySQL**
+```bash
+CREATE DATABASE ticketflow;
+```
+3. **Ejecutar la aplicación**
+```bash
+./mvnw spring-boot:run
+```
+4. **Abrir en el navegador**
+```bash
+https://localhost:8443
+```
 
 #### **Credenciales de prueba**
-- **Usuario Admin**: usuario: `admin`, contraseña: `admin`
-- **Usuario Registrado**: usuario: `user`, contraseña: `user`
+
+Usuario Admin: * Usuario: Admin User
+
+Email: admin@example.com
+
+Contraseña: admin
+
+Roles: USER, ADMIN
+
+Usuario Registrado 1: * Usuario: Juan García
+
+Email: juan@example.com
+
+Contraseña: 12345
+
+Roles: USER
+
+Usuario Registrado 2: * Usuario: María López
+
+Email: maria@example.com
+
+Contraseña: password123
+
+Roles: USER
 
 ### **Diagrama de Entidades de Base de Datos**
 
