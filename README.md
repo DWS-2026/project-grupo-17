@@ -186,7 +186,7 @@ Diagrama que muestra cómo se navega entre las diferentes páginas de la aplicac
 
 #### **Diagrama de Navegación**
 
-![Diagrama de Navegación](./ProyectTicketFlow/src/main/resources/posts/DiagramaNav2.svg)
+![Diagrama de Navegación](./ProyectTicketFlow/src/main/resources/posts/DiagramaNav2.png)
 > Hemos actualizado el diagrama de navegación ya que hemos añadido alguna vista más. También lo hemos mejorado respecto a la primera entrega.
 
 #### **Capturas de Pantalla Actualizadas**
