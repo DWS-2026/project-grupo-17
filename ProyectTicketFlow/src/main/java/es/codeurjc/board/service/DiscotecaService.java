@@ -46,17 +46,17 @@ public class DiscotecaService {
         Discoteca discoteca = findById(id);
         if (discoteca == null) return;
 
-        // 🔹 1. obtener eventos
+        // 1. Obtener eventos
         List<Evento> eventos = discoteca.getEventos();
 
         for (Evento evento : eventos) {
 
-            // 🔹 2. obtener entradas del evento
+            // 2. Obtener entradas del evento
             Collection<Entrada> entradas = entradaService.findByEvento(evento.getId());
 
             for (Entrada entrada : entradas) {
 
-                // 🔹 3. quitar entradas de usuarios
+                // 3. Quitar entradas de usuarios
                 for (User user : userService.findAll()) {
 
                     if (user.getEntradasCompradas() != null &&
@@ -67,15 +67,15 @@ public class DiscotecaService {
                     }
                 }
 
-                // 🔹 4. borrar entrada
+                // 4. Borrar entrada
                 entradaService.delete(entrada.getId());
             }
 
-            // 🔹 5. borrar evento
+            // 5. Borrar evento
             eventoService.delete(evento.getId());
         }
 
-        // 🔹 6. borrar discoteca
+        // 6. Borrar discoteca
         discotecaRepository.deleteById(id);
     }
 }

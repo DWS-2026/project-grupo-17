@@ -102,7 +102,7 @@ public class User {
         this.roles = roles;
     }
 
-    // 🔥 NUEVOS GETTERS/SETTERS
+    // Getters y setters de entradas compradas
 
     public List<Entrada> getEntradasCompradas() {
         return entradasCompradas;

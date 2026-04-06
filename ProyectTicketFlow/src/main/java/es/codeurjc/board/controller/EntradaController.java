@@ -21,6 +21,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+/**
+ * Controlador de entradas:
+ * gestiona el listado de entradas de un evento, su alta/edicion/borrado
+ * y la compra de entradas por parte de usuarios autenticados.
+ */
 public class EntradaController {
 
     @Autowired
@@ -33,6 +38,7 @@ public class EntradaController {
     private EventoService eventoService;
 
     @ModelAttribute
+	// Este metodo se ejecuta antes de cada handler para exponer datos de sesion comunes en las vistas.
 	public void addAttributes(Model model, HttpServletRequest request) {
 
 		Principal principal = request.getUserPrincipal();
@@ -50,6 +56,7 @@ public class EntradaController {
 
 
     @GetMapping("/eventos/{id}/entradas")
+    // Muestra todas las entradas asociadas a un evento concreto.
     public String showEntradas(@PathVariable Long id, Model model) {
 
         Evento evento = eventoService.findById(id);
@@ -63,6 +70,7 @@ public class EntradaController {
 
 
     @GetMapping("/eventos/{eventoId}/entradas/create")
+    // Carga el formulario de creacion de entrada para un evento.
     public String newEntradaForm(@PathVariable Long eventoId, Model model) {
 
         Evento evento = eventoService.findById(eventoId);
@@ -73,6 +81,7 @@ public class EntradaController {
 
 
     @PostMapping("/entradas/create-ticket")
+    // Recibe el formulario de alta, valida los datos y guarda la entrada.
     public String createEntrada(@RequestParam String name,
                                 @RequestParam String acceso,
                                 @RequestParam String incluye,
@@ -99,6 +108,7 @@ public class EntradaController {
 
 
     @GetMapping("/entradas/{id}/edit")
+    // Carga la vista de edicion con los datos actuales de la entrada.
     public String editEntradaForm(@PathVariable long id, Model model) {
 
         Entrada entrada = entradaService.findById(id);
@@ -111,6 +121,7 @@ public class EntradaController {
 
 
     @PostMapping("/entradas/{id}/edit")
+    // Aplica cambios sobre una entrada existente tras validar los campos.
     public String updateEntrada(@PathVariable long id,
                                 @RequestParam String name,
                                 @RequestParam String acceso,
@@ -140,6 +151,7 @@ public class EntradaController {
 
 
     @PostMapping("/entradas/{id}/delete")
+    // Elimina la entrada y la retira de los usuarios que la tuvieran comprada.
     public String deleteEntrada(@PathVariable long id) {
 
         Entrada entrada = entradaService.findById(id);
@@ -163,6 +175,7 @@ public class EntradaController {
     }
 
     @GetMapping("/entradas/{id}/pago")
+    // Simula la compra: asocia la entrada al usuario autenticado si aun no la tenia.
     public String comprarEntrada(@PathVariable Long id, Principal principal, Model model) {
 
         if (principal == null || principal.getName().equals("anonymousUser")) {
@@ -189,10 +202,8 @@ public class EntradaController {
                     .anyMatch(e -> e.getId().equals(entrada.getId()));
 
             if (yaComprada) {
-                // MENSAJE
                 model.addAttribute("error", "Ya has comprado esta entrada");
 
-                // volver a la misma vista de entradas
                 model.addAttribute("evento", entrada.getEvento());
                 model.addAttribute("discoteca", entrada.getEvento().getDiscoteca());
                 model.addAttribute("entradas", entradaService.findByEvento(entrada.getEvento().getId()));
@@ -208,6 +219,7 @@ public class EntradaController {
         return "redirect:/profile";
     }
 
+    // Utilidad local para validar textos obligatorios.
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

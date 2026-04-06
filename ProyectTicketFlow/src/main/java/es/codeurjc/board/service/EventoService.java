@@ -53,10 +53,10 @@ public class EventoService {
 
         if (evento == null) return;
 
-        // 🔹 1. obtener entradas del evento
+        // 1. Obtener entradas del evento
         Collection<Entrada> entradas = entradaService.findByEvento(id);
 
-        // 🔹 2. quitar entradas de usuarios
+        // 2. Quitar entradas de usuarios
         for (Entrada entrada : entradas) {
 
             for (User user : userService.findAll()) {
@@ -69,11 +69,11 @@ public class EventoService {
                 }
             }
 
-            // 🔹 3. borrar entrada
+            // 3. Borrar entrada
             entradaService.delete(entrada.getId());
         }
 
-        // 🔹 4. borrar evento
+        // 4. Borrar evento
         eventoRepository.deleteById(id);
     }
     public List<Evento> findFirst3() {

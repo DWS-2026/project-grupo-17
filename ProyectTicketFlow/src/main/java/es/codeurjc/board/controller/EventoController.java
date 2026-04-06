@@ -23,6 +23,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 @Controller
+/**
+ * Controlador de eventos:
+ * permite listar, crear, editar, mostrar imagen y borrar eventos
+ * dentro de una discoteca.
+ */
 public class EventoController {
 
     @Autowired
@@ -37,6 +42,7 @@ public class EventoController {
 
 
     @GetMapping("/discotecas/{id}/eventos")
+    // Lista los eventos de una discoteca y expone si el usuario es admin.
     public String showEventos(@PathVariable Long id, Model model, HttpServletRequest request) {
 
         Discoteca discoteca = discotecaService.findById(id);
@@ -50,6 +56,7 @@ public class EventoController {
 
 
     @GetMapping("/discotecas/{id}/eventos/create")
+    // Muestra el formulario para crear evento en la discoteca seleccionada.
     public String createEventoForm(@PathVariable Long id, Model model) {
 
         Discoteca discoteca = discotecaService.findById(id);
@@ -60,13 +67,14 @@ public class EventoController {
     }
 
     @PostMapping("/discotecas/{id}/eventos/create")
+    // Procesa el alta de un nuevo evento, validando datos y guardando imagen si existe.
     public String createEventoProcess(@PathVariable Long id,
                                       @ModelAttribute Evento evento,
                                       @RequestParam("imageFile") MultipartFile imageFile,
                                       Model model)
             throws IOException, SQLException {
 
-        // 🔥 1. Obtener discoteca
+        // 1. Obtener discoteca
         Discoteca discoteca = discotecaService.findById(id);
 
         if (discoteca == null) {
@@ -81,7 +89,7 @@ public class EventoController {
 
         evento.setDiscoteca(discoteca);
 
-        // 🔥 2. Procesar imagen (manual)
+        // 2. Procesar imagen de forma manual desde multipart.
         if (imageFile != null && !imageFile.isEmpty()) {
 
             byte[] bytes = imageFile.getBytes();
@@ -91,7 +99,7 @@ public class EventoController {
             evento.setImage(img);
         }
 
-        // 🔥 3. Guardar evento
+        // 3. Guardar evento.
         eventoService.save(evento);
 
         return "redirect:/discotecas/" + id + "/eventos";
@@ -99,6 +107,7 @@ public class EventoController {
 
     @GetMapping("/eventos/{id}/image")
     @ResponseBody
+    // Devuelve la imagen del evento como bytes para renderizar en la web.
     public ResponseEntity<byte[]> showImage(@PathVariable long id) throws IOException, SQLException {
 
         Evento e = eventoService.findById(id);
@@ -116,6 +125,7 @@ public class EventoController {
     }
 
     @GetMapping("/eventos/{id}/edit")
+    // Carga formulario de edicion del evento junto con las discotecas disponibles.
     public String editEventoForm(@PathVariable long id, Model model) {
 
         Evento evento = eventoService.findById(id);
@@ -128,6 +138,7 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/{id}/edit")
+    // Aplica cambios en evento existente e imagen opcional.
     public String updateEventoProcess(@PathVariable long id,
                                       Evento eventoForm,
                                       @RequestParam(required = false) MultipartFile image,
@@ -148,7 +159,7 @@ public class EventoController {
             return "edit-event";
         }
 
-        // 🔹 actualizar campos normales
+        // Actualizar campos normales.
         evento.setName(eventoForm.getName());
         evento.setDescripcion(eventoForm.getDescripcion());
         evento.setEdadRequerida(eventoForm.getEdadRequerida());
@@ -157,7 +168,7 @@ public class EventoController {
             evento.setDiscoteca(eventoForm.getDiscoteca());
         }
 
-        // 🔹 manejar imagen MANUALMENTE
+        // Manejar imagen manualmente si se ha subido una nueva.
         if (image != null && !image.isEmpty()) {
             byte[] bytes = image.getInputStream().readAllBytes();
             Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
@@ -171,6 +182,7 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/{id}/delete")
+    // Elimina un evento y redirige al listado de su discoteca.
     public String deleteEvento(@PathVariable long id) {
 
         Evento evento = eventoService.findById(id);
@@ -181,6 +193,7 @@ public class EventoController {
         return "redirect:/discotecas/" + discotecaId + "/eventos";
     }
 
+    // Utilidad local para validar texto obligatorio.
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

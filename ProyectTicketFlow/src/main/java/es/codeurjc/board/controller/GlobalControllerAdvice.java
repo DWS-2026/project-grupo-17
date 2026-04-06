@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import java.security.Principal;
 
 @ControllerAdvice
+/**
+ * Advice global para inyectar en todas las vistas datos comunes de sesion.
+ */
 public class GlobalControllerAdvice {
 
     @ModelAttribute
+    // Se ejecuta antes de cada controlador y evita repetir este bloque en cada clase.
     public void addAttributes(Model model, HttpServletRequest request) {
 
         Principal principal = request.getUserPrincipal();
@@ -19,8 +23,8 @@ public class GlobalControllerAdvice {
             model.addAttribute("email", principal.getName());
             model.addAttribute("admin", request.isUserInRole("ADMIN"));
         } else {
-            model.addAttribute("email", null);     // 🔹 importante
-            model.addAttribute("admin", false);    // 🔹 CLAVE
+            model.addAttribute("email", null);
+            model.addAttribute("admin", false);
         }
     }
 }

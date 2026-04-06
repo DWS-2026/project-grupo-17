@@ -15,12 +15,16 @@ import es.codeurjc.board.service.ImageService;
 
 
 @Controller
+/**
+ * Controlador auxiliar para servir imagenes por id.
+ */
 public class ImageController {
 
     @Autowired
     private ImageService imageService;
 
     @GetMapping("/images/{id}")
+    // Devuelve el recurso binario detectando su tipo MIME de forma automatica.
     public ResponseEntity<Object> getImageFile(@PathVariable long id) throws SQLException {
 
         Resource imageFile = imageService.getImageFile(id);
