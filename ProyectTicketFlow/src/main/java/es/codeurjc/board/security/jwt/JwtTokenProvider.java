@@ -12,14 +12,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtTokenProvider {
 
-	private final SecretKey jwtSecret = Jwts.SIG.HS256.key().build();
-	private final JwtParser jwtParser = Jwts.parser().verifyWith(jwtSecret).build();
+	private final SecretKey jwtSecret = Keys.hmacShaKeyFor("my-secret-key-that-is-at-least-32-bytes-long-for-hs256".getBytes());
+	private final JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(jwtSecret).build();
 
 	public String tokenStringFromHeaders(HttpServletRequest req){
 		String bearerToken = req.getHeader(HttpHeaders.AUTHORIZATION);
@@ -59,7 +60,7 @@ public class JwtTokenProvider {
 	}
 
 	public Claims validateToken(String token) {
-		return jwtParser.parseSignedClaims(token).getPayload();
+		return jwtParser.parseClaimsJws(token).getBody();
 	}
 
 	public String generateAccessToken(UserDetails userDetails) {
@@ -77,9 +78,9 @@ public class JwtTokenProvider {
 		return Jwts.builder()
 				.claim("roles", userDetails.getAuthorities())
 				.claim("type", tokenType.name())
-				.subject(userDetails.getUsername())
-				.issuedAt(currentDate)
-				.expiration(expiryDate)
+				.setSubject(userDetails.getUsername())
+				.setIssuedAt(currentDate)
+				.setExpiration(expiryDate)
 				.signWith(jwtSecret);
 	}
 }
