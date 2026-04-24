@@ -44,3 +44,7 @@ public class RepositoryUserDetails implements UserDetailsService {
 
 	}
 }
+//el usuario hace login. Este metodo busca que el usuario exista en la base
+//construyes los details de los roles para spring (lo necesita en formato ROLE_ADMIN
+//en el return creas un objeto que spring entiende y compara la password introdcida con la encriptada
+//si la password coincide login OK

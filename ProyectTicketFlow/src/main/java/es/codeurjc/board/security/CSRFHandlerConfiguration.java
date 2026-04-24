@@ -42,3 +42,7 @@ class CSRFHandlerInterceptor implements HandlerInterceptor {
 		}
 	}
 }
+
+//el usuario abre una sesion http y se le asigna un token
+//este handler guarda el token para esa sesión y se lo pasa a todos los html
+//cuando se envie un post (formulario) se comprueba que el token del form coincide con el de la sesión

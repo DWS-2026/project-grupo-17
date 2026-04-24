@@ -1,5 +1,4 @@
-﻿package es.codeurjc.board.controller;
-
+package es.codeurjc.board.controller;
 import es.codeurjc.board.UserDTO;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.User;

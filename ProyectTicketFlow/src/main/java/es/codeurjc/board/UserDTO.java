@@ -38,3 +38,6 @@ public class UserDTO {
         return admin;
     }
 }
+//esta clase sirve para hacer una version simplificada del usuario.
+//si hicieras model.addAttribute("usuarios", userService.findAll()); estas enviando password y roles
+//con userDTO controlas que datos enviar
