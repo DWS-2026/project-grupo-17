@@ -6,10 +6,8 @@ import java.sql.Blob;
 import java.sql.SQLException;
 
 import es.codeurjc.board.model.Discoteca;
-import es.codeurjc.board.model.Image;
 import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.DiscotecaService;
-import es.codeurjc.board.service.ImageService;
 import es.codeurjc.board.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +29,6 @@ public class DiscotecaController {
 
     @Autowired
     private DiscotecaService discotecaService;
-
-    @Autowired
-    private ImageService imageService;
 
     @Autowired
     private UserService userService;
@@ -90,25 +85,20 @@ public class DiscotecaController {
             return "redirect:/error-403";
         }
 
-        if (isBlank(discotecaForm.getName()) || isBlank(discotecaForm.getCalle()) || isBlank(discotecaForm.getDescripcion())) {
-            model.addAttribute("error", "Todos los campos obligatorios deben estar rellenos");
+        String error = discotecaService.validarCamposDiscoteca(
+            discotecaForm.getName(), 
+            discotecaForm.getCalle(), 
+            discotecaForm.getDescripcion()
+        );
+
+        if (error != null) {
+            model.addAttribute("error", error);
             model.addAttribute("discoteca", discoteca);
             model.addAttribute("id", id);
             return "edit-discoteca";
         }
 
-        discoteca.setName(discotecaForm.getName());
-        discoteca.setCalle(discotecaForm.getCalle());
-        discoteca.setDescripcion(discotecaForm.getDescripcion());
-
-        if (removeImage) {
-            discoteca.setImage(null);
-        } else if (!imageFile.isEmpty()) {
-            Image img = imageService.createImage(imageFile.getInputStream());
-            discoteca.setImage(img);
-        }
-
-        discotecaService.save(discoteca);
+        discotecaService.editDiscotecaWithImage(id, discotecaForm, removeImage, imageFile);
 
         return "redirect:/discotecas/" + discoteca.getId();
     }
@@ -118,24 +108,23 @@ public class DiscotecaController {
     public String createDiscotecaProcess(Discoteca discoteca,
                                          @RequestParam("imageFile") MultipartFile imageFile,
                                          Principal principal,
-                                         Model model) throws IOException {
+                                         Model model) throws IOException, SQLException {
 
-        if (isBlank(discoteca.getName()) || isBlank(discoteca.getCalle()) || isBlank(discoteca.getDescripcion())) {
-            model.addAttribute("error", "Todos los campos obligatorios deben estar rellenos");
+        String error = discotecaService.validarCamposDiscoteca(
+            discoteca.getName(), 
+            discoteca.getCalle(), 
+            discoteca.getDescripcion()
+        );
+
+        if (error != null) {
+            model.addAttribute("error", error);
             return "create-discotecas";
         }
 
         String email = principal.getName();
         User currentUser = userService.findByEmail(email).orElse(null);
 
-        discoteca.setOwner(currentUser);
-
-        if (!imageFile.isEmpty()) {
-            Image img = imageService.createImage(imageFile.getInputStream());
-            discoteca.setImage(img);
-        }
-
-        discotecaService.save(discoteca);
+        discotecaService.createDiscotecaWithImage(discoteca, imageFile, currentUser);
 
         return "redirect:/discotecas/" + discoteca.getId();
     }
@@ -169,10 +158,5 @@ public class DiscotecaController {
 
         discotecaService.delete(id);
         return "redirect:/discotecas";
-    }
-
-    // Utilidad local para validar campos de texto obligatorios.
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
     }
 }

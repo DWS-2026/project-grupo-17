@@ -2,7 +2,6 @@ package es.codeurjc.board.controller;
 import es.codeurjc.board.UserDTO;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.User;
-import es.codeurjc.board.repositories.EventoRepository;
 import es.codeurjc.board.service.EventoService;
 import es.codeurjc.board.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +18,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,47 +59,16 @@ public class UserController {
             Model model) {
 
         try {
-
-            //  VALIDACIONES BACKEND
-
-            if (nombre == null || nombre.isBlank()) {
-                model.addAttribute("error", "El nombre es obligatorio");
+            // Validar datos de registro
+            String error = userService.validarRegistro(nombre, email, password, fechaNacimiento);
+            
+            if (error != null) {
+                model.addAttribute("error", error);
                 return "register";
             }
 
-            if (email == null || email.isBlank()) {
-                model.addAttribute("error", "El email es obligatorio");
-                return "register";
-            }
-
-            if (!email.contains("@")) {
-                model.addAttribute("error", "El email no es válido");
-                return "register";
-            }
-
-            if (password == null || password.length() < 4) {
-                model.addAttribute("error", "La contraseña debe tener al menos 4 caracteres");
-                return "register";
-            }
-
-            if (fechaNacimiento == null || fechaNacimiento.isBlank()) {
-                model.addAttribute("error", "La fecha de nacimiento es obligatoria");
-                return "register";
-            }
-
-            //  EMAIL YA EXISTE
-            Optional<User> usuarioExistente = userService.findByEmail(email);
-            if (usuarioExistente.isPresent()) {
-                model.addAttribute("error", "El email ya está registrado");
-                return "register";
-            }
-
-            //  PARSE FECHA
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
-
-            //  GUARDAR
-            userService.save(nombre, email, password, fecha, avatar);
+            // Registrar usuario con validación
+            userService.registroConValidacion(nombre, email, password, fechaNacimiento, avatar);
 
             return "redirect:/login";
 
@@ -169,38 +134,26 @@ public class UserController {
             Principal principal) {
 
         try {
-            if (nombre == null || nombre.isBlank()) {
-                model.addAttribute("error", "El nombre es obligatorio");
-                model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
-                return "edit-profile";
-            }
-
-            if (email == null || email.isBlank() || !email.contains("@")) {
-                model.addAttribute("error", "El email no es valido");
-                model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
-                return "edit-profile";
-            }
-
-            if (fechaNacimiento == null || fechaNacimiento.isBlank()) {
-                model.addAttribute("error", "La fecha de nacimiento es obligatoria");
-                model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
-                return "edit-profile";
-            }
-
             String emailActual = principal.getName();
-
             Optional<User> user = userService.findByEmail(emailActual);
 
-            if (user.isPresent()) {
-                Long userId = user.get().getId();
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
-
-                userService.update(userId, nombre, email, fecha, avatar);
-
-                return "redirect:/profile";
+            if (!user.isPresent()) {
+                return "redirect:/login";
             }
+
+            // Validar datos de actualización
+            String error = userService.validarActualizacionPerfil(nombre, email, fechaNacimiento);
+            
+            if (error != null) {
+                model.addAttribute("error", error);
+                model.addAttribute("user", user.get());
+                return "edit-profile";
+            }
+
+            // Actualizar perfil con validación
+            userService.actualizarPerfilConValidacion(user.get().getId(), nombre, email, fechaNacimiento, avatar);
+
+            return "redirect:/profile";
 
         } catch (IOException e) {
             model.addAttribute("error", "Error al guardar la imagen");
@@ -211,8 +164,6 @@ public class UserController {
             model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
             return "edit-profile";
         }
-
-        return "redirect:/edit-profile";
     }
 
     // 🔹 ADMIN PANEL

@@ -1,8 +1,12 @@
 package es.codeurjc.board.service;
 
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+
+import javax.sql.rowset.serial.SerialBlob;
 
 import es.codeurjc.board.model.Entrada;
 import es.codeurjc.board.model.User;
@@ -13,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.Discoteca;
+import es.codeurjc.board.model.Image;
 
 @Service
 /**
@@ -89,5 +94,56 @@ public class EventoService {
     // Obtiene tres eventos para la portada.
     public List<Evento> findFirst3() {
         return eventoRepository.findTop3By();
+    }
+
+    // Valida los campos obligatorios de un evento
+    public String validarCamposEvento(String name, String descripcion, Integer edadRequerida) {
+        if (isBlank(name) || isBlank(descripcion) || edadRequerida == null || edadRequerida < 0) {
+            return "Revisa los campos: nombre, descripcion y edad requerida";
+        }
+        return null;
+    }
+
+    // Crea un evento con imagen vinculado a una discoteca
+    public void createEventoWithImage(Evento evento, MultipartFile imageFile, Discoteca discoteca) throws IOException, SQLException {
+        evento.setDiscoteca(discoteca);
+        
+        if (imageFile != null && !imageFile.isEmpty()) {
+            byte[] bytes = imageFile.getBytes();
+            Blob blob = new SerialBlob(bytes);
+            Image img = new Image(blob);
+            evento.setImage(img);
+        }
+        
+        save(evento);
+    }
+
+    // Actualiza un evento existente con manejo de imagen
+    public void updateEventoWithImage(Long id, Evento eventoForm, MultipartFile image, Discoteca nuevaDiscoteca) throws IOException, SQLException {
+        Evento evento = findById(id);
+        
+        if (evento != null) {
+            evento.setName(eventoForm.getName());
+            evento.setDescripcion(eventoForm.getDescripcion());
+            evento.setEdadRequerida(eventoForm.getEdadRequerida());
+            
+            if (nuevaDiscoteca != null) {
+                evento.setDiscoteca(nuevaDiscoteca);
+            }
+            
+            if (image != null && !image.isEmpty()) {
+                byte[] bytes = image.getInputStream().readAllBytes();
+                Blob blob = new SerialBlob(bytes);
+                Image img = new Image(blob);
+                evento.setImage(img);
+            }
+            
+            save(evento);
+        }
+    }
+
+    // Utilidad privada para validar campos de texto obligatorios
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

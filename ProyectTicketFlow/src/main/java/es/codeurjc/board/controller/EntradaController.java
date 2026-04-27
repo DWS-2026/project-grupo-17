@@ -9,11 +9,7 @@ import es.codeurjc.board.service.EntradaService;
 import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.UserService;
 
-import java.util.Collection;
-import java.util.ArrayList;
-
 import java.security.Principal;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -95,13 +91,15 @@ public class EntradaController {
             return "redirect:/error-403";
         }
 
-        if (isBlank(name) || isBlank(acceso) || isBlank(incluye) || precio == null || precio < 0) {
-            model.addAttribute("error", "Revisa los campos obligatorios y el precio");
+        String error = entradaService.validarCamposEntrada(name, acceso, incluye, precio);
+        
+        if (error != null) {
+            model.addAttribute("error", error);
             model.addAttribute("evento", evento);
             return "create-ticket";
         }
 
-        entradaService.save(name, acceso, incluye, precio, evento);
+        entradaService.createEntradaWithValidation(name, acceso, incluye, precio, evento);
 
         return "redirect:/eventos/" + eventoId + "/entradas";
     }
@@ -137,14 +135,16 @@ public class EntradaController {
 
         Evento evento = entrada.getEvento();
 
-        if (isBlank(name) || isBlank(acceso) || isBlank(incluye) || precio == null || precio < 0) {
-            model.addAttribute("error", "Revisa los campos obligatorios y el precio");
+        String error = entradaService.validarCamposEntrada(name, acceso, incluye, precio);
+        
+        if (error != null) {
+            model.addAttribute("error", error);
             model.addAttribute("entrada", entrada);
             model.addAttribute("evento", evento);
             return "edit-ticket";
         }
 
-        entradaService.update(id, name, acceso, incluye, precio, evento);
+        entradaService.updateEntradaWithValidation(id, name, acceso, incluye, precio, evento);
 
         return "redirect:/eventos/" + evento.getId() + "/entradas";
     }
@@ -157,21 +157,11 @@ public class EntradaController {
         Entrada entrada = entradaService.findById(id);
 
         if (entrada != null) {
-
-            Collection<User> users = userService.findAll();
-
-            for (User user : users) {
-                if (user.getEntradasCompradas() != null) {
-                    user.getEntradasCompradas().remove(entrada);
-                    userService.saveUser(user);
-                }
-            }
-
-
-            entradaService.delete(id);
+            entradaService.deleteEntradaConLimpieza(id);
+            return "redirect:/eventos/" + entrada.getEvento().getId() + "/entradas";
         }
 
-        return "redirect:/eventos/" + entrada.getEvento().getId() + "/entradas";
+        return "redirect:/eventos";
     }
 
     @GetMapping("/entradas/{id}/pago")
@@ -190,37 +180,20 @@ public class EntradaController {
 
         User user = userService.findByEmail(principal.getName()).orElse(null);
 
-        if (user != null) {
+        String resultado = entradaService.comprarEntrada(id, user);
 
-            List<Entrada> entradas = user.getEntradasCompradas();
-
-            if (entradas == null) {
-                entradas = new ArrayList<>();
-            }
-
-            boolean yaComprada = entradas.stream()
-                    .anyMatch(e -> e.getId().equals(entrada.getId()));
-
-            if (yaComprada) {
-                model.addAttribute("error", "Ya has comprado esta entrada");
-
-                model.addAttribute("evento", entrada.getEvento());
-                model.addAttribute("discoteca", entrada.getEvento().getDiscoteca());
-                model.addAttribute("entradas", entradaService.findByEvento(entrada.getEvento().getId()));
-
-                return "entradas";
-            }
-
-            entradas.add(entrada);
-            user.setEntradasCompradas(entradas);
-            userService.saveUser(user);
+        if ("error_ya_comprada".equals(resultado)) {
+            model.addAttribute("error", "Ya has comprado esta entrada");
+            model.addAttribute("evento", entrada.getEvento());
+            model.addAttribute("discoteca", entrada.getEvento().getDiscoteca());
+            model.addAttribute("entradas", entradaService.findByEvento(entrada.getEvento().getId()));
+            return "entradas";
         }
 
-        return "redirect:/profile";
-    }
+        if ("success".equals(resultado)) {
+            return "redirect:/profile";
+        }
 
-    // Utilidad local para validar textos obligatorios.
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
+        return "redirect:/";
     }
 }

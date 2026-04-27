@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -108,5 +109,71 @@ public class UserService {
     // Elimina usuario por id.
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    // Valida los datos de registro
+    public String validarRegistro(String nombre, String email, String password, String fechaNacimiento) {
+        if (isBlank(nombre)) {
+            return "El nombre es obligatorio";
+        }
+        
+        if (isBlank(email)) {
+            return "El email es obligatorio";
+        }
+        
+        if (!email.contains("@")) {
+            return "El email no es válido";
+        }
+        
+        if (password == null || password.length() < 4) {
+            return "La contraseña debe tener al menos 4 caracteres";
+        }
+        
+        if (isBlank(fechaNacimiento)) {
+            return "La fecha de nacimiento es obligatoria";
+        }
+        
+        // Validar que el email no existe ya
+        if (findByEmail(email).isPresent()) {
+            return "El email ya está registrado";
+        }
+        
+        return null;
+    }
+
+    // Registra un usuario nuevo con validación completa
+    public void registroConValidacion(String nombre, String email, String password, String fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
+        save(nombre, email, password, fecha, avatar);
+    }
+
+    // Valida los datos de actualización de perfil
+    public String validarActualizacionPerfil(String nombre, String email, String fechaNacimiento) {
+        if (isBlank(nombre)) {
+            return "El nombre es obligatorio";
+        }
+        
+        if (isBlank(email) || !email.contains("@")) {
+            return "El email no es valido";
+        }
+        
+        if (isBlank(fechaNacimiento)) {
+            return "La fecha de nacimiento es obligatoria";
+        }
+        
+        return null;
+    }
+
+    // Actualiza el perfil del usuario con validación
+    public void actualizarPerfilConValidacion(Long userId, String nombre, String email, String fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
+        update(userId, nombre, email, fecha, avatar);
+    }
+
+    // Utilidad privada para validar campos de texto obligatorios
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

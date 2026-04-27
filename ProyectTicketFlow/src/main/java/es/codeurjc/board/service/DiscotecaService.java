@@ -1,12 +1,13 @@
 package es.codeurjc.board.service;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 import es.codeurjc.board.model.Entrada;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.User;
+import es.codeurjc.board.model.Image;
 import es.codeurjc.board.repositories.DiscotecaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class DiscotecaService {
 
     @Autowired
     private DiscotecaRepository discotecaRepository;
+
+    @Autowired
+    private ImageService imageService;
 
     // Devuelve todas las discotecas.
     public Collection<Discoteca> findAll() {
@@ -85,5 +89,50 @@ public class DiscotecaService {
 
         // 6. Borrar discoteca
         discotecaRepository.deleteById(id);
+    }
+
+    // Valida los campos obligatorios de una discoteca
+    public String validarCamposDiscoteca(String name, String calle, String descripcion) {
+        if (isBlank(name) || isBlank(calle) || isBlank(descripcion)) {
+            return "Todos los campos obligatorios deben estar rellenos";
+        }
+        return null;
+    }
+
+    // Crea una discoteca con imagen asociada al propietario
+    public void createDiscotecaWithImage(Discoteca discoteca, MultipartFile imageFile, User owner) throws IOException, SQLException {
+        discoteca.setOwner(owner);
+        
+        if (imageFile != null && !imageFile.isEmpty()) {
+            Image img = imageService.createImage(imageFile.getInputStream());
+            discoteca.setImage(img);
+        }
+        
+        save(discoteca);
+    }
+
+    // Edita una discoteca existente con manejo de imagen
+    public void editDiscotecaWithImage(Long id, Discoteca discotecaForm, boolean removeImage, MultipartFile imageFile) throws IOException, SQLException {
+        Discoteca discoteca = findById(id);
+        
+        if (discoteca != null) {
+            discoteca.setName(discotecaForm.getName());
+            discoteca.setCalle(discotecaForm.getCalle());
+            discoteca.setDescripcion(discotecaForm.getDescripcion());
+            
+            if (removeImage) {
+                discoteca.setImage(null);
+            } else if (imageFile != null && !imageFile.isEmpty()) {
+                Image img = imageService.createImage(imageFile.getInputStream());
+                discoteca.setImage(img);
+            }
+            
+            save(discoteca);
+        }
+    }
+
+    // Utilidad privada para validar campos de texto obligatorios
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

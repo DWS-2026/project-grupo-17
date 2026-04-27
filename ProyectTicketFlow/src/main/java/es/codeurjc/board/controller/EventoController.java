@@ -1,16 +1,13 @@
 package es.codeurjc.board.controller;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.sql.Blob;
 import java.sql.SQLException;
 
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Evento;
-import es.codeurjc.board.model.Image;
 import es.codeurjc.board.service.DiscotecaService;
 import es.codeurjc.board.service.EventoService;
-import es.codeurjc.board.service.ImageService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,9 +29,6 @@ public class EventoController {
 
     @Autowired
     private EventoService eventoService;
-
-    @Autowired
-    private ImageService imageService;
 
     @Autowired
     private DiscotecaService discotecaService;
@@ -81,26 +75,20 @@ public class EventoController {
             return "redirect:/error-403";
         }
 
-        if (isBlank(evento.getName()) || isBlank(evento.getDescripcion()) || evento.getEdadRequerida() == null || evento.getEdadRequerida() < 0) {
-            model.addAttribute("error", "Revisa los campos: nombre, descripcion y edad requerida");
+        String error = eventoService.validarCamposEvento(
+            evento.getName(), 
+            evento.getDescripcion(), 
+            evento.getEdadRequerida()
+        );
+
+        if (error != null) {
+            model.addAttribute("error", error);
             model.addAttribute("discoteca", discoteca);
             return "create-event";
         }
 
-        evento.setDiscoteca(discoteca);
-
-        // 2. Procesar imagen de forma manual desde multipart.
-        if (imageFile != null && !imageFile.isEmpty()) {
-
-            byte[] bytes = imageFile.getBytes();
-            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
-
-            Image img = new Image(blob);
-            evento.setImage(img);
-        }
-
-        // 3. Guardar evento.
-        eventoService.save(evento);
+        // 2. Crear evento con imagen y guardar
+        eventoService.createEventoWithImage(evento, imageFile, discoteca);
 
         return "redirect:/discotecas/" + id + "/eventos";
     }
@@ -151,32 +139,22 @@ public class EventoController {
             return "redirect:/error-403";
         }
 
-        if (isBlank(eventoForm.getName()) || isBlank(eventoForm.getDescripcion()) || eventoForm.getEdadRequerida() == null || eventoForm.getEdadRequerida() < 0) {
-            model.addAttribute("error", "Revisa los campos: nombre, descripcion y edad requerida");
+        String error = eventoService.validarCamposEvento(
+            eventoForm.getName(), 
+            eventoForm.getDescripcion(), 
+            eventoForm.getEdadRequerida()
+        );
+
+        if (error != null) {
+            model.addAttribute("error", error);
             model.addAttribute("evento", evento);
             model.addAttribute("discoteca", evento.getDiscoteca());
             model.addAttribute("discotecas", discotecaService.findAll());
             return "edit-event";
         }
 
-        // Actualizar campos normales.
-        evento.setName(eventoForm.getName());
-        evento.setDescripcion(eventoForm.getDescripcion());
-        evento.setEdadRequerida(eventoForm.getEdadRequerida());
-
-        if (eventoForm.getDiscoteca() != null) {
-            evento.setDiscoteca(eventoForm.getDiscoteca());
-        }
-
-        // Manejar imagen manualmente si se ha subido una nueva.
-        if (image != null && !image.isEmpty()) {
-            byte[] bytes = image.getInputStream().readAllBytes();
-            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
-            Image img = new Image(blob);
-            evento.setImage(img);
-        }
-
-        eventoService.save(evento);
+        // Actualizar evento con manejo de imagen
+        eventoService.updateEventoWithImage(id, eventoForm, image, eventoForm.getDiscoteca());
 
         return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
     }
@@ -191,10 +169,5 @@ public class EventoController {
         eventoService.delete(id);
 
         return "redirect:/discotecas/" + discotecaId + "/eventos";
-    }
-
-    // Utilidad local para validar texto obligatorio.
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
     }
 }
