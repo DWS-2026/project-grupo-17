@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class JwtTokenProvider {
 
 	private final SecretKey jwtSecret = Keys.hmacShaKeyFor("my-secret-key-that-is-at-least-32-bytes-long-for-hs256".getBytes());
-	private final JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(jwtSecret).build();
+	private final JwtParser jwtParser = Jwts.parser().verifyWith(jwtSecret).build();
 
 	public String tokenStringFromHeaders(HttpServletRequest req){
 		String bearerToken = req.getHeader(HttpHeaders.AUTHORIZATION);
@@ -60,7 +60,7 @@ public class JwtTokenProvider {
 	}
 
 	public Claims validateToken(String token) {
-		return jwtParser.parseClaimsJws(token).getBody();
+		return jwtParser.parseSignedClaims(token).getPayload();
 	}
 
 	public String generateAccessToken(UserDetails userDetails) {
@@ -78,9 +78,9 @@ public class JwtTokenProvider {
 		return Jwts.builder()
 				.claim("roles", userDetails.getAuthorities())
 				.claim("type", tokenType.name())
-				.setSubject(userDetails.getUsername())
-				.setIssuedAt(currentDate)
-				.setExpiration(expiryDate)
+				.subject(userDetails.getUsername())
+				.issuedAt(currentDate)
+				.expiration(expiryDate)
 				.signWith(jwtSecret);
 	}
 }
