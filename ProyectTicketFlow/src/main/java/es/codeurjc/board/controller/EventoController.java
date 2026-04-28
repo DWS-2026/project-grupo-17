@@ -129,8 +129,7 @@ public class EventoController {
     // Aplica cambios en evento existente e imagen opcional.
     public String updateEventoProcess(@PathVariable long id,
                                       Evento eventoForm,
-                                      @RequestParam(required = false) MultipartFile image,
-                                      Model model)
+                                      @RequestParam("imageFile") MultipartFile image,                                      Model model)
             throws IOException, SQLException {
 
         Evento evento = eventoService.findById(id);

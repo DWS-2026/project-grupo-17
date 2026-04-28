@@ -59,4 +59,19 @@ public class DiscotecaRestController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getClubImage(@PathVariable Long id) throws Exception {
+
+        byte[] image = discotecaService.getClubImage(id);
+
+        if (image == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(image);
+    }
+
 }

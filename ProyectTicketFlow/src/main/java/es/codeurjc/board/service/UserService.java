@@ -220,13 +220,25 @@ public class UserService {
         });
     }
 
-
     public boolean deleteUser(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return true;
         }
         return false;
+    }
+
+    public byte[] getUserAvatar(Long id) throws SQLException {
+
+        User user = findById(id);
+
+        if (user == null || user.getAvatar() == null) {
+            return null;
+        }
+
+        Blob blob = user.getAvatar().getImageFile();
+
+        return blob.getBytes(1, (int) blob.length());
     }
 
     private UserDTO toDTO(User user) {

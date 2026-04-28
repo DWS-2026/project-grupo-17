@@ -185,13 +185,25 @@ public class EventoService {
         });
     }
 
-
     public boolean deleteEvent(Long id) {
         if (eventoRepository.existsById(id)) {
             delete(id); // Use existing delete to clear references
             return true;
         }
         return false;
+    }
+
+    public byte[] getEventImage(Long id) throws SQLException {
+
+        Evento evento = findById(id);
+
+        if (evento == null || evento.getImage() == null) {
+            return null;
+        }
+
+        Blob blob = evento.getImage().getImageFile();
+
+        return blob.getBytes(1, (int) blob.length());
     }
 
     private EventoDTO toDTO(Evento evento) {

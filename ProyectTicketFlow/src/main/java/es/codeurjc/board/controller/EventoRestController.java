@@ -59,4 +59,18 @@ public class EventoRestController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getEventImage(@PathVariable Long id) throws Exception {
+
+        byte[] image = eventoService.getEventImage(id);
+
+        if (image == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(image);
+    }
 }

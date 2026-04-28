@@ -1,6 +1,7 @@
 package es.codeurjc.board.service;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -178,6 +179,18 @@ public class DiscotecaService {
         return false;
     }
 
+    public byte[] getClubImage(Long id) throws SQLException {
+
+        Discoteca discoteca = findById(id);
+
+        if (discoteca == null || discoteca.getImage() == null) {
+            return null;
+        }
+
+        Blob blob = discoteca.getImage().getImageFile();
+
+        return blob.getBytes(1, (int) blob.length());
+    }
 
     private DiscotecaDTO toDTO(Discoteca discoteca) {
         DiscotecaDTO dto = new DiscotecaDTO();

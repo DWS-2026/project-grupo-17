@@ -4,6 +4,7 @@ import es.codeurjc.board.dto.UserDTO;
 import es.codeurjc.board.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -62,4 +63,19 @@ public class UserRestController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getUserAvatar(@PathVariable Long id) throws Exception {
+
+        byte[] image = userService.getUserAvatar(id);
+
+        if (image == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(image);
+    }
+
 }
