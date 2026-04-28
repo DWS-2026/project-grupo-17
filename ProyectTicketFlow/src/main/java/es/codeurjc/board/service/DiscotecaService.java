@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import es.codeurjc.board.model.Discoteca;
+import es.codeurjc.board.dto.DiscotecaDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 /**
@@ -102,31 +105,31 @@ public class DiscotecaService {
     // Crea una discoteca con imagen asociada al propietario
     public void createDiscotecaWithImage(Discoteca discoteca, MultipartFile imageFile, User owner) throws IOException, SQLException {
         discoteca.setOwner(owner);
-        
+
         if (imageFile != null && !imageFile.isEmpty()) {
             Image img = imageService.createImage(imageFile.getInputStream());
             discoteca.setImage(img);
         }
-        
+
         save(discoteca);
     }
 
     // Edita una discoteca existente con manejo de imagen
     public void editDiscotecaWithImage(Long id, Discoteca discotecaForm, boolean removeImage, MultipartFile imageFile) throws IOException, SQLException {
         Discoteca discoteca = findById(id);
-        
+
         if (discoteca != null) {
             discoteca.setName(discotecaForm.getName());
             discoteca.setCalle(discotecaForm.getCalle());
             discoteca.setDescripcion(discotecaForm.getDescripcion());
-            
+
             if (removeImage) {
                 discoteca.setImage(null);
             } else if (imageFile != null && !imageFile.isEmpty()) {
                 Image img = imageService.createImage(imageFile.getInputStream());
                 discoteca.setImage(img);
             }
-            
+
             save(discoteca);
         }
     }
@@ -134,5 +137,54 @@ public class DiscotecaService {
     // Utilidad privada para validar campos de texto obligatorios
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    // REST API methods
+    public Page<DiscotecaDTO> findAllClubs(Pageable pageable) {
+        return discotecaRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    public Optional<DiscotecaDTO> findClubById(Long id) {
+        return discotecaRepository.findById(id).map(this::toDTO);
+    }
+
+    public DiscotecaDTO createClub(DiscotecaDTO dto) {
+        Discoteca discoteca = new Discoteca();
+        discoteca.setName(dto.getName());
+        discoteca.setCalle(dto.getStreet());
+        discoteca.setDescripcion(dto.getDescription());
+        if (dto.getOwnerId() != null) {
+            discoteca.setOwner(userService.findById(dto.getOwnerId()));
+        }
+        discotecaRepository.save(discoteca);
+        return toDTO(discoteca);
+    }
+
+    public Optional<DiscotecaDTO> updateClub(Long id, DiscotecaDTO dto) {
+        return discotecaRepository.findById(id).map(discoteca -> {
+            discoteca.setName(dto.getName());
+            discoteca.setCalle(dto.getStreet());
+            discoteca.setDescripcion(dto.getDescription());
+            discotecaRepository.save(discoteca);
+            return toDTO(discoteca);
+        });
+    }
+
+    public boolean deleteClub(Long id) {
+        if (discotecaRepository.existsById(id)) {
+            delete(id); // Use existing delete to clean up references
+            return true;
+        }
+        return false;
+    }
+
+    private DiscotecaDTO toDTO(Discoteca discoteca) {
+        DiscotecaDTO dto = new DiscotecaDTO();
+        dto.setId(discoteca.getId());
+        dto.setName(discoteca.getName());
+        dto.setStreet(discoteca.getCalle());
+        dto.setDescription(discoteca.getDescripcion());
+        if (discoteca.getOwner() != null) dto.setOwnerId(discoteca.getOwner().getId());
+        return dto;
     }
 }

@@ -24,13 +24,13 @@ public class SecurityConfig {
     RepositoryUserDetails userDetailsService;
 
     @Bean
-        // Encoder usado para cifrar y verificar contrasenas.
+    // Encoder usado para cifrar y verificar contrasenas.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-        // Proveedor de autenticacion basado en UserDetailsService + PasswordEncoder.
+    // Proveedor de autenticacion basado en UserDetailsService + PasswordEncoder.
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider =
                 new DaoAuthenticationProvider(userDetailsService);
@@ -44,7 +44,7 @@ public class SecurityConfig {
     }
 
     @Bean
-        // Cadena de filtros HTTP: reglas de acceso, formulario de login y logout.
+    // Cadena de filtros HTTP: reglas de acceso, formulario de login y logout.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authenticationProvider(authenticationProvider());
@@ -102,8 +102,7 @@ public class SecurityConfig {
                         .accessDeniedPage("/error-403")
                 )
 
-                .csrf(csrf -> {
-                });
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }

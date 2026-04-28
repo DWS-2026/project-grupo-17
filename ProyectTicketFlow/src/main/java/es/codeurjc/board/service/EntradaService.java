@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import es.codeurjc.board.model.Entrada;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.User;
+import es.codeurjc.board.dto.EntradaDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.util.Optional;
 
 @Service
 /**
@@ -24,6 +28,9 @@ public class EntradaService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private es.codeurjc.board.repositories.EventoRepository eventoRepository;
 
     // Devuelve todas las entradas almacenadas.
     public Collection<Entrada> findAll() {
@@ -116,7 +123,7 @@ public class EntradaService {
     // Compra una entrada para un usuario
     public String comprarEntrada(Long entradaId, User user) {
         Entrada entrada = findById(entradaId);
-        
+
         if (entrada == null) {
             return "error_entrada_no_existe";
         }
@@ -137,7 +144,7 @@ public class EntradaService {
             entradas.add(entrada);
             user.setEntradasCompradas(entradas);
             userService.saveUser(user);
-            
+
             return "success";
         }
 
@@ -147,17 +154,17 @@ public class EntradaService {
     // Elimina una entrada y la retira de todos los usuarios que la tuvieran comprada
     public void deleteEntradaConLimpieza(long id) {
         Entrada entrada = findById(id);
-        
+
         if (entrada != null) {
             Collection<User> users = userService.findAll();
-            
+
             for (User user : users) {
                 if (user.getEntradasCompradas() != null) {
                     user.getEntradasCompradas().remove(entrada);
                     userService.saveUser(user);
                 }
             }
-            
+
             delete(id);
         }
     }
@@ -165,5 +172,57 @@ public class EntradaService {
     // Utilidad privada para validar campos de texto obligatorios
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    // REST API methods
+    public Page<EntradaDTO> findAllTickets(Pageable pageable) {
+        return entradaRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    public Optional<EntradaDTO> findTicketById(Long id) {
+        return entradaRepository.findById(id).map(this::toDTO);
+    }
+
+    public EntradaDTO createTicket(EntradaDTO dto) {
+        Entrada entrada = new Entrada();
+        entrada.setName(dto.getName());
+        entrada.setAcceso(dto.getAccessType());
+        entrada.setIncluye(dto.getIncludes());
+        entrada.setPrecio(dto.getPrice());
+        if (dto.getEventId() != null) {
+            eventoRepository.findById(dto.getEventId()).ifPresent(entrada::setEvento);
+        }
+        entradaRepository.save(entrada);
+        return toDTO(entrada);
+    }
+
+    public Optional<EntradaDTO> updateTicket(Long id, EntradaDTO dto) {
+        return entradaRepository.findById(id).map(entrada -> {
+            entrada.setName(dto.getName());
+            entrada.setAcceso(dto.getAccessType());
+            entrada.setIncluye(dto.getIncludes());
+            if (dto.getPrice() != null) entrada.setPrecio(dto.getPrice());
+            entradaRepository.save(entrada);
+            return toDTO(entrada);
+        });
+    }
+
+    public boolean deleteTicket(Long id) {
+        if (entradaRepository.existsById(id)) {
+            deleteEntradaConLimpieza(id);
+            return true;
+        }
+        return false;
+    }
+
+    private EntradaDTO toDTO(Entrada entrada) {
+        EntradaDTO dto = new EntradaDTO();
+        dto.setId(entrada.getId());
+        dto.setName(entrada.getName());
+        dto.setAccessType(entrada.getAcceso());
+        dto.setIncludes(entrada.getIncluye());
+        dto.setPrice(entrada.getPrecio());
+        if (entrada.getEvento() != null) dto.setEventId(entrada.getEvento().getId());
+        return dto;
     }
 }

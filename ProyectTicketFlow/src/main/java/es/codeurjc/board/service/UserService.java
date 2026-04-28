@@ -20,6 +20,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import es.codeurjc.board.dto.UserDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Service
 /**
  * Servicio de usuarios:
@@ -116,28 +120,28 @@ public class UserService {
         if (isBlank(nombre)) {
             return "El nombre es obligatorio";
         }
-        
+
         if (isBlank(email)) {
             return "El email es obligatorio";
         }
-        
+
         if (!email.contains("@")) {
             return "El email no es válido";
         }
-        
+
         if (password == null || password.length() < 4) {
             return "La contraseña debe tener al menos 4 caracteres";
         }
-        
+
         if (isBlank(fechaNacimiento)) {
             return "La fecha de nacimiento es obligatoria";
         }
-        
+
         // Validar que el email no existe ya
         if (findByEmail(email).isPresent()) {
             return "El email ya está registrado";
         }
-        
+
         return null;
     }
 
@@ -153,15 +157,15 @@ public class UserService {
         if (isBlank(nombre)) {
             return "El nombre es obligatorio";
         }
-        
+
         if (isBlank(email) || !email.contains("@")) {
             return "El email no es valido";
         }
-        
+
         if (isBlank(fechaNacimiento)) {
             return "La fecha de nacimiento es obligatoria";
         }
-        
+
         return null;
     }
 
@@ -175,5 +179,62 @@ public class UserService {
     // Utilidad privada para validar campos de texto obligatorios
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    // Obtener la lista de usuarios (excepto el actual) para el panel de administración
+    public List<es.codeurjc.board.dto.UserDTO> findAllOtherUsersAsDTO(String emailActual) {
+        return userRepository.findAll().stream()
+                .filter(u -> !u.getEmail().equals(emailActual))
+                .map(this::toDTO)
+                .toList();
+    }
+
+    // REST API methods
+    public Page<UserDTO> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    public Optional<UserDTO> findUserById(Long id) {
+        return userRepository.findById(id).map(this::toDTO);
+    }
+
+    public UserDTO createUser(UserDTO userDTO) {
+        User user = new User();
+        user.setNombre(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        user.setFechaNacimiento(userDTO.getBirthDate());
+        user.setRoles(userDTO.getRoles() != null ? userDTO.getRoles() : List.of("USER"));
+        user.setEncodedPassword(passwordEncoder.encode("default123")); // Default password for API created users
+        userRepository.save(user);
+        return toDTO(user);
+    }
+
+    public Optional<UserDTO> updateUser(Long id, UserDTO userDTO) {
+        return userRepository.findById(id).map(user -> {
+            user.setNombre(userDTO.getName());
+            user.setEmail(userDTO.getEmail());
+            user.setFechaNacimiento(userDTO.getBirthDate());
+            if (userDTO.getRoles() != null) user.setRoles(userDTO.getRoles());
+            userRepository.save(user);
+            return toDTO(user);
+        });
+    }
+
+    public boolean deleteUser(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    private UserDTO toDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getNombre());
+        dto.setEmail(user.getEmail());
+        dto.setBirthDate(user.getFechaNacimiento());
+        dto.setRoles(user.getRoles());
+        return dto;
     }
 }

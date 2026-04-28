@@ -1,5 +1,5 @@
 package es.codeurjc.board.controller;
-import es.codeurjc.board.UserDTO;
+
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.EventoService;
@@ -61,7 +61,7 @@ public class UserController {
         try {
             // Validar datos de registro
             String error = userService.validarRegistro(nombre, email, password, fechaNacimiento);
-            
+
             if (error != null) {
                 model.addAttribute("error", error);
                 return "register";
@@ -143,7 +143,7 @@ public class UserController {
 
             // Validar datos de actualización
             String error = userService.validarActualizacionPerfil(nombre, email, fechaNacimiento);
-            
+
             if (error != null) {
                 model.addAttribute("error", error);
                 model.addAttribute("user", user.get());
@@ -174,16 +174,7 @@ public class UserController {
 
         String emailActual = principal.getName();
 
-        model.addAttribute("usuarios", userService.findAll().stream()
-                .filter(u -> !u.getEmail().equals(emailActual))
-                .map(u -> new UserDTO(
-                u.getId(),
-                        u.getNombre(),
-                        u.getEmail(),
-                        u.getFechaNacimiento(),
-                        u.getRoles() != null && u.getRoles().contains("ADMIN")
-                ))
-                .toList());
+        model.addAttribute("usuarios", userService.findAllOtherUsersAsDTO(emailActual));
 
         return "admin";
     }

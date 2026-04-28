@@ -18,6 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Image;
+import es.codeurjc.board.dto.EventoDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.util.Optional;
 
 @Service
 /**
@@ -33,6 +37,9 @@ public class EventoService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private es.codeurjc.board.repositories.DiscotecaRepository discotecaRepository;
 
     // Devuelve todos los eventos.
     public Collection<Evento> findAll() {
@@ -107,37 +114,37 @@ public class EventoService {
     // Crea un evento con imagen vinculado a una discoteca
     public void createEventoWithImage(Evento evento, MultipartFile imageFile, Discoteca discoteca) throws IOException, SQLException {
         evento.setDiscoteca(discoteca);
-        
+
         if (imageFile != null && !imageFile.isEmpty()) {
             byte[] bytes = imageFile.getBytes();
             Blob blob = new SerialBlob(bytes);
             Image img = new Image(blob);
             evento.setImage(img);
         }
-        
+
         save(evento);
     }
 
     // Actualiza un evento existente con manejo de imagen
     public void updateEventoWithImage(Long id, Evento eventoForm, MultipartFile image, Discoteca nuevaDiscoteca) throws IOException, SQLException {
         Evento evento = findById(id);
-        
+
         if (evento != null) {
             evento.setName(eventoForm.getName());
             evento.setDescripcion(eventoForm.getDescripcion());
             evento.setEdadRequerida(eventoForm.getEdadRequerida());
-            
+
             if (nuevaDiscoteca != null) {
                 evento.setDiscoteca(nuevaDiscoteca);
             }
-            
+
             if (image != null && !image.isEmpty()) {
                 byte[] bytes = image.getInputStream().readAllBytes();
                 Blob blob = new SerialBlob(bytes);
                 Image img = new Image(blob);
                 evento.setImage(img);
             }
-            
+
             save(evento);
         }
     }
@@ -145,5 +152,54 @@ public class EventoService {
     // Utilidad privada para validar campos de texto obligatorios
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    // REST API methods
+    public Page<EventoDTO> findAllEvents(Pageable pageable) {
+        return eventoRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    public Optional<EventoDTO> findEventById(Long id) {
+        return eventoRepository.findById(id).map(this::toDTO);
+    }
+
+    public EventoDTO createEvent(EventoDTO eventoDTO) {
+        Evento evento = new Evento();
+        evento.setName(eventoDTO.getName());
+        evento.setDescripcion(eventoDTO.getDescription());
+        evento.setEdadRequerida(eventoDTO.getRequiredAge() != null ? eventoDTO.getRequiredAge() : 18);
+        if (eventoDTO.getDiscotecaId() != null) {
+            discotecaRepository.findById(eventoDTO.getDiscotecaId()).ifPresent(evento::setDiscoteca);
+        }
+        eventoRepository.save(evento);
+        return toDTO(evento);
+    }
+
+    public Optional<EventoDTO> updateEvent(Long id, EventoDTO eventoDTO) {
+        return eventoRepository.findById(id).map(evento -> {
+            evento.setName(eventoDTO.getName());
+            evento.setDescripcion(eventoDTO.getDescription());
+            if (eventoDTO.getRequiredAge() != null) evento.setEdadRequerida(eventoDTO.getRequiredAge());
+            eventoRepository.save(evento);
+            return toDTO(evento);
+        });
+    }
+
+    public boolean deleteEvent(Long id) {
+        if (eventoRepository.existsById(id)) {
+            delete(id); // Use existing delete to clear references
+            return true;
+        }
+        return false;
+    }
+
+    private EventoDTO toDTO(Evento evento) {
+        EventoDTO dto = new EventoDTO();
+        dto.setId(evento.getId());
+        dto.setName(evento.getName());
+        dto.setDescription(evento.getDescripcion());
+        dto.setRequiredAge(evento.getEdadRequerida());
+        if (evento.getDiscoteca() != null) dto.setDiscotecaId(evento.getDiscoteca().getId());
+        return dto;
     }
 }

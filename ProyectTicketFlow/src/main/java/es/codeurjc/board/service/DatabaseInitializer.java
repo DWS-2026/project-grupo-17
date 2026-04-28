@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Image;
 import es.codeurjc.board.model.Evento;
-import es.codeurjc.board.model.User; 
+import es.codeurjc.board.model.User;
 import es.codeurjc.board.model.Entrada; // ¡NUEVO! Importamos el modelo Entrada
-import es.codeurjc.board.repositories.UserRepository; 
+import es.codeurjc.board.repositories.UserRepository;
 import es.codeurjc.board.repositories.EntradaRepository; // ¡NUEVO! Importamos el repositorio de Entrada
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -42,7 +42,7 @@ public class DatabaseInitializer {
 
     // Se usa repositorio directo para crear una entrada de ejemplo inicial.
     @Autowired
-    private EntradaRepository entradaRepository; 
+    private EntradaRepository entradaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -53,32 +53,32 @@ public class DatabaseInitializer {
     public void init() throws IOException, SQLException {
 
         // 1) Inicializacion de usuarios base del sistema.
-        
+
         User admin= new User(
-            "Admin User", 
-            "admin@example.com", 
-            passwordEncoder.encode("admin"), 
-            LocalDate.of(1990, 1, 10), 
-            null, 
-            "USER", "ADMIN"
+                "Admin User",
+                "admin@example.com",
+                passwordEncoder.encode("admin"),
+                LocalDate.of(1990, 1, 10),
+                null,
+                "USER", "ADMIN"
         );
 
         User juan= new User(
-            "Juan García", 
-            "juan@example.com", 
-            passwordEncoder.encode("12345"), 
-            LocalDate.of(1995, 5, 15), 
-            null, 
-            "USER"
+                "Juan García",
+                "juan@example.com",
+                passwordEncoder.encode("12345"),
+                LocalDate.of(1995, 5, 15),
+                null,
+                "USER"
         );
 
         User maria= new User(
-            "María López", 
-            "maria@example.com", 
-            passwordEncoder.encode("password123"), 
-            LocalDate.of(1998, 8, 20), 
-            null, 
-            "USER"
+                "María López",
+                "maria@example.com",
+                passwordEncoder.encode("password123"),
+                LocalDate.of(1998, 8, 20),
+                null,
+                "USER"
         );
 
         setUserAvatar(admin,"/posts/avatar.png");
@@ -101,7 +101,7 @@ public class DatabaseInitializer {
         e1.setName("Noche Electrónica");
         e1.setDescripcion("DJ internacional toda la noche");
         e1.setEdadRequerida(18);
-        e1.setDiscoteca(d1); 
+        e1.setDiscoteca(d1);
         setEventoImage(e1, "/posts/imagen1.avif");
 
         Evento e2 = new Evento();
@@ -109,7 +109,7 @@ public class DatabaseInitializer {
         e2.setDescripcion("Shows de luces y láser");
         e2.setEdadRequerida(18);
         e2.setDiscoteca(d1);
-        setEventoImage(e2, "/posts/imagen2.avif"); 
+        setEventoImage(e2, "/posts/imagen2.avif");
 
         d1.getEventos().addAll(Arrays.asList(e1, e2));
 
@@ -123,7 +123,7 @@ public class DatabaseInitializer {
         e3.setName("Noche Loca");
         e3.setDescripcion("DJ Dembow");
         e3.setEdadRequerida(16);
-        e3.setDiscoteca(d2); 
+        e3.setDiscoteca(d2);
         setEventoImage(e3, "/posts/Event_3.jpg");
 
         Evento e4 = new Evento();
@@ -145,14 +145,14 @@ public class DatabaseInitializer {
         e5.setName("Noche inolvidable");
         e5.setDescripcion("DJ Hardcore");
         e5.setEdadRequerida(16);
-        e5.setDiscoteca(d3); 
+        e5.setDiscoteca(d3);
         setEventoImage(e5, "/posts/Event_5.jpg");
 
         Evento e6 = new Evento();
         e6.setName("Noche final");
         e6.setDescripcion("DJ Theo");
         e6.setEdadRequerida(18);
-        e6.setDiscoteca(d3); 
+        e6.setDiscoteca(d3);
         setEventoImage(e6, "/posts/Event_6.jpg");
 
         d3.getEventos().addAll(Arrays.asList(e5,e6));
@@ -163,15 +163,15 @@ public class DatabaseInitializer {
         discotecaService.save(d3);
 
         // 3) Inicializacion de una entrada de prueba para facilitar tests manuales.
-        
+
         Entrada entradaPrueba = new Entrada(
-            "Entrada General Anticipada",
-            "NORMAL",
-            "Incluye 1 consumición",
-            15.50,
-            e1
+                "Entrada General Anticipada",
+                "NORMAL",
+                "Incluye 1 consumición",
+                15.50,
+                e1
         );
-        
+
         entradaRepository.save(entradaPrueba);
     }
 
@@ -181,7 +181,7 @@ public class DatabaseInitializer {
         byte[] bytes = resource.getInputStream().readAllBytes();
         Blob blob = new SerialBlob(bytes);
         Image img = new Image(blob);
-        discoteca.setImage(img); 
+        discoteca.setImage(img);
     }
 
     // Carga imagen desde recursos y la asigna a un evento.
@@ -192,13 +192,13 @@ public class DatabaseInitializer {
         Image img = new Image(blob);
         evento.setImage(img);
     }
-    
+
     // Carga imagen desde recursos y la asigna como avatar de usuario.
     public void setUserAvatar(User user, String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();
         Blob blob = new SerialBlob(bytes);
         Image img = new Image(blob);
-        user.setAvatar(img); 
+        user.setAvatar(img);
     }
 }
