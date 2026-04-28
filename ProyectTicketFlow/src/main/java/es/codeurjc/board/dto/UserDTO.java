@@ -30,4 +30,5 @@ public class UserDTO {
     public boolean isAdmin() {
         return roles != null && roles.contains("ADMIN");
     }
+
 }

@@ -11,6 +11,7 @@ import org.springframework.web.context.annotation.SessionScope;
  */
 public class UserSession {
 
+
 	private Long userId;
 
 	// Devuelve el id del usuario guardado en la sesion actual.

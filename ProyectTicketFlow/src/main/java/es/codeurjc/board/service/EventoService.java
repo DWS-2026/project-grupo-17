@@ -185,6 +185,7 @@ public class EventoService {
         });
     }
 
+
     public boolean deleteEvent(Long id) {
         if (eventoRepository.existsById(id)) {
             delete(id); // Use existing delete to clear references

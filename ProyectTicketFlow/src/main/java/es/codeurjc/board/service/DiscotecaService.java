@@ -178,6 +178,7 @@ public class DiscotecaService {
         return false;
     }
 
+
     private DiscotecaDTO toDTO(Discoteca discoteca) {
         DiscotecaDTO dto = new DiscotecaDTO();
         dto.setId(discoteca.getId());
