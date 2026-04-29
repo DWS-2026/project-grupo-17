@@ -1,5 +1,6 @@
 package es.codeurjc.board.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -23,6 +24,7 @@ public class Entrada {
     private Double precio;
 
     // Muchas entradas pertenecen a un unico evento.
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "evento_id")
     private Evento evento;

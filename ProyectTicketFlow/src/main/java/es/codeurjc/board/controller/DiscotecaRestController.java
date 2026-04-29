@@ -4,11 +4,13 @@ import es.codeurjc.board.dto.DiscotecaDTO;
 import es.codeurjc.board.service.DiscotecaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/clubs")
@@ -36,12 +38,26 @@ public class DiscotecaRestController {
     }
 
     @PostMapping
-    public ResponseEntity<DiscotecaDTO> createClub(@RequestBody DiscotecaDTO clubDTO) {
+    public ResponseEntity<?> createClub(@RequestBody DiscotecaDTO clubDTO) {
+        //Validación de campo en una entidad en su creación
+        String error = discotecaService.validarCamposDiscoteca(
+                clubDTO.getName(),
+                clubDTO.getStreet(),
+                clubDTO.getDescription()
+        );
+
+        if (error != null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", error));
+        }
+
         DiscotecaDTO createdClub = discotecaService.createClub(clubDTO);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdClub.getId())
                 .toUri();
+
         return ResponseEntity.created(location).body(createdClub);
     }
 
@@ -70,7 +86,7 @@ public class DiscotecaRestController {
         }
 
         return ResponseEntity.ok()
-                .header("Content-Type", "image/jpeg")
+                .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
     }
 

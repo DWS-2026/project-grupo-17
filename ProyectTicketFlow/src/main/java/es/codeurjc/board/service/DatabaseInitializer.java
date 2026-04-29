@@ -201,5 +201,4 @@ public class DatabaseInitializer {
         Image img = new Image(blob);
         user.setAvatar(img);
     }
-
 }

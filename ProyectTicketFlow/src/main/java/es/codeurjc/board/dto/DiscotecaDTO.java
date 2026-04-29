@@ -6,6 +6,7 @@ public class DiscotecaDTO {
     private String street;
     private String description;
     private Long ownerId;
+    private String imageURL;
 
     public DiscotecaDTO() {}
 
@@ -23,4 +24,8 @@ public class DiscotecaDTO {
 
     public Long getOwnerId() { return ownerId; }
     public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
+
+    public String getImageURL() { return imageURL; }
+    public void setImageURL(String imageURL) { this.imageURL = imageURL; }
+
 }

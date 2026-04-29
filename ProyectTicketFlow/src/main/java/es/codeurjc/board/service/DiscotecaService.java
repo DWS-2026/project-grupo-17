@@ -198,6 +198,9 @@ public class DiscotecaService {
         dto.setName(discoteca.getName());
         dto.setStreet(discoteca.getCalle());
         dto.setDescription(discoteca.getDescripcion());
+        if (discoteca.getImage() != null) {
+            dto.setImageURL("/api/v1/clubs/" + discoteca.getId() + "/image");
+        }
         if (discoteca.getOwner() != null) dto.setOwnerId(discoteca.getOwner().getId());
         return dto;
     }

@@ -4,6 +4,7 @@ import es.codeurjc.board.dto.EventoDTO;
 import es.codeurjc.board.service.EventoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -70,7 +71,7 @@ public class EventoRestController {
         }
 
         return ResponseEntity.ok()
-                .header("Content-Type", "image/jpeg")
+                .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
     }
 }

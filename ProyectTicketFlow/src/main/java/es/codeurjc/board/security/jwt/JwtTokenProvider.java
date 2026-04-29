@@ -69,7 +69,7 @@ public class JwtTokenProvider {
 
 	public String generateRefreshToken(UserDetails userDetails) {
 		var token = buildToken(TokenType.REFRESH, userDetails);
-        return token.compact();
+		return token.compact();
 	}
 
 	private JwtBuilder buildToken(TokenType tokenType, UserDetails userDetails) {

@@ -225,5 +225,4 @@ public class EntradaService {
         if (entrada.getEvento() != null) dto.setEventId(entrada.getEvento().getId());
         return dto;
     }
-
 }

@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/profile", "/edit-profile", "/entradas/*/pago", "/mis-entradas").authenticated()
 
                         // PUBLICO
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/css/*", "/images/*").permitAll()
 
                         // RESTO
                         .anyRequest().permitAll()
@@ -101,10 +101,9 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedPage("/error-403")
                 )
-
+                //CSRF desactivado en API REST
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }
-
 }
