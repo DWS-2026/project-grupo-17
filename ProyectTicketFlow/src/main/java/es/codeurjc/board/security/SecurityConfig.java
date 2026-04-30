@@ -1,8 +1,10 @@
 package es.codeurjc.board.security;
 
+import es.codeurjc.board.security.jwt.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -11,26 +13,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-/**
- * Configuracion principal de Spring Security.
- * Define autenticacion, autorizacion por rutas, login/logout y manejo de acceso denegado.
- */
 public class SecurityConfig {
 
     @Autowired
     RepositoryUserDetails userDetailsService;
 
+    @Autowired
+    JwtRequestFilter jwtRequestFilter;
+
     @Bean
-    // Encoder usado para cifrar y verificar contrasenas.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    // Proveedor de autenticacion basado en UserDetailsService + PasswordEncoder.
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider =
                 new DaoAuthenticationProvider(userDetailsService);
@@ -44,13 +44,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    // Cadena de filtros HTTP: reglas de acceso, formulario de login y logout.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authenticationProvider(authenticationProvider());
 
-        http
-                .authorizeHttpRequests(authorize -> authorize
+        // Filtro JWT para API REST
+        http.addFilterBefore(jwtRequestFilter,
+                UsernamePasswordAuthenticationFilter.class);
+
+        http.authorizeHttpRequests(authorize -> authorize
+
+
+                        // WEB
+
 
                         // ADMIN - DISCOTECAS
                         .requestMatchers("/discotecas/create-discotecas").hasRole("ADMIN")
@@ -68,22 +74,54 @@ public class SecurityConfig {
                         .requestMatchers("/entradas/*/edit").hasRole("ADMIN")
                         .requestMatchers("/entradas/*/delete").hasRole("ADMIN")
 
+                        // ADMIN PANEL
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/admin/users/*/profile").hasRole("ADMIN")
+
+                        // PUBLICO WEB
+                        .requestMatchers("/", "/login", "/register", "/css/*", "/images/*").permitAll()
                         .requestMatchers("/user/*/avatar").permitAll()
 
-
-                        // USUARIO LOGUEADO
+                        // USER LOGUEADO WEB
                         .requestMatchers("/profile", "/edit-profile", "/entradas/*/pago", "/mis-entradas").authenticated()
 
-                        // PUBLICO
-                        .requestMatchers("/", "/login", "/register", "/css/*", "/images/*").permitAll()
+
+                        // API REST AUTH
+
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/signup").permitAll()
+                        .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/v1/auth/logout").authenticated()
+
+
+                        // API REST PUBLIC GET
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/clubs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/tickets/**").permitAll()
+
+
+                        // API REST ADMIN
+
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/clubs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/clubs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/clubs/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/events/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/events/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/events/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/tickets/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/tickets/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/tickets/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
 
                         // RESTO
                         .anyRequest().permitAll()
                 )
 
-                // LOGIN
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
@@ -91,7 +129,6 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
-                // LOGOUT
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
@@ -101,7 +138,8 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedPage("/error-403")
                 )
-                //CSRF desactivado en API REST
+
+                // CSRF desactivado solo para API REST
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();

@@ -1,6 +1,7 @@
 package es.codeurjc.board.dto;
 
-public class EntradaDTO {
+public class
+EntradaDTO {
     private Long id;
     private String name;
     private String accessType;

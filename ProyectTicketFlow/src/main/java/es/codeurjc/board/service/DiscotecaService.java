@@ -98,7 +98,7 @@ public class DiscotecaService {
     // Valida los campos obligatorios de una discoteca
     public String validarCamposDiscoteca(String name, String calle, String descripcion) {
         if (isBlank(name) || isBlank(calle) || isBlank(descripcion)) {
-            return "Todos los campos obligatorios deben estar rellenos";
+            return "Los campos nombre, descripcion, y calle deben estar rellenos";
         }
         return null;
     }
