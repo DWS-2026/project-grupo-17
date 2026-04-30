@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,51 +22,83 @@ public class UserRestController {
         this.userService = userService;
     }
 
+    // LISTADO (solo admin lo controla SecurityConfig)
     @GetMapping
     public ResponseEntity<Page<UserDTO>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
+
         Page<UserDTO> users = userService.findAllUsers(PageRequest.of(page, size));
         return ResponseEntity.ok(users);
     }
 
+    // PERFIL PROPIO O ADMIN
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id,
+                                         Authentication auth) {
+
+        if (!userService.canAccessUser(id, auth)) {
+            return ResponseEntity.status(403).body("Acceso denegado");
+        }
+
         return userService.findUserById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // SOLO ADMIN
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+
         UserDTO createdUser = userService.createUser(userDTO);
-        
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdUser.getId())
                 .toUri();
-                
+
         return ResponseEntity.created(location).body(createdUser);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+    // PERFIL PROPIO O ADMIN
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id,
+                                        @RequestBody UserDTO userDTO,
+                                        Authentication auth) {
+
+        if (!userService.canAccessUser(id, auth)) {
+            return ResponseEntity.status(403).body("No puedes editar otro usuario");
+        }
+
         return userService.updateUser(id, userDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // PERFIL PROPIO O ADMIN
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id,
+                                        Authentication auth) {
+
+        if (!userService.canAccessUser(id, auth)) {
+            return ResponseEntity.status(403).body("No puedes borrar otro usuario");
+        }
+
         if (userService.deleteUser(id)) {
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.notFound().build();
     }
 
+    // PERFIL PROPIO O ADMIN
     @GetMapping("/{id}/image")
-    public ResponseEntity<byte[]> getUserAvatar(@PathVariable Long id) throws Exception {
+    public ResponseEntity<?> getUserAvatar(@PathVariable Long id,
+                                           Authentication auth) throws Exception {
+
+        if (!userService.canAccessUser(id, auth)) {
+            return ResponseEntity.status(403).body("No puedes ver otra imagen");
+        }
 
         byte[] image = userService.getUserAvatar(id);
 
@@ -77,5 +110,5 @@ public class UserRestController {
                 .contentType(MediaType.IMAGE_PNG)
                 .body(image);
     }
-
 }
+

@@ -26,12 +26,16 @@ public class DiscotecaRestController {
     public ResponseEntity<Page<DiscotecaDTO>> getAllClubs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<DiscotecaDTO> clubs = discotecaService.findAllClubs(PageRequest.of(page, size));
+
+        Page<DiscotecaDTO> clubs =
+                discotecaService.findAllClubs(PageRequest.of(page, size));
+
         return ResponseEntity.ok(clubs);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DiscotecaDTO> getClubById(@PathVariable Long id) {
+
         return discotecaService.findClubById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -39,7 +43,7 @@ public class DiscotecaRestController {
 
     @PostMapping
     public ResponseEntity<?> createClub(@RequestBody DiscotecaDTO clubDTO) {
-        //Validación de campo en una entidad en su creación
+
         String error = discotecaService.validarCamposDiscoteca(
                 clubDTO.getName(),
                 clubDTO.getStreet(),
@@ -61,8 +65,10 @@ public class DiscotecaRestController {
         return ResponseEntity.created(location).body(createdClub);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<DiscotecaDTO> updateClub(@PathVariable Long id, @RequestBody DiscotecaDTO clubDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<DiscotecaDTO> updateClub(@PathVariable Long id,
+                                                   @RequestBody DiscotecaDTO clubDTO) {
+
         return discotecaService.updateClub(id, clubDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -70,9 +76,11 @@ public class DiscotecaRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClub(@PathVariable Long id) {
+
         if (discotecaService.deleteClub(id)) {
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.notFound().build();
     }
 
@@ -89,5 +97,4 @@ public class DiscotecaRestController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
     }
-
 }

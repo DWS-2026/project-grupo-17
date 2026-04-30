@@ -92,6 +92,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/signup").permitAll()
                         .requestMatchers("/api/v1/auth/refresh").permitAll()
                         .requestMatchers("/api/v1/auth/logout").authenticated()
+                        .requestMatchers("/api/v1/users/*").authenticated()
 
 
                         // API REST PUBLIC GET
@@ -105,18 +106,18 @@ public class SecurityConfig {
 
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/clubs/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/clubs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/clubs/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/clubs/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/events/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/events/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/events/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/events/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/tickets/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/tickets/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/tickets/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/tickets/**").hasRole("ADMIN")
 
-                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
 
                         // RESTO
                         .anyRequest().permitAll()

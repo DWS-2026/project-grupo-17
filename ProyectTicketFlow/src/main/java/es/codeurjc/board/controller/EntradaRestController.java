@@ -24,6 +24,7 @@ public class EntradaRestController {
     public ResponseEntity<Page<EntradaDTO>> getAllTickets(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
         Page<EntradaDTO> tickets = entradaService.findAllTickets(PageRequest.of(page, size));
         return ResponseEntity.ok(tickets);
     }
@@ -37,16 +38,21 @@ public class EntradaRestController {
 
     @PostMapping
     public ResponseEntity<EntradaDTO> createTicket(@RequestBody EntradaDTO ticketDTO) {
+
         EntradaDTO createdTicket = entradaService.createTicket(ticketDTO);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdTicket.getId())
                 .toUri();
+
         return ResponseEntity.created(location).body(createdTicket);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EntradaDTO> updateTicket(@PathVariable Long id, @RequestBody EntradaDTO ticketDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<EntradaDTO> updateTicket(@PathVariable Long id,
+                                                   @RequestBody EntradaDTO ticketDTO) {
+
         return entradaService.updateTicket(id, ticketDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -54,9 +60,11 @@ public class EntradaRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
+
         if (entradaService.deleteTicket(id)) {
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.notFound().build();
     }
 }

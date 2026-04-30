@@ -25,6 +25,7 @@ public class EventoRestController {
     public ResponseEntity<Page<EventoDTO>> getAllEvents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
         Page<EventoDTO> events = eventoService.findAllEvents(PageRequest.of(page, size));
         return ResponseEntity.ok(events);
     }
@@ -38,16 +39,21 @@ public class EventoRestController {
 
     @PostMapping
     public ResponseEntity<EventoDTO> createEvent(@RequestBody EventoDTO eventDTO) {
+
         EventoDTO createdEvent = eventoService.createEvent(eventDTO);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdEvent.getId())
                 .toUri();
+
         return ResponseEntity.created(location).body(createdEvent);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EventoDTO> updateEvent(@PathVariable Long id, @RequestBody EventoDTO eventDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<EventoDTO> updateEvent(@PathVariable Long id,
+                                                 @RequestBody EventoDTO eventDTO) {
+
         return eventoService.updateEvent(id, eventDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -55,9 +61,11 @@ public class EventoRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+
         if (eventoService.deleteEvent(id)) {
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.notFound().build();
     }
 

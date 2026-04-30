@@ -23,6 +23,8 @@ import java.util.Optional;
 import es.codeurjc.board.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+
 
 @Service
 /**
@@ -210,12 +212,27 @@ public class UserService {
     }
 
     public Optional<UserDTO> updateUser(Long id, UserDTO userDTO) {
+
         return userRepository.findById(id).map(user -> {
-            user.setNombre(userDTO.getName());
-            user.setEmail(userDTO.getEmail());
-            user.setFechaNacimiento(userDTO.getBirthDate());
-            if (userDTO.getRoles() != null) user.setRoles(userDTO.getRoles());
+
+            if (userDTO.getName() != null) {
+                user.setNombre(userDTO.getName());
+            }
+
+            if (userDTO.getEmail() != null) {
+                user.setEmail(userDTO.getEmail());
+            }
+
+            if (userDTO.getBirthDate() != null) {
+                user.setFechaNacimiento(userDTO.getBirthDate());
+            }
+
+            if (userDTO.getRoles() != null) {
+                user.setRoles(userDTO.getRoles());
+            }
+
             userRepository.save(user);
+
             return toDTO(user);
         });
     }
@@ -239,6 +256,25 @@ public class UserService {
         Blob blob = user.getAvatar().getImageFile();
 
         return blob.getBytes(1, (int) blob.length());
+    }
+
+    public boolean canAccessUser(Long targetId, Authentication auth) {
+
+        String email = auth.getName();
+
+        Optional<User> currentUserOpt = userRepository.findByEmail(email);
+
+        if (currentUserOpt.isEmpty()) {
+            return false;
+        }
+
+        User currentUser = currentUserOpt.get();
+
+        boolean esAdmin = auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        return esAdmin || currentUser.getId().equals(targetId);
     }
 
     private UserDTO toDTO(User user) {
