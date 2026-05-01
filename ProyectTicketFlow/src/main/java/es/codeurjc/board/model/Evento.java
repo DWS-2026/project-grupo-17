@@ -28,6 +28,8 @@ public class Evento {
     @JoinColumn(name = "owner_id")
     private User owner;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String descripcion;
     private Integer edadRequerida;
 

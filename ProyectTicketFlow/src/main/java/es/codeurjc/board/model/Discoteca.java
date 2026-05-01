@@ -19,6 +19,8 @@ public class Discoteca {
     private String name;
 
     private String calle;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String descripcion;
 
     // Imagen principal de la discoteca (logo o foto).

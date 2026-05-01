@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -51,7 +51,7 @@
             <img src="/eventos/{{evento.id}}/image" class="img-fluid rounded mb-4">
 
             <h2 class="fw-bold text-white">{{evento.name}}</h2>
-            <p class="text-white-50">{{evento.descripcion}}</p>
+            <div class="text-white-50 rich-text-content">{{{evento.descripcion}}}</div>
 
             {{#entradas}}
             <div class="card mb-3 shadow-sm">

@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,94 +8,137 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <!-- Quill.js Rich Text Editor -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+    <style>
+        #editor-container {
+            height: 200px;
+            background: #fff;
+        }
+
+        .ql-toolbar.ql-snow {
+            background: #f8f9fa;
+        }
+    </style>
 </head>
+
 <body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container position-relative">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container position-relative">
 
-            <div class="header1">
-                <a href="/discotecas" class="flecha">
-                    <-
-                </a>
-                <a class="navbar-brand" href="/">TicketFlow</a>
-            </div>
-
-            <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
-                Publicar Discoteca
-            </span>
-
-            <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y"
-               href="/profile">
-                <i class="bi bi-person-circle"></i>
-            </a>
-
-        </div>
-    </nav>
-</header>
-
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-3">
-
-                <div class="card-header bg-primary text-white p-4 text-center">
-                    <h3 class="fw-bold mb-0">Registrar Nueva Discoteca</h3>
-                    <p class="mb-0 text-white-50">¡Añade un nuevo local a la red TicketFlow!</p>
+                <div class="header1">
+                    <a href="/discotecas" class="flecha">
+                        <- </a>
+                            <a class="navbar-brand" href="/">TicketFlow</a>
                 </div>
 
-                <div class="card-body p-4">
-                    {{#error}}
-                    <div class="alert alert-danger" role="alert">{{error}}</div>
-                    {{/error}}
-                    <form action="/discotecas/create-discotecas" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="_csrf" value="{{token}}" />
+                <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
+                    Publicar Discoteca
+                </span>
 
-                        <div class="mb-3">
-                            <label for="name" class="form-label fw-bold">Nombre del Local</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-music-note-beamed"></i></span>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Ej: Sala Riviera" required>
+                <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y" href="/profile">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-3">
+
+                    <div class="card-header bg-primary text-white p-4 text-center">
+                        <h3 class="fw-bold mb-0">Registrar Nueva Discoteca</h3>
+                        <p class="mb-0 text-white-50">¡Añade un nuevo local a la red TicketFlow!</p>
+                    </div>
+
+                    <div class="card-body p-4">
+                        {{#error}}
+                        <div class="alert alert-danger" role="alert">{{error}}</div>
+                        {{/error}}
+                        <form id="discotecaForm" action="/discotecas/create-discotecas" method="post"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="{{token}}" />
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-bold">Nombre del Local</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-music-note-beamed"></i></span>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="Ej: Sala Riviera" required>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="calle" class="form-label fw-bold">Dirección</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
-                                <input type="text" class="form-control" id="calle" name="calle" placeholder="Ej: Calle Atocha, 125" required>
+                            <div class="mb-3">
+                                <label for="calle" class="form-label fw-bold">Dirección</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                    <input type="text" class="form-control" id="calle" name="calle"
+                                        placeholder="Ej: Calle Atocha, 125" required>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="descripcion" class="form-label fw-bold">Descripción del Local</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe el estilo musical, el aforo, el ambiente..." required></textarea>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label fw-bold">Descripción del Local </label>
+                                <!-- Quill editor container -->
+                                <div id="editor-container"></div>
+                                <!-- Hidden input that will hold the HTML from Quill -->
+                                <input type="hidden" id="descripcion" name="descripcion">
                             </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label for="image" class="form-label fw-bold">Foto del Local</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-image"></i></span>
-                                <input type="file" class="form-control" id="image" name="imageFile" required>
+                            <div class="mb-4">
+                                <label for="image" class="form-label fw-bold">Foto del Local</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                    <input type="file" class="form-control" id="image" name="imageFile" required>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-dark btn-lg">Publicar Discoteca</button>
-                        </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-dark btn-lg">Publicar Discoteca</button>
+                            </div>
 
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-{{>partials/footer}}
+    {{>partials/footer}}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script>
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Describe el estilo musical, el aforo, el ambiente...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        });
+
+        document.getElementById('discotecaForm').addEventListener('submit', function (e) {
+            var html = quill.root.innerHTML;
+            if (html === '<p><br></p>' || html.trim() === '') {
+                e.preventDefault();
+                alert('La descripción no puede estar vacía.');
+                return;
+            }
+            document.getElementById('descripcion').value = html;
+        });
+    </script>
 </body>
+
 </html>

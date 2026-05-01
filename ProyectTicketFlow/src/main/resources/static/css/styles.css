@@ -104,3 +104,26 @@ main {
     aspect-ratio: 1 / 1;
     object-fit: cover;
 }
+
+/* ==================== Rich Text Content Display ==================== */
+.rich-text-content {
+    line-height: 1.6;
+}
+.rich-text-content p {
+    margin-bottom: 0.5rem;
+}
+.rich-text-content ul,
+.rich-text-content ol {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+}
+.rich-text-content h1,
+.rich-text-content h2,
+.rich-text-content h3 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+.rich-text-content a {
+    color: #0d6efd;
+    text-decoration: underline;
+}
