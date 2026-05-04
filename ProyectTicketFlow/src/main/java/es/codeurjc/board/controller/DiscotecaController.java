@@ -138,8 +138,12 @@ public class DiscotecaController {
             return ResponseEntity.notFound().build();
         }
 
-        Blob blob = d.getImage().getImageFile();
-        byte[] bytes = blob.getBytes(1, (int) blob.length());
+        // Utiliza el método del servicio que soporta leer desde disco o BD
+        byte[] bytes = discotecaService.getClubImage(id);
+        
+        if (bytes == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")

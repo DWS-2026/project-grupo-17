@@ -35,6 +35,12 @@ public class EventoService {
     private UserService userService;
 
     @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private FileStorageService fileStorageService;
+
+    @Autowired
     private es.codeurjc.board.repositories.DiscotecaRepository discotecaRepository;
 
     public Collection<Evento> findAll() {
@@ -100,9 +106,7 @@ public class EventoService {
         evento.setDiscoteca(discoteca);
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            byte[] bytes = imageFile.getBytes();
-            Blob blob = new SerialBlob(bytes);
-            Image img = new Image(blob);
+            Image img = imageService.createImageFromFile(imageFile);
             evento.setImage(img);
         }
 
@@ -125,10 +129,12 @@ public class EventoService {
             }
 
             if (image != null && !image.isEmpty()) {
-                byte[] bytes = image.getInputStream().readAllBytes();
-                Blob blob = new SerialBlob(bytes);
-                Image img = new Image(blob);
-                evento.setImage(img);
+                if (evento.getImage() != null) {
+                    imageService.replaceImageFile(evento.getImage().getId(), image);
+                } else {
+                    Image img = imageService.createImageFromFile(image);
+                    evento.setImage(img);
+                }
             }
 
             save(evento);
@@ -204,7 +210,7 @@ public class EventoService {
         return false;
     }
 
-    public byte[] getEventImage(Long id) throws SQLException {
+    public byte[] getEventImage(Long id) throws SQLException, IOException {
 
         Evento evento = findById(id);
 
@@ -212,9 +218,27 @@ public class EventoService {
             return null;
         }
 
-        Blob blob = evento.getImage().getImageFile();
+        Image image = evento.getImage();
+        
+        // Si está en disco, leerla desde ahí
+        if (image.getFileName() != null && !image.getFileName().isEmpty()) {
+            try {
+                org.springframework.core.io.Resource resource = 
+                    fileStorageService.getFileAsResource(image.getFileName());
+                return resource.getInputStream().readAllBytes();
+            } catch (IOException e) {
+                System.err.println("Error reading file from disk: " + e.getMessage());
+                // Continuar con blob si existe
+            }
+        }
+        
+        // Si está en BD (backwards compatibility)
+        if (image.getImageFile() != null) {
+            Blob blob = image.getImageFile();
+            return blob.getBytes(1, (int) blob.length());
+        }
 
-        return blob.getBytes(1, (int) blob.length());
+        return null;
     }
 
     private EventoDTO toDTO(Evento evento) {

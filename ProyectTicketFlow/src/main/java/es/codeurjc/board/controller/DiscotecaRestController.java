@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -56,6 +57,36 @@ public class DiscotecaRestController {
         }
 
         DiscotecaDTO createdClub = discotecaService.createClub(clubDTO);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdClub.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(createdClub);
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createClubWithImage(
+            @RequestParam String name,
+            @RequestParam String street,
+            @RequestParam String description,
+            @RequestParam(required = false) Long ownerId,
+            @RequestParam(required = false) MultipartFile imageFile
+    ) throws Exception {
+
+        String error = discotecaService.validarCamposDiscoteca(name, street, description);
+        if (error != null) {
+            return ResponseEntity.badRequest().body(Map.of("error", error));
+        }
+
+        DiscotecaDTO dto = new DiscotecaDTO();
+        dto.setName(name);
+        dto.setStreet(street);
+        dto.setDescription(description);
+        dto.setOwnerId(ownerId);
+
+        DiscotecaDTO createdClub = discotecaService.createClubWithImage(dto, imageFile);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

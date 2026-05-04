@@ -9,28 +9,27 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import es.codeurjc.board.model.Image;
 import es.codeurjc.board.service.ImageService;
 
-
-@Controller
+@RestController
+@RequestMapping("/api/v1/files")
 /**
- * Controlador auxiliar para servir imágenes por id.
- * Soporta imágenes almacenadas en disco y en BD.
+ * Controlador REST para servir ficheros almacenados en disco.
  */
-public class ImageController {
+public class FileRestController {
 
     @Autowired
     private ImageService imageService;
 
     @GetMapping("/images/{id}")
-    // Devuelve el recurso binario detectando su tipo MIME de forma automatica.
-    public ResponseEntity<Object> getImageFile(@PathVariable long id) throws SQLException, IOException {
-
+    // Devuelve la imagen por ID (GET desde REST).
+    public ResponseEntity<Resource> getImageFile(@PathVariable long id) throws IOException, SQLException {
         Resource imageFile = imageService.getImageFile(id);
 
         MediaType mediaType = MediaTypeFactory
@@ -45,7 +44,7 @@ public class ImageController {
 
     @GetMapping("/images/{id}/download")
     // Descarga la imagen con su nombre original.
-    public ResponseEntity<Resource> downloadImage(@PathVariable long id) throws SQLException, IOException {
+    public ResponseEntity<Resource> downloadImageFile(@PathVariable long id) throws IOException, SQLException {
         Image image = imageService.getImage(id);
         Resource imageFile = imageService.getImageFile(id);
 

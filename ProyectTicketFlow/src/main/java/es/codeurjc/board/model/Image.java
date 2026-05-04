@@ -11,7 +11,8 @@ import jakarta.persistence.Lob;
 @Entity
 /**
  * Entidad Image.
- * Guarda contenido binario (Blob) para avatars, carteles y fotos.
+ * Almacena ficheros en disco con su nombre único.
+ * Mantiene compatibilidad con Blob para imágenes existentes en BD.
  */
 public class Image {
 
@@ -21,8 +22,14 @@ public class Image {
     private Long id;
 
     @Lob
-    // Binario de imagen persistido como objeto grande en BD.
+    // Binario de imagen persistido como objeto grande en BD (backwards compatibility).
     private Blob imageFile;
+
+    // Nombre único del fichero guardado en disco.
+    private String fileName;
+    
+    // Nombre original del fichero (para preservar extensión y referencia).
+    private String originalFileName;
 
     // Constructor vacio requerido por JPA.
     public Image() {
@@ -30,6 +37,13 @@ public class Image {
 
     public Image(Blob imageFile) {
         this.imageFile = imageFile;
+    }
+
+    // Constructor para nuevas imágenes almacenadas en disco.
+    public Image(String fileName, String originalFileName) {
+        this.fileName = fileName;
+        this.originalFileName = originalFileName;
+        this.imageFile = null;
     }
 
     // Getters y setters de la entidad.
@@ -49,9 +63,25 @@ public class Image {
         this.imageFile = imageFile;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
+    }
+
     @Override
     // toString reducido para no imprimir el Blob completo en logs.
     public String toString() {
-        return "Image [id=" + id + "]";
+        return "Image [id=" + id + ", fileName=" + fileName + "]";
     }
 }

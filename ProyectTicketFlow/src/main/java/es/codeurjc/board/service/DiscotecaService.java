@@ -38,6 +38,9 @@ public class DiscotecaService {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
     public Collection<Discoteca> findAll() {
         return discotecaRepository.findAll();
     }
@@ -103,7 +106,7 @@ public class DiscotecaService {
         discoteca.setOwner(owner);
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            Image img = imageService.createImage(imageFile.getInputStream());
+            Image img = imageService.createImageFromFile(imageFile);
             discoteca.setImage(img);
         }
 
@@ -125,10 +128,17 @@ public class DiscotecaService {
             discoteca.setDescripcion(discotecaForm.getDescripcion());
 
             if (removeImage) {
+                if (discoteca.getImage() != null) {
+                    imageService.deleteImage(discoteca.getImage().getId());
+                }
                 discoteca.setImage(null);
             } else if (imageFile != null && !imageFile.isEmpty()) {
-                Image img = imageService.createImage(imageFile.getInputStream());
-                discoteca.setImage(img);
+                if (discoteca.getImage() != null) {
+                    imageService.replaceImageFile(discoteca.getImage().getId(), imageFile);
+                } else {
+                    Image img = imageService.createImageFromFile(imageFile);
+                    discoteca.setImage(img);
+                }
             }
 
             save(discoteca);
@@ -163,6 +173,26 @@ public class DiscotecaService {
 
         discotecaRepository.save(discoteca);
 
+        return toDTO(discoteca);
+    }
+
+    public DiscotecaDTO createClubWithImage(DiscotecaDTO dto, MultipartFile imageFile) throws IOException {
+
+        Discoteca discoteca = new Discoteca();
+        discoteca.setName(dto.getName());
+        discoteca.setCalle(dto.getStreet());
+        discoteca.setDescripcion(dto.getDescription());
+
+        if (dto.getOwnerId() != null) {
+            discoteca.setOwner(userService.findById(dto.getOwnerId()));
+        }
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            Image img = imageService.createImageFromFile(imageFile);
+            discoteca.setImage(img);
+        }
+
+        discotecaRepository.save(discoteca);
         return toDTO(discoteca);
     }
 
@@ -203,7 +233,7 @@ public class DiscotecaService {
         return false;
     }
 
-    public byte[] getClubImage(Long id) throws SQLException {
+    public byte[] getClubImage(Long id) throws SQLException, IOException {
 
         Discoteca discoteca = findById(id);
 
@@ -211,9 +241,27 @@ public class DiscotecaService {
             return null;
         }
 
-        Blob blob = discoteca.getImage().getImageFile();
+        Image image = discoteca.getImage();
+        
+        // Si está en disco, leerla desde ahí
+        if (image.getFileName() != null && !image.getFileName().isEmpty()) {
+            try {
+                org.springframework.core.io.Resource resource = 
+                    fileStorageService.getFileAsResource(image.getFileName());
+                return resource.getInputStream().readAllBytes();
+            } catch (IOException e) {
+                System.err.println("Error reading file from disk: " + e.getMessage());
+                // Continuar con blob si existe
+            }
+        }
+        
+        // Si está en BD (backwards compatibility)
+        if (image.getImageFile() != null) {
+            Blob blob = image.getImageFile();
+            return blob.getBytes(1, (int) blob.length());
+        }
 
-        return blob.getBytes(1, (int) blob.length());
+        return null;
     }
 
     private DiscotecaDTO toDTO(Discoteca discoteca) {
