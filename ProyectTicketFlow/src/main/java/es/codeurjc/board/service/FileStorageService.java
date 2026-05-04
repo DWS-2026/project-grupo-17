@@ -19,7 +19,7 @@ public class FileStorageService {
     private String uploadDir;
 
     /**
-     * Guarda un fichero en disco y devuelve su nombre único (preservando extensión).
+     * Guarda un fichero en disco y devuelve su nombre único (incluyendo nombre original).
      * @param file Fichero a guardar
      * @return Nombre único del fichero guardado
      */
@@ -32,15 +32,19 @@ public class FileStorageService {
         Path uploadPath = Paths.get(uploadDir);
         Files.createDirectories(uploadPath);
 
-        // Obtener extensión original
+        // Obtener nombre original
         String originalFileName = file.getOriginalFilename();
-        String fileExtension = "";
-        if (originalFileName != null && originalFileName.contains(".")) {
-            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+
+        if (originalFileName == null || originalFileName.isBlank()) {
+            throw new IOException("Invalid file name");
         }
 
-        // Generar nombre único con extensión original
-        String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
+        // Limpiar espacios (opcional pero recomendable)
+        originalFileName = originalFileName.replaceAll("\\s+", "_");
+
+        // 🔥 CLAVE: incluir nombre original + UUID
+        String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+
         Path filePath = uploadPath.resolve(uniqueFileName);
 
         // Guardar fichero
@@ -56,7 +60,7 @@ public class FileStorageService {
      */
     public Resource getFileAsResource(String fileName) throws IOException {
         Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
-        
+
         // Validar que la ruta está dentro del directorio permitido (seguridad)
         if (!filePath.toRealPath().startsWith(Paths.get(uploadDir).toRealPath())) {
             throw new IOException("Invalid file path");
@@ -76,8 +80,7 @@ public class FileStorageService {
      */
     public void deleteFile(String fileName) throws IOException {
         Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
-        
-        // Validar que la ruta está dentro del directorio permitido (seguridad)
+
         if (!filePath.toRealPath().startsWith(Paths.get(uploadDir).toRealPath())) {
             throw new IOException("Invalid file path");
         }
@@ -92,7 +95,7 @@ public class FileStorageService {
      */
     public Path getFilePath(String fileName) throws IOException {
         Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
-        
+
         if (!filePath.toRealPath().startsWith(Paths.get(uploadDir).toRealPath())) {
             throw new IOException("Invalid file path");
         }
