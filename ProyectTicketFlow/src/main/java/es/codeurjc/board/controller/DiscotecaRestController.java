@@ -19,9 +19,11 @@ import java.util.Optional;
 public class DiscotecaRestController {
 
     private final DiscotecaService discotecaService;
+    private final es.codeurjc.board.service.FileStorageService fileStorageService;
 
-    public DiscotecaRestController(DiscotecaService discotecaService) {
+    public DiscotecaRestController(DiscotecaService discotecaService, es.codeurjc.board.service.FileStorageService fileStorageService) {
         this.discotecaService = discotecaService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping
@@ -169,16 +171,13 @@ public class DiscotecaRestController {
             return ResponseEntity.notFound().build();
         }
         try {
-            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(java.nio.file.Paths.get("uploads").resolve(club.getFlyerFileName()).normalize().toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/pdf")
-                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            }
-        } catch (java.net.MalformedURLException e) {
+            org.springframework.core.io.Resource resource = fileStorageService.getFileAsResource(club.getFlyerFileName());
+            return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/pdf")
+                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.notFound().build();
     }
 }

@@ -33,6 +33,9 @@ public class DiscotecaController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private es.codeurjc.board.service.FileStorageService fileStorageService;
+
 
     @GetMapping("/discotecas")
     // Lista todas las discotecas y marca en el modelo si el usuario actual es admin.
@@ -163,14 +166,12 @@ public class DiscotecaController {
                     .build();
         }
         try {
-            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(java.nio.file.Paths.get("uploads").resolve(d.getFlyer()).normalize().toUri());
-            if (resource.exists() && resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            }
-        } catch (java.net.MalformedURLException e) {
+            org.springframework.core.io.Resource resource = fileStorageService.getFileAsResource(d.getFlyer());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (IOException e) {
             // ignore
         }
         return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
