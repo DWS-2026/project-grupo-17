@@ -38,25 +38,37 @@ public class EventoRestController {
     }
 
     @PostMapping
-    public ResponseEntity<EventoDTO> createEvent(@RequestBody EventoDTO eventDTO) {
+    public ResponseEntity<?> createEvent(@RequestBody EventoDTO eventDTO) {
 
-        EventoDTO createdEvent = eventoService.createEvent(eventDTO);
+        if (eventDTO.getName() == null || eventDTO.getDescription() == null || eventDTO.getRequiredAge() == null || eventDTO.getDiscotecaId() == null || eventDTO.getOwnerId() == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, description, requiredAge, discotecaId y ownerId."));
+        }
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(createdEvent.getId())
-                .toUri();
+        try {
+            EventoDTO createdEvent = eventoService.createEvent(eventDTO);
 
-        return ResponseEntity.created(location).body(createdEvent);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdEvent.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(createdEvent);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<EventoDTO> updateEvent(@PathVariable Long id,
-                                                 @RequestBody EventoDTO eventDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateEvent(@PathVariable Long id,
+                                         @RequestBody EventoDTO eventDTO) {
 
-        return eventoService.updateEvent(id, eventDTO)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return eventoService.updateEvent(id, eventDTO)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")

@@ -48,6 +48,10 @@ public class DiscotecaRestController {
     @PostMapping
     public ResponseEntity<?> createClub(@RequestBody DiscotecaDTO clubDTO) {
 
+        if (clubDTO.getName() == null || clubDTO.getStreet() == null || clubDTO.getDescription() == null || clubDTO.getOwnerId() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, street, description y ownerId."));
+        }
+
         String error = discotecaService.validarCamposDiscoteca(
                 clubDTO.getName(),
                 clubDTO.getStreet(),
@@ -127,7 +131,7 @@ public class DiscotecaRestController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<DiscotecaDTO> updateClub(@PathVariable Long id,
                                                    @RequestBody DiscotecaDTO clubDTO) {
 

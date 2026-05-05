@@ -48,7 +48,11 @@ public class UserRestController {
 
     // SOLO ADMIN
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
+
+        if (userDTO.getName() == null || userDTO.getEmail() == null || userDTO.getBirthDate() == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, email y birthDate."));
+        }
 
         UserDTO createdUser = userService.createUser(userDTO);
 
@@ -61,7 +65,7 @@ public class UserRestController {
     }
 
     // PERFIL PROPIO O ADMIN
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,
                                         @RequestBody UserDTO userDTO,
                                         Authentication auth) {

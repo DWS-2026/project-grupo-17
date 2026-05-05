@@ -189,8 +189,9 @@ public class EntradaService {
         entrada.setPrecio(dto.getPrice());
 
         if (dto.getEventId() != null) {
-            eventoRepository.findById(dto.getEventId())
-                    .ifPresent(entrada::setEvento);
+            Evento evento = eventoRepository.findById(dto.getEventId())
+                    .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + dto.getEventId() + " no existe"));
+            entrada.setEvento(evento);
         }
 
         entradaRepository.save(entrada);
@@ -219,8 +220,9 @@ public class EntradaService {
             }
 
             if (dto.getEventId() != null) {
-                eventoRepository.findById(dto.getEventId())
-                        .ifPresent(entrada::setEvento);
+                Evento evento = eventoRepository.findById(dto.getEventId())
+                        .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + dto.getEventId() + " no existe"));
+                entrada.setEvento(evento);
             }
 
             entradaRepository.save(entrada);

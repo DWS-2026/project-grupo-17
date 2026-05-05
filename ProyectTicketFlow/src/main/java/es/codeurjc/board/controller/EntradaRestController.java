@@ -37,25 +37,37 @@ public class EntradaRestController {
     }
 
     @PostMapping
-    public ResponseEntity<EntradaDTO> createTicket(@RequestBody EntradaDTO ticketDTO) {
+    public ResponseEntity<?> createTicket(@RequestBody EntradaDTO ticketDTO) {
 
-        EntradaDTO createdTicket = entradaService.createTicket(ticketDTO);
+        if (ticketDTO.getName() == null || ticketDTO.getAccessType() == null || ticketDTO.getIncludes() == null || ticketDTO.getPrice() == null || ticketDTO.getEventId() == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, accessType, includes, price y eventId."));
+        }
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(createdTicket.getId())
-                .toUri();
+        try {
+            EntradaDTO createdTicket = entradaService.createTicket(ticketDTO);
 
-        return ResponseEntity.created(location).body(createdTicket);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdTicket.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(createdTicket);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<EntradaDTO> updateTicket(@PathVariable Long id,
-                                                   @RequestBody EntradaDTO ticketDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTicket(@PathVariable Long id,
+                                          @RequestBody EntradaDTO ticketDTO) {
 
-        return entradaService.updateTicket(id, ticketDTO)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return entradaService.updateTicket(id, ticketDTO)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")

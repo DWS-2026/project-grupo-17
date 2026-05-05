@@ -38,6 +38,11 @@ public class AuthRestController {
     public ResponseEntity<?> signup(
             @RequestBody SignupRequestDTO request) throws Exception {
 
+        if (request.getPassword() == null || request.getPassword().length() < 4) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "La contraseña debe tener al menos 4 caracteres"));
+        }
+
         String error = userService.validarRegistro(
                 request.getName(),
                 request.getEmail(),

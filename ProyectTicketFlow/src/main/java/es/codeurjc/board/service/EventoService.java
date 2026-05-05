@@ -166,8 +166,9 @@ public class EventoService {
         );
 
         if (eventoDTO.getDiscotecaId() != null) {
-            discotecaRepository.findById(eventoDTO.getDiscotecaId())
-                    .ifPresent(evento::setDiscoteca);
+            es.codeurjc.board.model.Discoteca discoteca = discotecaRepository.findById(eventoDTO.getDiscotecaId())
+                    .orElseThrow(() -> new IllegalArgumentException("La discoteca con ID " + eventoDTO.getDiscotecaId() + " no existe"));
+            evento.setDiscoteca(discoteca);
         }
 
         eventoRepository.save(evento);
@@ -192,8 +193,9 @@ public class EventoService {
             }
 
             if (eventoDTO.getDiscotecaId() != null) {
-                discotecaRepository.findById(eventoDTO.getDiscotecaId())
-                        .ifPresent(evento::setDiscoteca);
+                es.codeurjc.board.model.Discoteca discoteca = discotecaRepository.findById(eventoDTO.getDiscotecaId())
+                        .orElseThrow(() -> new IllegalArgumentException("La discoteca con ID " + eventoDTO.getDiscotecaId() + " no existe"));
+                evento.setDiscoteca(discoteca);
             }
 
             eventoRepository.save(evento);
