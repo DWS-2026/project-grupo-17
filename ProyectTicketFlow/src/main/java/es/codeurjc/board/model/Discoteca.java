@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
+
 @Entity
 /**
  * Entidad Discoteca.
@@ -22,6 +25,8 @@ public class Discoteca {
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String descripcion;
+
+    private String flyer;
 
     // Imagen principal de la discoteca (logo o foto).
     @OneToOne(cascade = CascadeType.ALL)
@@ -42,13 +47,13 @@ public class Discoteca {
     public Discoteca(String name, String calle, String descripcion) {
         this.name = name;
         this.calle = calle;
-        this.descripcion = descripcion;
+        this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null;
     }
 
     public Discoteca(String name, String calle, String descripcion, User owner) {
         this.name = name;
         this.calle = calle;
-        this.descripcion = descripcion;
+        this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null;
         this.owner = owner;
     }
 
@@ -70,7 +75,10 @@ public class Discoteca {
     public void setCalle(String calle) { this.calle = calle; }
 
     public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null; }
+
+    public String getFlyer() { return flyer; }
+    public void setFlyer(String flyer) { this.flyer = flyer; }
 
     public User getOwner() { return owner; }
     public void setOwner(User owner) { this.owner = owner; }

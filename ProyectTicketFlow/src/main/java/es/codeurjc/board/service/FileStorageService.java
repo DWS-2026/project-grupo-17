@@ -42,27 +42,20 @@ public class FileStorageService {
         // Limpiar espacios (opcional pero recomendable)
         originalFileName = originalFileName.replaceAll("\\s+", "_");
 
-        // 🔥 CLAVE: incluir nombre original + UUID
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+        Path filePath = uploadPath.resolve(originalFileName);
 
-        Path filePath = uploadPath.resolve(uniqueFileName);
+        // Guardar fichero (sobrescribe si existe)
+        Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-        // Guardar fichero
-        Files.copy(file.getInputStream(), filePath);
-
-        return uniqueFileName;
+        return originalFileName;
     }
 
-    /**
-     * Obtiene un fichero del disco como recurso.
-     * @param fileName Nombre único del fichero
-     * @return Resource para servir el fichero
-     */
     public Resource getFileAsResource(String fileName) throws IOException {
-        Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path filePath = uploadPath.resolve(fileName).normalize();
 
         // Validar que la ruta está dentro del directorio permitido (seguridad)
-        if (!filePath.toRealPath().startsWith(Paths.get(uploadDir).toRealPath())) {
+        if (!filePath.startsWith(uploadPath)) {
             throw new IOException("Invalid file path");
         }
 
@@ -79,9 +72,10 @@ public class FileStorageService {
      * @param fileName Nombre único del fichero
      */
     public void deleteFile(String fileName) throws IOException {
-        Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path filePath = uploadPath.resolve(fileName).normalize();
 
-        if (!filePath.toRealPath().startsWith(Paths.get(uploadDir).toRealPath())) {
+        if (!filePath.startsWith(uploadPath)) {
             throw new IOException("Invalid file path");
         }
 
@@ -94,9 +88,10 @@ public class FileStorageService {
      * @return Path del fichero
      */
     public Path getFilePath(String fileName) throws IOException {
-        Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path filePath = uploadPath.resolve(fileName).normalize();
 
-        if (!filePath.toRealPath().startsWith(Paths.get(uploadDir).toRealPath())) {
+        if (!filePath.startsWith(uploadPath)) {
             throw new IOException("Invalid file path");
         }
 

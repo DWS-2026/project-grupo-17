@@ -72,7 +72,8 @@ public class DiscotecaRestController {
             @RequestParam String street,
             @RequestParam String description,
             @RequestParam(required = false) Long ownerId,
-            @RequestParam(required = false) MultipartFile imageFile
+            @RequestParam(required = false) MultipartFile imageFile,
+            @RequestParam(required = false) MultipartFile flyerFile
     ) throws Exception {
 
         String error = discotecaService.validarCamposDiscoteca(name, street, description);
@@ -86,7 +87,7 @@ public class DiscotecaRestController {
         dto.setDescription(description);
         dto.setOwnerId(ownerId);
 
-        DiscotecaDTO createdClub = discotecaService.createClubWithImage(dto, imageFile);
+        DiscotecaDTO createdClub = discotecaService.createClubWithImageAndFlyer(dto, imageFile, flyerFile);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -127,5 +128,29 @@ public class DiscotecaRestController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
+    }
+
+    @GetMapping("/{id}/flyer")
+    public ResponseEntity<org.springframework.core.io.Resource> getClubFlyer(@PathVariable Long id) {
+        java.util.Optional<DiscotecaDTO> optClub = discotecaService.findClubById(id);
+        if (optClub.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        DiscotecaDTO club = optClub.get();
+        if (club.getFlyerFileName() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(java.nio.file.Paths.get("uploads").resolve(club.getFlyerFileName()).normalize().toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/pdf")
+                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            }
+        } catch (java.net.MalformedURLException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

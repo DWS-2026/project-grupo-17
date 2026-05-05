@@ -7,6 +7,7 @@ public class DiscotecaDTO {
     private String description;
     private Long ownerId;
     private String imageURL;
+    private String flyerFileName;
 
     public DiscotecaDTO() {}
 
@@ -27,5 +28,8 @@ public class DiscotecaDTO {
 
     public String getImageURL() { return imageURL; }
     public void setImageURL(String imageURL) { this.imageURL = imageURL; }
+
+    public String getFlyerFileName() { return flyerFileName; }
+    public void setFlyerFileName(String flyerFileName) { this.flyerFileName = flyerFileName; }
 
 }

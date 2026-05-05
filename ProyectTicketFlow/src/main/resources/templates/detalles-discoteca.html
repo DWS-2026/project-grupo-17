@@ -52,6 +52,15 @@
                             {{{discoteca.descripcion}}}
                         </div>
                     </div>
+
+                    {{#discoteca.flyer}}
+                    <div class="text-start mt-4">
+                        <h5 class="fw-bold">Flyer Oficial</h5>
+                        <a href="/discotecas/{{discoteca.id}}/flyer" class="btn btn-outline-info" target="_blank">
+                            <i class="bi bi-download"></i> Descargar / Ver Flyer ({{discoteca.flyer}})
+                        </a>
+                    </div>
+                    {{/discoteca.flyer}}
                 </div>
                 
                 <div class="card-footer bg-light text-center py-3">

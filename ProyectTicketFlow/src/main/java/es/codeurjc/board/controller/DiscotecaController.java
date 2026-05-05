@@ -75,7 +75,9 @@ public class DiscotecaController {
     public String editDiscotecaProcess(@PathVariable Long id,
                                        Discoteca discotecaForm,
                                        @RequestParam(required = false) boolean removeImage,
-                                       @RequestParam("imageFile") MultipartFile imageFile,
+                                       @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                                       @RequestParam(required = false) boolean removeFlyer,
+                                       @RequestParam(value = "flyerFile", required = false) MultipartFile flyerFile,
                                        Model model)
             throws IOException, SQLException {
 
@@ -99,6 +101,7 @@ public class DiscotecaController {
         }
 
         discotecaService.editDiscotecaWithImage(id, discotecaForm, removeImage, imageFile);
+        discotecaService.editDiscotecaWithFlyer(id, discotecaForm, flyerFile, removeFlyer);
 
         return "redirect:/discotecas/" + discoteca.getId();
     }
@@ -106,7 +109,8 @@ public class DiscotecaController {
     @PostMapping("/discotecas/create-discotecas")
     // Crea una discoteca nueva asociandola al usuario autenticado como propietario.
     public String createDiscotecaProcess(Discoteca discoteca,
-                                         @RequestParam("imageFile") MultipartFile imageFile,
+                                         @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                                         @RequestParam(value = "flyerFile", required = false) MultipartFile flyerFile,
                                          Principal principal,
                                          Model model) throws IOException, SQLException {
 
@@ -125,12 +129,12 @@ public class DiscotecaController {
         User currentUser = userService.findByEmail(email).orElse(null);
 
         discotecaService.createDiscotecaWithImage(discoteca, imageFile, currentUser);
+        discotecaService.createDiscotecaWithFlyer(discoteca, flyerFile, currentUser);
 
         return "redirect:/discotecas/" + discoteca.getId();
     }
 
     @GetMapping("/discotecas/{id}/image")
-    @ResponseBody
     // Devuelve los bytes de la imagen de una discoteca para pintarla en el front.
     public ResponseEntity<byte[]> showImage(@PathVariable long id) throws SQLException, IOException {
         Discoteca d = discotecaService.findById(id);
@@ -148,6 +152,30 @@ public class DiscotecaController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
                 .body(bytes);
+    }
+
+    @GetMapping("/discotecas/{id}/flyer")
+    public ResponseEntity<org.springframework.core.io.Resource> getClubFlyer(@PathVariable long id) {
+        Discoteca d = discotecaService.findById(id);
+        if (d == null || d.getFlyer() == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, "/discotecas/" + id)
+                    .build();
+        }
+        try {
+            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(java.nio.file.Paths.get("uploads").resolve(d.getFlyer()).normalize().toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            }
+        } catch (java.net.MalformedURLException e) {
+            // ignore
+        }
+        return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, "/discotecas/" + id)
+                .build();
     }
 
     @PostMapping("/discotecas/delete/{id}")

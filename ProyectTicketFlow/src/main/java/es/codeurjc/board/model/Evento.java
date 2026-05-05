@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
+
 @Entity
 public class Evento {
 
@@ -54,7 +57,7 @@ public class Evento {
     public void setOwner(User owner) { this.owner = owner; }
 
     public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null; }
 
     public Integer getEdadRequerida() { return edadRequerida; }
     public void setEdadRequerida(Integer edadRequerida) { this.edadRequerida = edadRequerida; }

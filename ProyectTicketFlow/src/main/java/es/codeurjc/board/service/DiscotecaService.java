@@ -145,6 +145,38 @@ public class DiscotecaService {
         }
     }
 
+    public void createDiscotecaWithFlyer(Discoteca discoteca, MultipartFile flyerFile, User owner) throws IOException {
+        discoteca.setOwner(owner);
+        if (flyerFile != null && !flyerFile.isEmpty()) {
+            String flyerName = fileStorageService.storeFile(flyerFile);
+            discoteca.setFlyer(flyerName);
+        }
+        save(discoteca);
+    }
+
+    public void editDiscotecaWithFlyer(Long id, Discoteca discotecaForm, MultipartFile flyerFile, boolean removeFlyer) throws IOException {
+        Discoteca discoteca = findById(id);
+        if (discoteca != null) {
+            discoteca.setName(discotecaForm.getName());
+            discoteca.setCalle(discotecaForm.getCalle());
+            discoteca.setDescripcion(discotecaForm.getDescripcion());
+
+            if (removeFlyer) {
+                if (discoteca.getFlyer() != null) {
+                    fileStorageService.deleteFile(discoteca.getFlyer());
+                }
+                discoteca.setFlyer(null);
+            } else if (flyerFile != null && !flyerFile.isEmpty()) {
+                if (discoteca.getFlyer() != null) {
+                    fileStorageService.deleteFile(discoteca.getFlyer());
+                }
+                String flyerName = fileStorageService.storeFile(flyerFile);
+                discoteca.setFlyer(flyerName);
+            }
+            save(discoteca);
+        }
+    }
+
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
@@ -176,7 +208,7 @@ public class DiscotecaService {
         return toDTO(discoteca);
     }
 
-    public DiscotecaDTO createClubWithImage(DiscotecaDTO dto, MultipartFile imageFile) throws IOException {
+    public DiscotecaDTO createClubWithImageAndFlyer(DiscotecaDTO dto, MultipartFile imageFile, MultipartFile flyerFile) throws IOException {
 
         Discoteca discoteca = new Discoteca();
         discoteca.setName(dto.getName());
@@ -190,6 +222,11 @@ public class DiscotecaService {
         if (imageFile != null && !imageFile.isEmpty()) {
             Image img = imageService.createImageFromFile(imageFile);
             discoteca.setImage(img);
+        }
+
+        if (flyerFile != null && !flyerFile.isEmpty()) {
+            String flyerName = fileStorageService.storeFile(flyerFile);
+            discoteca.setFlyer(flyerName);
         }
 
         discotecaRepository.save(discoteca);
@@ -279,6 +316,10 @@ public class DiscotecaService {
 
         if (discoteca.getOwner() != null) {
             dto.setOwnerId(discoteca.getOwner().getId());
+        }
+
+        if (discoteca.getFlyer() != null) {
+            dto.setFlyerFileName(discoteca.getFlyer());
         }
 
         return dto;
