@@ -1,14 +1,16 @@
 package es.codeurjc.board.security;
 
 import es.codeurjc.board.security.jwt.JwtRequestFilter;
+import es.codeurjc.board.security.jwt.UnauthorizedHandlerJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 public class ApiSecurityConfig {
@@ -16,15 +18,16 @@ public class ApiSecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private UnauthorizedHandlerJwt unauthorizedHandlerJwt;
+
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 
-        http.securityMatcher("/api/**");
-        
-        // Filtro JWT para API REST
-        http.addFilterBefore(jwtRequestFilter,
-                UsernamePasswordAuthenticationFilter.class);
+        http
+                .securityMatcher("/api/v1/**")
+                .exceptionHandling(handling -> handling.authenticationEntryPoint(unauthorizedHandlerJwt));
 
         http.authorizeHttpRequests(authorize -> authorize
                 // API REST AUTH
@@ -57,6 +60,46 @@ public class ApiSecurityConfig {
                 // RESTO API
                 .anyRequest().permitAll()
         );
+
+        http
+                .exceptionHandling(exception -> exception
+
+                        // 401 - No autenticado
+                        .authenticationEntryPoint((request, response, authException) -> {
+
+                            if (request.getRequestURI().startsWith("/api/")) {
+                                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                                response.setContentType("application/json");
+                                response.getWriter().write("""
+                                    {
+                                        "status": 401,
+                                        "error": "Unauthorized",
+                                        "message": "No autenticado"
+                                    }
+                                """);
+                            } else {
+                                response.sendRedirect("/login");
+                            }
+                        })
+
+                        // 403 - Sin permisos
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+
+                            if (request.getRequestURI().startsWith("/api/")) {
+                                response.setStatus(HttpStatus.FORBIDDEN.value());
+                                response.setContentType("application/json");
+                                response.getWriter().write("""
+                                    {
+                                        "status": 403,
+                                        "error": "Forbidden",
+                                        "message": "No tienes permisos"
+                                    }
+                                """);
+                            } else {
+                                response.sendRedirect("/error-403");
+                            }
+                        })
+                );
 
         // CSRF desactivado solo para API REST
         http.csrf(csrf -> csrf.disable());
