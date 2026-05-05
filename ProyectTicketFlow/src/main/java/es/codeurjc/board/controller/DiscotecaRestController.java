@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/clubs")
@@ -95,6 +96,33 @@ public class DiscotecaRestController {
                 .toUri();
 
         return ResponseEntity.created(location).body(createdClub);
+    }
+
+    @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateClubWithFiles(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String street,
+            @RequestParam String description,
+            @RequestParam(required = false) Long ownerId,
+            @RequestParam(required = false) Boolean removeImage,
+            @RequestParam(required = false) Boolean removeFlyer,
+            @RequestParam(required = false) MultipartFile imageFile,
+            @RequestParam(required = false) MultipartFile flyerFile
+    ) throws Exception {
+
+        String error = discotecaService.validarCamposDiscoteca(name, street, description);
+        if (error != null) {
+            return ResponseEntity.badRequest().body(Map.of("error", error));
+        }
+
+        Optional<DiscotecaDTO> updatedClub = discotecaService.updateClubWithImageAndFlyer(
+                id, name, street, description, ownerId, imageFile, flyerFile,
+                Boolean.TRUE.equals(removeImage), Boolean.TRUE.equals(removeFlyer)
+        );
+
+        return updatedClub.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}")

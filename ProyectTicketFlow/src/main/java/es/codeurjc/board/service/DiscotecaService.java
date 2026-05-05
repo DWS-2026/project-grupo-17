@@ -233,6 +233,66 @@ public class DiscotecaService {
         return toDTO(discoteca);
     }
 
+    public Optional<DiscotecaDTO> updateClubWithImageAndFlyer(Long id,
+                                                               String name,
+                                                               String street,
+                                                               String description,
+                                                               Long ownerId,
+                                                               MultipartFile imageFile,
+                                                               MultipartFile flyerFile,
+                                                               boolean removeImage,
+                                                               boolean removeFlyer) throws IOException {
+
+        Discoteca discoteca = findById(id);
+        if (discoteca == null) {
+            return Optional.empty();
+        }
+
+        if (name != null) {
+            discoteca.setName(name);
+        }
+        if (street != null) {
+            discoteca.setCalle(street);
+        }
+        if (description != null) {
+            discoteca.setDescripcion(description);
+        }
+        if (ownerId != null) {
+            User owner = userService.findById(ownerId);
+            discoteca.setOwner(owner);
+        }
+
+        if (removeImage) {
+            if (discoteca.getImage() != null) {
+                imageService.deleteImage(discoteca.getImage().getId());
+            }
+            discoteca.setImage(null);
+        } else if (imageFile != null && !imageFile.isEmpty()) {
+            if (discoteca.getImage() != null) {
+                imageService.replaceImageFile(discoteca.getImage().getId(), imageFile);
+            } else {
+                Image img = imageService.createImageFromFile(imageFile);
+                discoteca.setImage(img);
+            }
+        }
+
+        if (removeFlyer) {
+            if (discoteca.getFlyer() != null) {
+                fileStorageService.deleteFile(discoteca.getFlyer());
+            }
+            discoteca.setFlyer(null);
+        } else if (flyerFile != null && !flyerFile.isEmpty()) {
+            if (discoteca.getFlyer() != null) {
+                fileStorageService.deleteFile(discoteca.getFlyer());
+            }
+            String flyerName = fileStorageService.storeFile(flyerFile);
+            discoteca.setFlyer(flyerName);
+        }
+
+        save(discoteca);
+        return Optional.of(toDTO(discoteca));
+    }
+
     public Optional<DiscotecaDTO> updateClub(Long id, DiscotecaDTO dto) {
 
         return discotecaRepository.findById(id).map(discoteca -> {
