@@ -331,7 +331,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 ### **Documentación de la API REST**
 
 #### **Especificación OpenAPI**
-📄 **[Especificación OpenAPI (YAML)](./api-docs/api-docs.yaml)**
+📄 **[Especificación OpenAPI (YAML)](ProyectTicketFlow/api-docs/api-docs.yaml)**
 
 #### **Documentación HTML**
 📖 **[Documentación API REST (HTML)](https://raw.githack.com/[usuario]/[repositorio]/main/api-docs/api-docs.html)**
