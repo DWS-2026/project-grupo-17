@@ -334,7 +334,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 📄 **[Especificación OpenAPI (YAML)](ProyectTicketFlow/api-docs/api-docs.yaml)**
 
 #### **Documentación HTML**
-📖 **[Documentación API REST (HTML)](https://raw.githack.com/DWS-2026/project-grupo-17/main/ProyectoTicketFlow/api-docs/index.html)**
+📖 **[Documentación API REST (HTML)](ProyectTicketFlow/api-docs/index.html)**
 
 > La documentación de la API REST se encuentra en la carpeta `/api-docs` del repositorio. Se ha generado automáticamente con SpringDoc a partir de las anotaciones en el código Java.
 
@@ -368,13 +368,13 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 ---
 
-#### **Alumno 2 - [Nombre Completo]**
+#### **Alumno 2 - Eduardo Narros Sánchez**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
 | Nº    | Commits      | Files      |
 |:------------: |:------------:| :------------:|
-|1| [Descripción commit 1](URL_commit_1)  | [Archivo1](URL_archivo_1)   |
+|1| [Cambios en el pom.xml y en el JwTokenprovider](https://github.com/DWS-2026/project-grupo-17/commit/ce59a21e27c245b566a11080bb26b7864298793f)  | [Pom.xml](ProyectTicketFlow/pom.xml) <br>[JwTokenProvider.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/JwtTokenProvider.java)  |
 |2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
 |3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
 |4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |
