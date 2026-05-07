@@ -395,14 +395,13 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 ---
 
-#### **Alumno 4 - [Nombre Completo]**
+#### **Alumno 4 - [Alejandro Cabello Manzanero]**
 
 [Descripción de las tareas y responsabilidades principales del alumno en el proyecto]
 
 | Nº    | Commits      | Files      |
 |:------------: |:------------:| :------------:|
-|1| [Descripción commit 1](URL_commit_1)  | [Archivo1](URL_archivo_1)   |
-|2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
-|3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
-|4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |
-|5| [Descripción commit 5](URL_commit_5)  | [Archivo5](URL_archivo_5)   |
+|1| [Añadido endpoints de imagen para users, clubs y events](https://github.com/DWS-2026/dws-2026-project-base/commit/66ca183f508f4f2ddcc3422f0cfeeb5e89fa6779)  | [DiscotecaRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/DiscotecaRestController.java) <br> [EventoRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/EventoRestController.java) <br> [UserRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/UserRestController.java) <br>[DiscotecaService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/DiscotecaService.java) <br>[EventoService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/EventoService.java) <br>[UserService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/UserService.java) | 
+|2| [He añadido una validación en un campo de una entidad en su creacion, he creado el endpoint de login y el de registro, y he corregido un par de detalles extra](https://github.com/DWS-2026/dws-2026-project-base/commit/52d6c3b9ffd7e6affb756f35c701372730909d98)  | [AuthRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/AuthRestController.java) <br>[DiscotecaRestController](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/DiscotecaRestController.java) <br>[DiscotecaDTO.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/dto/DiscotecaDTO.java) <br>[SignupRequestDTO](ProyectTicketFlow/src/main/java/es/codeurjc/board/dto/SignupRequestDTO.java) <br>[Discoteca.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/model/Discoteca.java) <br>[Evento.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/model/Evento.java)  |
+|3| [He añadido el control de acceso por roles](https://github.com/DWS-2026/dws-2026-project-base/commit/fa8b4949b469a1396b73d77c72e0e428e0f85261))  | [SecurityConfig.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/SecurityConfig.java)  |
+|4| [securityconfig corregido, añadido control por dueño, mejora en editar objeto]((https://github.com/DWS-2026/dws-2026-project-base/commit/bad97ae6a030c8b932c2bb500d86b3e8d42beba4))  | [DiscotecaRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/DiscotecaRestController.java) <br>[EntradaRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/EntradaRestController.java) <br>[EventoRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/EventoRestController.java) <br>[UserRestController.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/controller/UserRestController.java) <br>[SecurityConfig.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/SecurityConfig.java) <br>[DiscotecaService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/DiscotecaService.java) <br>[EntradaService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/EntradaService.java) <br>[EventoService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/EventoService.java) <br>[UserService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/service/UserService.java)  |
