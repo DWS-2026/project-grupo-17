@@ -57,7 +57,7 @@ public class DatabaseInitializer {
         User admin = new User(
                 "Admin User",
                 "admin@example.com",
-                passwordEncoder.encode("admin"),
+                passwordEncoder.encode("Admin123!_SecurePath"),
                 LocalDate.of(1990, 1, 10),
                 null,
                 "USER", "ADMIN");
@@ -65,7 +65,7 @@ public class DatabaseInitializer {
         User juan = new User(
                 "Juan García",
                 "juan@example.com",
-                passwordEncoder.encode("12345"),
+                passwordEncoder.encode("JuanP@ss_2026.Flow"),
                 LocalDate.of(1995, 5, 15),
                 null,
                 "USER");
@@ -73,7 +73,7 @@ public class DatabaseInitializer {
         User maria = new User(
                 "María López",
                 "maria@example.com",
-                passwordEncoder.encode("password123"),
+                passwordEncoder.encode("Maria.Secure*98!App"),
                 LocalDate.of(1998, 8, 20),
                 null,
                 "USER");

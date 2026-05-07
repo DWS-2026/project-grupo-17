@@ -348,9 +348,9 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 | Rol | Usuario           | Contraseña  |
 |:---|:------------------|:------------|
-| Administrador | admin@example.com | admin       |
-| Usuario Registrado | juan@example.com  | 12345       |
-| Usuario Registrado | maria@example.com | password123 |
+| Administrador | admin@example.com | Admin123!_SecurePath |
+| Usuario Registrado | juan@example.com  | JuanP@ss_2026.Flow |
+| Usuario Registrado | maria@example.com | Maria.Secure*98!App |
 
 ### **Participación de Miembros en la Práctica 3**
 
