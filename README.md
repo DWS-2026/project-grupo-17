@@ -346,11 +346,11 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 #### **Credenciales de Usuarios de Ejemplo**
 
-| Rol | Usuario | Contraseña |
-|:---|:---|:---|
-| Administrador | admin | admin123 |
-| Usuario Registrado | user1 | user123 |
-| Usuario Registrado | user2 | user123 |
+| Rol | Usuario           | Contraseña  |
+|:---|:------------------|:------------|
+| Administrador | admin@example.com | admin       |
+| Usuario Registrado | juan@example.com  | 12345       |
+| Usuario Registrado | maria@example.com | password123 |
 
 ### **Participación de Miembros en la Práctica 3**
 
