@@ -388,7 +388,7 @@ Diagrama actualizado incluyendo los @RestController y su relación con los @Serv
 
 | Nº    | Commits      | Files      |
 |:------------: |:------------:| :------------:|
-|1| [Descripción commit 1](URL_commit_1)  | [Archivo1](URL_archivo_1)   |
+|1| [Implementacion del jwt](https://github.com/DWS-2026/dws-2026-project-base/commit/989abcb2bb3f5194cd850548ada3cc99982e9433) | [AuthResponse.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/AuthResponse.java) <br>[JwtRequestFilter.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/JwtRequestFilter.java) <br>[JwtTokenProvider.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/JwtTokenProvider.java) <br>[LoginRequest.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/LoginRequest.java) <br>[TokenType.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/TokenType.java) <br>[UnauthorizedHandlerJwt.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/UnauthorizedHandlerJwt.java) <br>[UserLoginService.java](ProyectTicketFlow/src/main/java/es/codeurjc/board/security/jwt/UserLoginService.java) |
 |2| [Descripción commit 2](URL_commit_2)  | [Archivo2](URL_archivo_2)   |
 |3| [Descripción commit 3](URL_commit_3)  | [Archivo3](URL_archivo_3)   |
 |4| [Descripción commit 4](URL_commit_4)  | [Archivo4](URL_archivo_4)   |

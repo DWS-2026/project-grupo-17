@@ -19,7 +19,9 @@ public class FileStorageService {
     private String uploadDir;
 
     /**
-     * Guarda un fichero en disco y devuelve su nombre único (incluyendo nombre original).
+     * Guarda un fichero en disco y devuelve su nombre único (incluyendo nombre
+     * original).
+     * 
      * @param file Fichero a guardar
      * @return Nombre único del fichero guardado
      */
@@ -28,26 +30,40 @@ public class FileStorageService {
             throw new IOException("File is empty");
         }
 
-        // Crear directorio si no existe
-        Path uploadPath = Paths.get(uploadDir);
+        // Crear directorio si no existe (normalizado a ruta absoluta)
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         Files.createDirectories(uploadPath);
 
-        // Obtener nombre original
+        // Obtener nombre original exacto
         String originalFileName = file.getOriginalFilename();
 
         if (originalFileName == null || originalFileName.isBlank()) {
             throw new IOException("Invalid file name");
         }
 
-        // Limpiar espacios (opcional pero recomendable)
+        // 1. Limpiar de path traversal internamente
+        originalFileName = org.springframework.util.StringUtils.cleanPath(originalFileName);
+
+        if (originalFileName.contains("..")) {
+            throw new IOException("Invalid file name (Path Traversal detected)");
+        }
+
+        // Limpiar espacios para evitar problemas en URLs
         originalFileName = originalFileName.replaceAll("\\s+", "_");
 
-        Path filePath = uploadPath.resolve(originalFileName);
+        Path filePath = uploadPath.resolve(originalFileName).normalize();
 
-        // Guardar fichero (sobrescribe si existe)
+        // 2. Doble protección final contra Path Traversal
+        if (!filePath.startsWith(uploadPath)) {
+            throw new IOException("Cannot store file outside current directory.");
+        }
+
+        // 3. Guardar fichero usando el nombre original (Se sobrescribe si ya existe
+        // para mantener el nombre exacto)
         Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-        return originalFileName;
+        return originalFileName; // Devolvemos el nombre original para guardarlo en la entidad y recuperarlo
+                                 // después
     }
 
     public Resource getFileAsResource(String fileName) throws IOException {
@@ -69,6 +85,7 @@ public class FileStorageService {
 
     /**
      * Elimina un fichero del disco.
+     * 
      * @param fileName Nombre único del fichero
      */
     public void deleteFile(String fileName) throws IOException {
@@ -84,6 +101,7 @@ public class FileStorageService {
 
     /**
      * Obtiene la ruta física del fichero.
+     * 
      * @param fileName Nombre único del fichero
      * @return Path del fichero
      */

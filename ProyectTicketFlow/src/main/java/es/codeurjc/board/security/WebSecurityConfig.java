@@ -3,6 +3,7 @@ package es.codeurjc.board.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,6 +38,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @Order(2)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
 
         http.authenticationProvider(authenticationProvider());
