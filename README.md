@@ -342,7 +342,7 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 
 Diagrama actualizado incluyendo los @RestController y su relación con los @Service compartidos:
 
-![Diagrama de Clases Actualizado](images/complete-classes-diagram.png)
+![Diagrama de Clases Actualizado](ProyectTicketFlow/src/main/resources/posts/diagramaTemRest.png)
 
 #### **Credenciales de Usuarios de Ejemplo**
 
