@@ -10,7 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class ApiSecurityConfig {
@@ -30,6 +30,7 @@ public class ApiSecurityConfig {
                 .exceptionHandling(handling -> handling.authenticationEntryPoint(unauthorizedHandlerJwt));
 
         http.authorizeHttpRequests(authorize -> authorize
+
                 // API REST AUTH
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/signup").permitAll()
@@ -103,6 +104,9 @@ public class ApiSecurityConfig {
 
         // CSRF desactivado solo para API REST
         http.csrf(csrf -> csrf.disable());
+
+        // Añadir el filtro JWT antes del filtro de usuario/contraseña
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
