@@ -1,10 +1,13 @@
 package es.codeurjc.board.controller;
 
 import es.codeurjc.board.dto.EntradaDTO;
+import es.codeurjc.board.model.User;
 import es.codeurjc.board.service.EntradaService;
+import es.codeurjc.board.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,9 +18,11 @@ import java.net.URI;
 public class EntradaRestController {
 
     private final EntradaService entradaService;
+    private final UserService userService;
 
-    public EntradaRestController(EntradaService entradaService) {
+    public EntradaRestController(EntradaService entradaService, UserService userService) {
         this.entradaService = entradaService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -78,5 +83,37 @@ public class EntradaRestController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{id}/purchase")
+    public ResponseEntity<?> purchaseTicket(@PathVariable Long id, Authentication auth) {
+
+        if (auth == null || auth.getName() == null) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Debes estar autenticado para comprar una entrada"));
+        }
+
+        User user = userService.findByEmail(auth.getName()).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body(java.util.Map.of("error", "Usuario no encontrado"));
+        }
+
+        String resultado = entradaService.comprarEntrada(id, user);
+
+        switch (resultado) {
+            case "success":
+                return ResponseEntity.ok(java.util.Map.of(
+                    "message", "Entrada comprada exitosamente",
+                    "ticketId", id
+                ));
+            case "error_ya_comprada":
+                return ResponseEntity.status(409).body(java.util.Map.of("error", "Ya has comprado esta entrada"));
+            case "error_entrada_no_existe":
+                return ResponseEntity.status(404).body(java.util.Map.of("error", "La entrada no existe"));
+            case "error_usuario_no_existe":
+                return ResponseEntity.status(404).body(java.util.Map.of("error", "Usuario no encontrado"));
+            default:
+                return ResponseEntity.status(500).body(java.util.Map.of("error", "Error al procesar la compra"));
+        }
     }
 }
