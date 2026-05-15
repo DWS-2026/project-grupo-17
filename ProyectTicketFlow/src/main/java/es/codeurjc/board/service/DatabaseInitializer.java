@@ -98,7 +98,7 @@ public class DatabaseInitializer {
         Evento e1 = new Evento();
         e1.setName("Noche Electrónica");
         e1.setDescripcion(
-                "<p><strong>DJ internacional</strong> toda la noche con sets de <em>techno, house y trance</em>.</p><p>Una experiencia sonora <span style=\"color: rgb(255, 153, 0);\">inolvidable</span>.</p>");
+                "DJ internacional toda la noche con sets de techno, house y trance. Una experiencia sonora inolvidable.");
         e1.setEdadRequerida(18);
         e1.setDiscoteca(d1);
         setEventoImage(e1, "/posts/imagen1.avif");
@@ -106,7 +106,7 @@ public class DatabaseInitializer {
         Evento e2 = new Evento();
         e2.setName("Fiesta de Luces");
         e2.setDescripcion(
-                "<p><strong>Shows de luces y láser</strong> espectaculares.</p><ul><li>Mapping 3D</li><li>Láser show</li><li>Iluminación LED</li></ul>");
+                "Shows de luces y láser espectaculares. Incluye mapping 3D, láser show e iluminación LED.");
         e2.setEdadRequerida(18);
         e2.setDiscoteca(d1);
         setEventoImage(e2, "/posts/imagen2.avif");
@@ -123,7 +123,7 @@ public class DatabaseInitializer {
         Evento e3 = new Evento();
         e3.setName("Noche Loca");
         e3.setDescripcion(
-                "<p><strong>DJ Dembow</strong> - Los mejores ritmos urbanos.</p><p>Una noche <em>loca</em> con <span style=\"color: rgb(255, 0, 0);\">mucha energía</span>.</p>");
+                "DJ Dembow - Los mejores ritmos urbanos. Una noche loca con mucha energía.");
         e3.setEdadRequerida(16);
         e3.setDiscoteca(d2);
         setEventoImage(e3, "/posts/Event_3.jpg");
@@ -131,7 +131,7 @@ public class DatabaseInitializer {
         Evento e4 = new Evento();
         e4.setName("Fiesta Masónica");
         e4.setDescripcion(
-                "<p><strong>Bailes de Máscaras</strong> - Una noche de misterio y elegancia.</p><p><em>Dress code obligatorio</em>.</p>");
+                "Bailes de Máscaras - Una noche de misterio y elegancia. Dress code obligatorio.");
         e4.setEdadRequerida(23);
         e4.setDiscoteca(d2);
         setEventoImage(e4, "/posts/Event_4.jpg");
@@ -148,7 +148,7 @@ public class DatabaseInitializer {
         Evento e5 = new Evento();
         e5.setName("Noche inolvidable");
         e5.setDescripcion(
-                "<p><strong>DJ Hardcore</strong> - Sesión de música <span style=\"color: rgb(255, 0, 0);\">extrema</span>.</p><p>Solo para los más <em>atrevidos</em>.</p>");
+                "DJ Hardcore - Sesión de música extrema. Solo para los más atrevidos.");
         e5.setEdadRequerida(16);
         e5.setDiscoteca(d3);
         setEventoImage(e5, "/posts/Event_5.jpg");
@@ -156,7 +156,7 @@ public class DatabaseInitializer {
         Evento e6 = new Evento();
         e6.setName("Noche final");
         e6.setDescripcion(
-                "<p><strong>DJ Theo</strong> en una sesión <em>épica</em> de cierre de temporada.</p><p>No te pierdas la <span style=\"color: rgb(0, 102, 204);\">noche final</span>.</p>");
+                "DJ Theo en una sesión épica de cierre de temporada. No te pierdas la noche final.");
         e6.setEdadRequerida(18);
         e6.setDiscoteca(d3);
         setEventoImage(e6, "/posts/Event_6.jpg");

@@ -55,43 +55,6 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    // Crea y guarda usuario nuevo: cifra password, asigna rol USER y avatar (subido o por defecto).
-    public void save(String nombre, String email, String password, LocalDate fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
-        User user = new User();
-        user.setNombre(nombre);
-        user.setEmail(email);
-        user.setEncodedPassword(passwordEncoder.encode(password));
-        user.setFechaNacimiento(fechaNacimiento);
-        user.setRoles(List.of("USER"));
-
-        if (avatar != null && !avatar.isEmpty()) {
-            Image img = createImageFromMultipart(avatar);
-            user.setAvatar(img);
-        } else {
-            user.setAvatar(getDefaultImage("/posts/avatar.png"));
-        }
-
-        userRepository.save(user);
-    }
-
-    // Actualiza campos de perfil de un usuario existente y reemplaza avatar si llega uno nuevo.
-    public void update(Long id, String nombre, String email, LocalDate fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
-        User user = userRepository.findById(id).orElse(null);
-
-        if (user != null) {
-            user.setNombre(nombre);
-            user.setEmail(email);
-            user.setFechaNacimiento(fechaNacimiento);
-
-            if (avatar != null && !avatar.isEmpty()) {
-                Image img = createImageFromMultipart(avatar);
-                user.setAvatar(img);
-            }
-
-            userRepository.save(user);
-        }
-    }
-
     // Convierte archivo multipart en entidad Image para persistirla en BD.
     public Image createImageFromMultipart(MultipartFile file) throws IOException, SQLException {
         byte[] bytes = file.getBytes();
@@ -148,10 +111,21 @@ public class UserService {
     }
 
     // Registra un usuario nuevo con validación completa
-    public void registroConValidacion(String nombre, String email, String password, String fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
-        save(nombre, email, password, fecha, avatar);
+    public User registroConValidacion(String nombre,
+                                      String email,
+                                      String password,
+                                      String fechaNacimiento,
+                                      MultipartFile avatar)
+            throws IOException, SQLException {
+
+        return crearUsuario(
+                nombre,
+                email,
+                password,
+                fechaNacimiento,
+                avatar,
+                List.of("USER")
+        );
     }
 
     // Valida los datos de actualización de perfil
@@ -171,11 +145,95 @@ public class UserService {
         return null;
     }
 
-    // Actualiza el perfil del usuario con validación
-    public void actualizarPerfilConValidacion(Long userId, String nombre, String email, String fechaNacimiento, MultipartFile avatar) throws IOException, SQLException {
+    public User crearUsuario(String nombre,
+                             String email,
+                             String password,
+                             String fechaNacimiento,
+                             MultipartFile avatar,
+                             List<String> roles)
+            throws IOException, SQLException {
+
+        String error = validarRegistro(nombre, email, password, fechaNacimiento);
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
-        update(userId, nombre, email, fecha, avatar);
+
+        User user = new User();
+        user.setNombre(nombre);
+        user.setEmail(email);
+        user.setEncodedPassword(passwordEncoder.encode(password));
+        user.setFechaNacimiento(fecha);
+        user.setRoles(roles != null ? roles : List.of("USER"));
+
+        if (avatar != null && !avatar.isEmpty()) {
+            Image img = createImageFromMultipart(avatar);
+            user.setAvatar(img);
+        } else {
+            user.setAvatar(getDefaultImage("/posts/avatar.png"));
+        }
+
+        return userRepository.save(user);
+    }
+
+    public Optional<User> actualizarUsuario(Long id,
+                                            String nombre,
+                                            String email,
+                                            String fechaNacimiento,
+                                            MultipartFile avatar,
+                                            List<String> roles)
+            throws IOException, SQLException {
+
+        User user = findById(id);
+
+        if (user == null) {
+            return Optional.empty();
+        }
+
+        String error = validarActualizacionPerfil(nombre, email, fechaNacimiento);
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate fecha = LocalDate.parse(fechaNacimiento, formatter);
+
+        user.setNombre(nombre);
+        user.setEmail(email);
+        user.setFechaNacimiento(fecha);
+
+        if (roles != null) {
+            user.setRoles(roles);
+        }
+
+        if (avatar != null && !avatar.isEmpty()) {
+            Image img = createImageFromMultipart(avatar);
+            user.setAvatar(img);
+        }
+
+        return Optional.of(userRepository.save(user));
+    }
+
+    // Actualiza el perfil del usuario con validación
+    public Optional<User> actualizarPerfilConValidacion(Long userId,
+                                                        String nombre,
+                                                        String email,
+                                                        String fechaNacimiento,
+                                                        MultipartFile avatar)
+            throws IOException, SQLException {
+
+        return actualizarUsuario(
+                userId,
+                nombre,
+                email,
+                fechaNacimiento,
+                avatar,
+                null
+        );
     }
 
     // Utilidad privada para validar campos de texto obligatorios
@@ -201,40 +259,39 @@ public class UserService {
     }
 
     public UserDTO createUser(UserDTO userDTO) {
-        User user = new User();
-        user.setNombre(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setFechaNacimiento(userDTO.getBirthDate());
-        user.setRoles(userDTO.getRoles() != null ? userDTO.getRoles() : List.of("USER"));
-        user.setEncodedPassword(passwordEncoder.encode("default123")); // Default password for API created users
-        userRepository.save(user);
-        return toDTO(user);
+
+        try {
+            User user = crearUsuario(
+                    userDTO.getName(),
+                    userDTO.getEmail(),
+                    "default123",
+                    userDTO.getBirthDate() != null ? userDTO.getBirthDate().toString() : null,
+                    null,
+                    userDTO.getRoles() != null ? userDTO.getRoles() : List.of("USER")
+            );
+
+            return toDTO(user);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public Optional<UserDTO> updateUser(Long id, UserDTO userDTO) {
 
-        return userRepository.findById(id).map(user -> {
+        try {
+            return actualizarUsuario(
+                    id,
+                    userDTO.getName(),
+                    userDTO.getEmail(),
+                    userDTO.getBirthDate() != null ? userDTO.getBirthDate().toString() : null,
+                    null,
+                    userDTO.getRoles()
+            ).map(this::toDTO);
 
-            if (userDTO.getName() != null) {
-                user.setNombre(userDTO.getName());
-            }
-
-            if (userDTO.getEmail() != null) {
-                user.setEmail(userDTO.getEmail());
-            }
-
-            if (userDTO.getBirthDate() != null) {
-                user.setFechaNacimiento(userDTO.getBirthDate());
-            }
-
-            if (userDTO.getRoles() != null) {
-                user.setRoles(userDTO.getRoles());
-            }
-
-            userRepository.save(user);
-
-            return toDTO(user);
-        });
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public boolean deleteUser(Long id) {

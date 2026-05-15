@@ -1,6 +1,5 @@
 package es.codeurjc.board.controller;
 
-import es.codeurjc.board.dto.EntradaDTO;
 import es.codeurjc.board.dto.UserDTO;
 import es.codeurjc.board.service.EntradaService;
 import es.codeurjc.board.service.UserService;
@@ -54,18 +53,24 @@ public class UserRestController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
 
-        if (userDTO.getName() == null || userDTO.getEmail() == null || userDTO.getBirthDate() == null) {
-            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, email y birthDate."));
+        try {
+
+            UserDTO createdUser = userService.createUser(userDTO);
+
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdUser.getId())
+                    .toUri();
+
+            return ResponseEntity
+                    .created(location)
+                    .body(createdUser);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest()
+                    .body(java.util.Map.of("error", e.getMessage()));
         }
-
-        UserDTO createdUser = userService.createUser(userDTO);
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(createdUser.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).body(createdUser);
     }
 
     // PERFIL PROPIO O ADMIN
@@ -75,12 +80,21 @@ public class UserRestController {
                                         Authentication auth) {
 
         if (!userService.canAccessUser(id, auth)) {
-            return ResponseEntity.status(403).body("No puedes editar otro usuario");
+            return ResponseEntity.status(403)
+                    .body("No puedes editar otro usuario");
         }
 
-        return userService.updateUser(id, userDTO)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+
+            return userService.updateUser(id, userDTO)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest()
+                    .body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
     // PERFIL PROPIO O ADMIN

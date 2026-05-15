@@ -161,8 +161,7 @@ public class EntradaController {
         return "redirect:/eventos";
     }
 
-    @GetMapping("/entradas/{id}/pago")
-    // Simula la compra: asocia la entrada al usuario autenticado si aun no la tenia.
+    @PostMapping("/entradas/{id}/pago")
     public String comprarEntrada(@PathVariable Long id, Principal principal, Model model) {
 
         if (principal == null || principal.getName().equals("anonymousUser")) {

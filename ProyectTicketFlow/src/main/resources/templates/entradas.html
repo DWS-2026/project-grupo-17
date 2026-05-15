@@ -76,9 +76,12 @@
 
                             {{#email}}
                             {{^admin}}
-                            <a href="/entradas/{{id}}/pago" class="btn btn-success btn-sm">
-                                Comprar
-                            </a>
+                            <form action="/entradas/{{id}}/pago" method="post">
+                                <input type="hidden" name="_csrf" value="{{token}}">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    Comprar
+                                </button>
+                            </form>
                             {{/admin}}
                             {{/email}}
 

@@ -1,7 +1,6 @@
 package es.codeurjc.board.controller;
 
 import java.io.IOException;
-import java.sql.Blob;
 import java.sql.SQLException;
 
 import es.codeurjc.board.model.Discoteca;
@@ -61,36 +60,37 @@ public class EventoController {
     }
 
     @PostMapping("/discotecas/{id}/eventos/create")
-    // Procesa el alta de un nuevo evento, validando datos y guardando imagen si existe.
     public String createEventoProcess(@PathVariable Long id,
                                       @ModelAttribute Evento evento,
                                       @RequestParam("imageFile") MultipartFile imageFile,
                                       Model model)
             throws IOException, SQLException {
 
-        // 1. Obtener discoteca
         Discoteca discoteca = discotecaService.findById(id);
 
         if (discoteca == null) {
             return "redirect:/error-403";
         }
 
-        String error = eventoService.validarCamposEvento(
-            evento.getName(), 
-            evento.getDescripcion(), 
-            evento.getEdadRequerida()
-        );
+        try {
 
-        if (error != null) {
-            model.addAttribute("error", error);
+            eventoService.crearEvento(
+                    evento.getName(),
+                    evento.getDescripcion(),
+                    evento.getEdadRequerida(),
+                    discoteca.getId(),
+                    imageFile
+            );
+
+            return "redirect:/discotecas/" + id + "/eventos";
+
+        } catch (IllegalArgumentException e) {
+
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("discoteca", discoteca);
+
             return "create-event";
         }
-
-        // 2. Crear evento con imagen y guardar
-        eventoService.createEventoWithImage(evento, imageFile, discoteca);
-
-        return "redirect:/discotecas/" + id + "/eventos";
     }
 
     @GetMapping("/eventos/{id}/image")
@@ -130,10 +130,10 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/{id}/edit")
-    // Aplica cambios en evento existente e imagen opcional.
     public String updateEventoProcess(@PathVariable long id,
                                       Evento eventoForm,
-                                      @RequestParam("imageFile") MultipartFile image,                                      Model model)
+                                      @RequestParam("imageFile") MultipartFile image,
+                                      Model model)
             throws IOException, SQLException {
 
         Evento evento = eventoService.findById(id);
@@ -142,24 +142,32 @@ public class EventoController {
             return "redirect:/error-403";
         }
 
-        String error = eventoService.validarCamposEvento(
-            eventoForm.getName(), 
-            eventoForm.getDescripcion(), 
-            eventoForm.getEdadRequerida()
-        );
+        try {
 
-        if (error != null) {
-            model.addAttribute("error", error);
+            eventoService.actualizarEvento(
+                    id,
+                    eventoForm.getName(),
+                    eventoForm.getDescripcion(),
+                    eventoForm.getEdadRequerida(),
+                    eventoForm.getDiscoteca() != null
+                            ? eventoForm.getDiscoteca().getId()
+                            : evento.getDiscoteca().getId(),
+                    image
+            );
+
+            return "redirect:/discotecas/" +
+                    evento.getDiscoteca().getId() +
+                    "/eventos";
+
+        } catch (IllegalArgumentException e) {
+
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("evento", evento);
             model.addAttribute("discoteca", evento.getDiscoteca());
             model.addAttribute("discotecas", discotecaService.findAll());
+
             return "edit-event";
         }
-
-        // Actualizar evento con manejo de imagen
-        eventoService.updateEventoWithImage(id, eventoForm, image, eventoForm.getDiscoteca());
-
-        return "redirect:/discotecas/" + evento.getDiscoteca().getId() + "/eventos";
     }
 
     @PostMapping("/eventos/{id}/delete")

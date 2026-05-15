@@ -40,10 +40,6 @@ public class EventoRestController {
     @PostMapping
     public ResponseEntity<?> createEvent(@RequestBody EventoDTO eventDTO) {
 
-        if (eventDTO.getName() == null || eventDTO.getDescription() == null || eventDTO.getRequiredAge() == null || eventDTO.getDiscotecaId() == null || eventDTO.getOwnerId() == null) {
-            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, description, requiredAge, discotecaId y ownerId."));
-        }
-
         try {
             EventoDTO createdEvent = eventoService.createEvent(eventDTO);
 

@@ -59,24 +59,25 @@ public class UserController {
             Model model) {
 
         try {
-            // Validar datos de registro
-            String error = userService.validarRegistro(nombre, email, password, fechaNacimiento);
 
-            if (error != null) {
-                model.addAttribute("error", error);
-                return "register";
-            }
-
-            // Registrar usuario con validación
-            userService.registroConValidacion(nombre, email, password, fechaNacimiento, avatar);
+            userService.registroConValidacion(
+                    nombre,
+                    email,
+                    password,
+                    fechaNacimiento,
+                    avatar
+            );
 
             return "redirect:/login";
 
-        } catch (IOException e) {
-            model.addAttribute("error", "Error al guardar la imagen");
+        } catch (IllegalArgumentException e) {
+
+            model.addAttribute("error", e.getMessage());
             return "register";
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al registrar el usuario");
+
+        } catch (IOException | SQLException e) {
+
+            model.addAttribute("error", "Error al guardar la imagen");
             return "register";
         }
     }
@@ -134,34 +135,42 @@ public class UserController {
             Principal principal) {
 
         try {
+
             String emailActual = principal.getName();
             Optional<User> user = userService.findByEmail(emailActual);
 
-            if (!user.isPresent()) {
+            if (user.isEmpty()) {
                 return "redirect:/login";
             }
 
-            // Validar datos de actualización
-            String error = userService.validarActualizacionPerfil(nombre, email, fechaNacimiento);
-
-            if (error != null) {
-                model.addAttribute("error", error);
-                model.addAttribute("user", user.get());
-                return "edit-profile";
-            }
-
-            // Actualizar perfil con validación
-            userService.actualizarPerfilConValidacion(user.get().getId(), nombre, email, fechaNacimiento, avatar);
+            userService.actualizarPerfilConValidacion(
+                    user.get().getId(),
+                    nombre,
+                    email,
+                    fechaNacimiento,
+                    avatar
+            );
 
             return "redirect:/profile";
 
-        } catch (IOException e) {
-            model.addAttribute("error", "Error al guardar la imagen");
-            model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+        } catch (IllegalArgumentException e) {
+
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute(
+                    "user",
+                    userService.findByEmail(principal.getName()).orElse(null)
+            );
+
             return "edit-profile";
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al actualizar el perfil");
-            model.addAttribute("user", userService.findByEmail(principal.getName()).orElse(null));
+
+        } catch (IOException | SQLException e) {
+
+            model.addAttribute("error", "Error al guardar la imagen");
+            model.addAttribute(
+                    "user",
+                    userService.findByEmail(principal.getName()).orElse(null)
+            );
+
             return "edit-profile";
         }
     }

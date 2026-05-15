@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.sql.rowset.serial.SerialBlob;
-
 import es.codeurjc.board.dto.EventoDTO;
 import es.codeurjc.board.model.Discoteca;
 import es.codeurjc.board.model.Entrada;
@@ -100,9 +98,36 @@ public class EventoService {
         return null;
     }
 
-    public void createEventoWithImage(Evento evento, MultipartFile imageFile, Discoteca discoteca)
-            throws IOException, SQLException {
+    public Evento crearEvento(
+            String name,
+            String descripcion,
+            Integer edadRequerida,
+            Long discotecaId,
+            MultipartFile imageFile
+    ) throws IOException, SQLException {
 
+        String error = validarCamposEvento(
+                name,
+                descripcion,
+                edadRequerida
+        );
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
+        Discoteca discoteca = discotecaRepository.findById(discotecaId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "La discoteca con ID " + discotecaId + " no existe"
+                        )
+                );
+
+        Evento evento = new Evento();
+
+        evento.setName(name);
+        evento.setDescripcion(descripcion);
+        evento.setEdadRequerida(edadRequerida);
         evento.setDiscoteca(discoteca);
 
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -110,35 +135,76 @@ public class EventoService {
             evento.setImage(img);
         }
 
-        save(evento);
+        return eventoRepository.save(evento);
     }
 
-    public void updateEventoWithImage(Long id, Evento eventoForm, MultipartFile image,
-                                      Discoteca nuevaDiscoteca)
-            throws IOException, SQLException {
+    public Optional<Evento> actualizarEvento(
+            Long id,
+            String name,
+            String descripcion,
+            Integer edadRequerida,
+            Long discotecaId,
+            MultipartFile imageFile
+    ) throws IOException, SQLException {
 
         Evento evento = findById(id);
 
-        if (evento != null) {
-            evento.setName(eventoForm.getName());
-            evento.setDescripcion(eventoForm.getDescripcion());
-            evento.setEdadRequerida(eventoForm.getEdadRequerida());
-
-            if (nuevaDiscoteca != null) {
-                evento.setDiscoteca(nuevaDiscoteca);
-            }
-
-            if (image != null && !image.isEmpty()) {
-                if (evento.getImage() != null) {
-                    imageService.replaceImageFile(evento.getImage().getId(), image);
-                } else {
-                    Image img = imageService.createImageFromFile(image);
-                    evento.setImage(img);
-                }
-            }
-
-            save(evento);
+        if (evento == null) {
+            return Optional.empty();
         }
+
+        if (name != null) {
+            evento.setName(name);
+        }
+
+        if (descripcion != null) {
+            evento.setDescripcion(descripcion);
+        }
+
+        if (edadRequerida != null) {
+            evento.setEdadRequerida(edadRequerida);
+        }
+
+        String error = validarCamposEvento(
+                evento.getName(),
+                evento.getDescripcion(),
+                evento.getEdadRequerida()
+        );
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
+        if (discotecaId != null) {
+            Discoteca discoteca = discotecaRepository.findById(discotecaId)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException(
+                                    "La discoteca con ID " + discotecaId + " no existe"
+                            )
+                    );
+
+            evento.setDiscoteca(discoteca);
+        }
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+            if (evento.getImage() != null) {
+
+                imageService.replaceImageFile(
+                        evento.getImage().getId(),
+                        imageFile
+                );
+
+            } else {
+
+                Image img =
+                        imageService.createImageFromFile(imageFile);
+
+                evento.setImage(img);
+            }
+        }
+
+        return Optional.of(eventoRepository.save(evento));
     }
 
     private boolean isBlank(String value) {
@@ -157,51 +223,40 @@ public class EventoService {
 
     public EventoDTO createEvent(EventoDTO eventoDTO) {
 
-        Evento evento = new Evento();
+        try {
 
-        evento.setName(eventoDTO.getName());
-        evento.setDescripcion(eventoDTO.getDescription());
-        evento.setEdadRequerida(
-                eventoDTO.getRequiredAge() != null ? eventoDTO.getRequiredAge() : 18
-        );
-
-        if (eventoDTO.getDiscotecaId() != null) {
-            es.codeurjc.board.model.Discoteca discoteca = discotecaRepository.findById(eventoDTO.getDiscotecaId())
-                    .orElseThrow(() -> new IllegalArgumentException("La discoteca con ID " + eventoDTO.getDiscotecaId() + " no existe"));
-            evento.setDiscoteca(discoteca);
-        }
-
-        eventoRepository.save(evento);
-
-        return toDTO(evento);
-    }
-
-    public Optional<EventoDTO> updateEvent(Long id, EventoDTO eventoDTO) {
-
-        return eventoRepository.findById(id).map(evento -> {
-
-            if (eventoDTO.getName() != null) {
-                evento.setName(eventoDTO.getName());
-            }
-
-            if (eventoDTO.getDescription() != null) {
-                evento.setDescripcion(eventoDTO.getDescription());
-            }
-
-            if (eventoDTO.getRequiredAge() != null) {
-                evento.setEdadRequerida(eventoDTO.getRequiredAge());
-            }
-
-            if (eventoDTO.getDiscotecaId() != null) {
-                es.codeurjc.board.model.Discoteca discoteca = discotecaRepository.findById(eventoDTO.getDiscotecaId())
-                        .orElseThrow(() -> new IllegalArgumentException("La discoteca con ID " + eventoDTO.getDiscotecaId() + " no existe"));
-                evento.setDiscoteca(discoteca);
-            }
-
-            eventoRepository.save(evento);
+            Evento evento = crearEvento(
+                    eventoDTO.getName(),
+                    eventoDTO.getDescription(),
+                    eventoDTO.getRequiredAge(),
+                    eventoDTO.getDiscotecaId(),
+                    null
+            );
 
             return toDTO(evento);
-        });
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    public Optional<EventoDTO> updateEvent(Long id,
+                                           EventoDTO eventoDTO) {
+
+        try {
+
+            return actualizarEvento(
+                    id,
+                    eventoDTO.getName(),
+                    eventoDTO.getDescription(),
+                    eventoDTO.getRequiredAge(),
+                    eventoDTO.getDiscotecaId(),
+                    null
+            ).map(this::toDTO);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public boolean deleteEvent(Long id) {
