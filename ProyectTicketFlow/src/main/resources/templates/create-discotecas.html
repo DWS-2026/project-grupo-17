@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TicketFlow - Create Club</title>
+    <title>TicketFlow - Crear club</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -34,7 +34,7 @@
                 </div>
 
                 <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
-                    Publish Club
+                    Publicar club
                 </span>
 
                 <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y" href="/profile">
@@ -51,8 +51,8 @@
                 <div class="card shadow-lg border-0 rounded-3">
 
                     <div class="card-header bg-primary text-white p-4 text-center">
-                        <h3 class="fw-bold mb-0">Register New Club</h3>
-                        <p class="mb-0 text-white-50">Add a new venue to the TicketFlow network!</p>
+                        <h3 class="fw-bold mb-0">Registrar nuevo club</h3>
+                        <p class="mb-0 text-white-50">¡Añade un nuevo local a la red TicketFlow!</p>
                     </div>
 
                     <div class="card-body p-4">
@@ -64,25 +64,25 @@
                             <input type="hidden" name="_csrf" value="{{token}}" />
 
                             <div class="mb-3">
-                                <label for="name" class="form-label fw-bold">Venue Name</label>
+                                <label for="name" class="form-label fw-bold">Nombre del local</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-music-note-beamed"></i></span>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="E.g.: Sala Riviera" required>
+                                        placeholder="Ej.: Sala Riviera" required>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="calle" class="form-label fw-bold">Address</label>
+                                <label for="calle" class="form-label fw-bold">Dirección</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
                                     <input type="text" class="form-control" id="calle" name="calle"
-                                        placeholder="E.g.: Calle Atocha, 125" required>
+                                        placeholder="Ej.: Calle Atocha, 125" required>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="descripcion" class="form-label fw-bold">Venue Description </label>
+                                <label for="descripcion" class="form-label fw-bold">Descripción del local</label>
                                 <!-- Quill editor container -->
                                 <div id="editor-container"></div>
                                 <!-- Hidden input that will hold the HTML from Quill -->
@@ -90,7 +90,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="image" class="form-label fw-bold">Venue Photo</label>
+                                <label for="image" class="form-label fw-bold">Foto del local</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-image"></i></span>
                                     <input type="file" class="form-control" id="image" name="imageFile" required>
@@ -98,7 +98,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="flyer" class="form-label fw-bold">Venue Flyer (Optional PDF)</label>
+                                <label for="flyer" class="form-label fw-bold">Flyer del local (PDF opcional)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-file-earmark-pdf"></i></span>
                                     <input type="file" class="form-control" id="flyer" name="flyerFile" accept="application/pdf">
@@ -106,7 +106,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-dark btn-lg">Publish Club</button>
+                                <button type="submit" class="btn btn-dark btn-lg">Publicar club</button>
                             </div>
 
                         </form>
@@ -123,7 +123,7 @@
     <script>
         var quill = new Quill('#editor-container', {
             theme: 'snow',
-            placeholder: 'Describe the musical style, capacity, atmosphere...',
+            placeholder: 'Describe el estilo musical, aforo, ambiente...',
             modules: {
                 toolbar: [
                     [{ 'header': [1, 2, 3, false] }],
@@ -141,7 +141,7 @@
             var html = quill.root.innerHTML;
             if (html === '<p><br></p>' || html.trim() === '') {
                 e.preventDefault();
-                alert('The description cannot be empty.');
+                alert('La descripción no puede estar vacía.');
                 return;
             }
             document.getElementById('descripcion').value = html;

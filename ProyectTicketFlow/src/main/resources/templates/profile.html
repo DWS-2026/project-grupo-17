@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {{^adminViewingOtherProfile}}<title>My Profile - TicketFlow</title>{{/adminViewingOtherProfile}}
-  {{#adminViewingOtherProfile}}<title>Profile - TicketFlow</title>{{/adminViewingOtherProfile}}
+  {{^adminViewingOtherProfile}}<title>Mi perfil - TicketFlow</title>{{/adminViewingOtherProfile}}
+  {{#adminViewingOtherProfile}}<title>Perfil - TicketFlow</title>{{/adminViewingOtherProfile}}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -22,13 +22,13 @@
       </div>
         {{^adminViewingOtherProfile}}
         <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
-          My profile
+          Mi perfil
       </span>
         {{/adminViewingOtherProfile}}
 
       <form method="post" action="/logout">
                 <input type="hidden" name="_csrf" value="{{token}}" />
-                <button type="submit" class="btn btn-outline-danger btn-sm">Log Out</button>
+                <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
       </form>
 
     </div>
@@ -41,7 +41,7 @@
   <div class="card shadow mb-4">
     <div class="card-header bg-primary text-white">
       {{^adminViewingOtherProfile}}
-      <h4 class="mb-0">My Profile</h4>
+      <h4 class="mb-0">Mi perfil</h4>
       {{/adminViewingOtherProfile}}
     </div>
     <div class="card-body">
@@ -55,21 +55,21 @@
         <div class="col-md-6">
           <h5>{{user.nombre}}</h5>
           <p class="mb-1"><strong>Email:</strong> {{user.email}}</p>
-          <p class="mb-1"><strong>Date of birth:</strong> {{user.fechaNacimiento}}</p>
+          <p class="mb-1"><strong>Fecha de nacimiento:</strong> {{user.fechaNacimiento}}</p>
 
           {{#profileUserAdmin}}
-          <span class="badge bg-danger">Administrator</span>
+          <span class="badge bg-danger">Administrador</span>
           {{/profileUserAdmin}}
           {{^profileUserAdmin}}
-          <span class="badge bg-secondary">Registered User</span>
+          <span class="badge bg-secondary">Usuario registrado</span>
           {{/profileUserAdmin}}
 
           {{#canEditProfile}}
-          <a href="/edit-profile" class="btn btn-primary">Edit profile</a>
+          <a href="/edit-profile" class="btn btn-primary">Editar perfil</a>
           {{/canEditProfile}}
 
           {{#canViewAdminPanel}}
-          <a href="/admin" class="btn btn-warning">View users</a>
+          <a href="/admin" class="btn btn-warning">Ver usuarios</a>
           {{/canViewAdminPanel}}
         </div>
       </div>
@@ -79,7 +79,7 @@
   <!-- PURCHASED TICKETS -->
   {{#showMisEntradasButton}}
   <a href="/mis-entradas" class="btn btn-success">
-    View my tickets
+    Ver mis entradas
   </a>
   {{/showMisEntradasButton}}
 

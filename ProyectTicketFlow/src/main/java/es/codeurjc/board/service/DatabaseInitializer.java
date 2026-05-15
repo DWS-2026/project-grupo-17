@@ -92,21 +92,21 @@ public class DatabaseInitializer {
         d1.setName("Nuit");
         d1.setCalle("Calle Mayor 10");
         d1.setDescripcion(
-                "<p><strong>Top-level electronic music club</strong>.</p><p>Enjoy the best <em>international DJs</em> in a <span style=\"color: rgb(153, 51, 255);\">vibrant and unique</span> atmosphere.</p><ul><li>Capacity: 500 people</li><li>Hours: 00:00 - 06:00</li></ul>");
+                "<p><strong>Club de música electrónica de primer nivel</strong>.</p><p>Disfruta de los mejores <em>DJs internacionales</em> en un ambiente <span style=\"color: rgb(153, 51, 255);\">vibrante y único</span>.</p><ul><li>Aforo: 500 personas</li><li>Horario: 00:00 - 06:00</li></ul>");
         setDiscotecaImage(d1, "/posts/nuit.png");
 
         Evento e1 = new Evento();
-        e1.setName("Electronic Night");
+        e1.setName("Noche Electrónica");
         e1.setDescripcion(
-                "International DJ all night long with techno, house and trance sets. An unforgettable sound experience.");
+                "DJ internacional toda la noche con sesiones de techno, house y trance. Una experiencia sonora inolvidable.");
         e1.setEdadRequerida(18);
         e1.setDiscoteca(d1);
         setEventoImage(e1, "/posts/imagen1.avif");
 
         Evento e2 = new Evento();
-        e2.setName("Light Party");
+        e2.setName("Fiesta de Luces");
         e2.setDescripcion(
-                "Spectacular light and laser shows. Includes 3D mapping, laser show and LED lighting.");
+                "Espectaculares shows de luces y láser. Incluye mapping 3D, espectáculo láser e iluminación LED.");
         e2.setEdadRequerida(18);
         e2.setDiscoteca(d1);
         setEventoImage(e2, "/posts/imagen2.avif");
@@ -117,21 +117,21 @@ public class DatabaseInitializer {
         d2.setName("La Riviera");
         d2.setCalle("Avenida del Sol 25");
         d2.setDescripcion(
-                "<p><strong>Chill atmosphere and premium cocktails</strong>.</p><p>The best place to enjoy a <em>relaxed yet stylish</em> night.</p><ul><li>Outdoor terrace</li><li>Artisanal cocktail menu</li></ul>");
+                "<p><strong>Ambiente tranquilo y cócteles premium</strong>.</p><p>El mejor lugar para disfrutar de una noche <em>relajada pero con estilo</em>.</p><ul><li>Terraza exterior</li><li>Carta de cócteles artesanales</li></ul>");
         setDiscotecaImage(d2, "/posts/lariviera.png");
 
         Evento e3 = new Evento();
-        e3.setName("Crazy Night");
+        e3.setName("Noche Loca");
         e3.setDescripcion(
-                "DJ Dembow - The best urban rhythms. A crazy night full of energy.");
+                "DJ Dembow - Los mejores ritmos urbanos. Una noche loca llena de energía.");
         e3.setEdadRequerida(16);
         e3.setDiscoteca(d2);
         setEventoImage(e3, "/posts/Event_3.jpg");
 
         Evento e4 = new Evento();
-        e4.setName("Masquerade Party");
+        e4.setName("Fiesta de Máscaras");
         e4.setDescripcion(
-                "Masquerade Ball - A night of mystery and elegance. Dress code required.");
+                "Baile de Máscaras - Una noche de misterio y elegancia. Código de vestimenta obligatorio.");
         e4.setEdadRequerida(23);
         e4.setDiscoteca(d2);
         setEventoImage(e4, "/posts/Event_4.jpg");
@@ -142,21 +142,21 @@ public class DatabaseInitializer {
         d3.setName("Jowke");
         d3.setCalle("Calle Escaño");
         d3.setDescripcion(
-                "<p><strong>Club with unique shows</strong>.</p><p>A place where the fun has no limits, with <em>live shows</em> every night.</p>");
+                "<p><strong>Club con espectáculos únicos</strong>.</p><p>Un lugar donde la diversión no tiene límites, con <em>shows en directo</em> cada noche.</p>");
         setDiscotecaImage(d3, "/posts/jowke.webp");
 
         Evento e5 = new Evento();
-        e5.setName("Unforgettable Night");
+        e5.setName("Noche Inolvidable");
         e5.setDescripcion(
-                "DJ Hardcore - Extreme music session. For the most daring only.");
+                "DJ Hardcore - Sesión de música extrema. Solo para los más atrevidos.");
         e5.setEdadRequerida(16);
         e5.setDiscoteca(d3);
         setEventoImage(e5, "/posts/Event_5.jpg");
 
         Evento e6 = new Evento();
-        e6.setName("Final Night");
+        e6.setName("Noche Final");
         e6.setDescripcion(
-                "DJ Theo in an epic season closing session. Don't miss the final night.");
+                "DJ Theo en una épica sesión de cierre de temporada. No te pierdas la noche final.");
         e6.setEdadRequerida(18);
         e6.setDiscoteca(d3);
         setEventoImage(e6, "/posts/Event_6.jpg");
@@ -172,9 +172,9 @@ public class DatabaseInitializer {
         // 3) Initialization of a test ticket to facilitate manual testing.
 
         Entrada entradaPrueba = new Entrada(
-                "Early General Admission",
+                "Entrada General Anticipada",
                 "NORMAL",
-                "Includes 1 drink",
+                "Incluye 1 consumición",
                 15.50,
                 e1);
 
