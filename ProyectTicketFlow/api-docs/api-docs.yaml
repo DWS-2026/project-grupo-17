@@ -6,6 +6,27 @@ servers:
 - url: https://localhost:8443
   description: Generated server url
 paths:
+  /api/v1/users/{id}/tickets:
+    get:
+      tags:
+      - user-rest-controller
+      operationId: getUserTickets
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
   /api/v1/users/{id}:
     get:
       tags:
@@ -67,6 +88,31 @@ paths:
             '*/*':
               schema:
                 type: object
+  /api/v1/tickets/{id}/purchase:
+    post:
+      tags:
+      - entrada-rest-controller
+      operationId: purchaseTicket
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "409":
+          description: Conflict
   /api/v1/tickets/{id}:
     get:
       tags:
