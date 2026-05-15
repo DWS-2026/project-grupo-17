@@ -47,13 +47,13 @@ public class AuthRestController {
                     null
             );
             return ResponseEntity.status(201)
-                    .body(Map.of("message", "Usuario registrado correctamente"));
+                    .body(Map.of("message", "User registered successfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(Map.of("error", "Error al registrar el usuario"));
+                    .body(Map.of("error", "Error registering the user"));
         }
     }
 

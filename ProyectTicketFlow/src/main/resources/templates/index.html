@@ -26,7 +26,7 @@
 
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/discotecas">Discotecas</a>
+                        <a class="nav-link active" href="/discotecas">Clubs</a>
                     </li>
                 </ul>
 
@@ -37,7 +37,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="/register">Registro</a>
+                        <a class="btn btn-primary ms-2" href="/register">Register</a>
                     </li>
                     {{/email}}
                     {{#email}}
@@ -57,18 +57,18 @@
 
 <div class="hero-section text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold">Vive la noche</h1>
-        <p class="lead">Compra tus entradas para las mejores discotecas de forma segura.</p>
+        <h1 class="display-4 fw-bold">Live the night</h1>
+        <p class="lead">Buy your tickets for the best clubs safely.</p>
     </div>
 </div>
 
 <main class="container mb-5">
     <section id="eventos-destacados">
-        <h2 class="mb-4 border-bottom pb-2 text-white">Eventos Destacados</h2>
+        <h2 class="mb-4 border-bottom pb-2 text-white">Featured Events</h2>
         <div class="d-flex flex-row flex-wrap gap-4">
             {{#eventos}}
             <div class="card flex-fill h-100 shadow-sm overflow-hidden" style="min-width: 250px;">
-                <img src="/eventos/{{id}}/image" class="card-img-top" alt="Cartel de {{name}}">
+                <img src="/eventos/{{id}}/image" class="card-img-top" alt="Poster of {{name}}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5 class="card-title fw-bold text-primary mb-0">{{name}}</h5>
@@ -81,16 +81,16 @@
                 </div>
                 <div class="card-footer bg-white pt-3 d-flex justify-content-end gap-2 pb-3 border-top-0">
                     <a href="/eventos/{{id}}/entradas" class="btn btn-sm btn-success">
-                        <i class="bi bi-ticket-perforated"></i> Comprar entradas
+                        <i class="bi bi-ticket-perforated"></i> Buy tickets
                     </a>
                     {{#admin}}
                     <a href="/eventos/{{id}}/edit" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-pencil-square"></i> Editar
+                        <i class="bi bi-pencil-square"></i> Edit
                     </a>
                     <form action="/eventos/{{id}}/delete" method="post" class="m-0">
                         <input type="hidden" name="_csrf" value="{{token}}">
                         <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash3"></i> Eliminar
+                            <i class="bi bi-trash3"></i> Delete
                         </button>
                     </form>
                     {{/admin}}

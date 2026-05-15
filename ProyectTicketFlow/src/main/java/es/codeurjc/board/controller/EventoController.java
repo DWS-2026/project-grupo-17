@@ -20,9 +20,9 @@ import org.springframework.http.ResponseEntity;
 
 @Controller
 /**
- * Controlador de eventos:
- * permite listar, crear, editar, mostrar imagen y borrar eventos
- * dentro de una discoteca.
+ * Event controller:
+ * allows listing, creating, editing, displaying images and deleting events
+ * within a club.
  */
 public class EventoController {
 
@@ -35,7 +35,7 @@ public class EventoController {
 
 
     @GetMapping("/discotecas/{id}/eventos")
-    // Lista los eventos de una discoteca y expone si el usuario es admin.
+    // Lists the events of a club and exposes whether the user is an admin.
     public String showEventos(@PathVariable Long id, Model model, HttpServletRequest request) {
 
         Discoteca discoteca = discotecaService.findById(id);
@@ -49,7 +49,7 @@ public class EventoController {
 
 
     @GetMapping("/discotecas/{id}/eventos/create")
-    // Muestra el formulario para crear evento en la discoteca seleccionada.
+    // Displays the form to create an event in the selected club.
     public String createEventoForm(@PathVariable Long id, Model model) {
 
         Discoteca discoteca = discotecaService.findById(id);
@@ -95,7 +95,7 @@ public class EventoController {
 
     @GetMapping("/eventos/{id}/image")
     @ResponseBody
-    // Devuelve la imagen del evento como bytes para renderizar en la web.
+    // Returns the event image as bytes for rendering on the web.
     public ResponseEntity<byte[]> showImage(@PathVariable long id) throws IOException, SQLException {
 
         Evento e = eventoService.findById(id);
@@ -104,7 +104,7 @@ public class EventoController {
             return ResponseEntity.notFound().build();
         }
 
-        // Utiliza el método del servicio que soporta leer desde disco o BD
+        // Uses the service method that supports reading from disk or DB
         byte[] bytes = eventoService.getEventImage(id);
         
         if (bytes == null) {
@@ -117,7 +117,7 @@ public class EventoController {
     }
 
     @GetMapping("/eventos/{id}/edit")
-    // Carga formulario de edicion del evento junto con las discotecas disponibles.
+    // Loads the event edit form along with the available clubs.
     public String editEventoForm(@PathVariable long id, Model model) {
 
         Evento evento = eventoService.findById(id);
@@ -171,7 +171,7 @@ public class EventoController {
     }
 
     @PostMapping("/eventos/{id}/delete")
-    // Elimina un evento y redirige al listado de su discoteca.
+    // Deletes an event and redirects to its club's listing.
     public String deleteEvento(@PathVariable long id) {
 
         Evento evento = eventoService.findById(id);

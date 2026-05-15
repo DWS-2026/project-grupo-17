@@ -93,7 +93,7 @@ public class EventoService {
 
     public String validarCamposEvento(String name, String descripcion, Integer edadRequerida) {
         if (isBlank(name) || isBlank(descripcion) || edadRequerida == null || edadRequerida < 0) {
-            return "Revisa los campos: nombre, descripcion y edad requerida";
+            return "Please check the fields: name, description and required age";
         }
         return null;
     }
@@ -119,7 +119,7 @@ public class EventoService {
         Discoteca discoteca = discotecaRepository.findById(discotecaId)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
-                                "La discoteca con ID " + discotecaId + " no existe"
+                                "The club with ID " + discotecaId + " does not exist"
                         )
                 );
 
@@ -179,7 +179,7 @@ public class EventoService {
             Discoteca discoteca = discotecaRepository.findById(discotecaId)
                     .orElseThrow(() ->
                             new IllegalArgumentException(
-                                    "La discoteca con ID " + discotecaId + " no existe"
+                                    "The club with ID " + discotecaId + " does not exist"
                             )
                     );
 
@@ -277,19 +277,19 @@ public class EventoService {
 
         Image image = evento.getImage();
         
-        // Si está en disco, leerla desde ahí
+        // If stored on disk, read from there
         if (image.getFileName() != null && !image.getFileName().isEmpty()) {
             try {
-                org.springframework.core.io.Resource resource = 
+                org.springframework.core.io.Resource resource =
                     fileStorageService.getFileAsResource(image.getFileName());
                 return resource.getInputStream().readAllBytes();
             } catch (IOException e) {
                 System.err.println("Error reading file from disk: " + e.getMessage());
-                // Continuar con blob si existe
+                // Continue with blob if it exists
             }
         }
-        
-        // Si está en BD (backwards compatibility)
+
+        // If stored in DB (backwards compatibility)
         if (image.getImageFile() != null) {
             Blob blob = image.getImageFile();
             return blob.getBytes(1, (int) blob.length());

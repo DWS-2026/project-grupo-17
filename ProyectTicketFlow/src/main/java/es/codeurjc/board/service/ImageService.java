@@ -17,9 +17,9 @@ import es.codeurjc.board.repositories.ImageRepository;
 
 @Service
 /**
- * Servicio de imagenes:
- * encapsula la creacion, lectura, reemplazo y borrado de ficheros de imagen.
- * Soporta almacenamiento en disco y en BD para compatibilidad.
+ * Image service:
+ * encapsulates the creation, reading, replacement and deletion of image files.
+ * Supports storage on disk and in DB for compatibility.
  */
 public class ImageService {
 
@@ -29,12 +29,12 @@ public class ImageService {
 	@Autowired
 	private FileStorageService fileStorageService;
 
-	// Obtiene la entidad Image por id.
+	// Gets the Image entity by id.
 	public Image getImage(long id) {
 		return imageRepository.findById(id).orElseThrow();
 	}
 
-	// Crea y persiste una imagen nueva leyendo todos los bytes del InputStream.
+	// Creates and persists a new image by reading all bytes from the InputStream.
 	public Image createImage(InputStream inputStream) throws IOException {
 
 		Image image = new Image();
@@ -51,35 +51,35 @@ public class ImageService {
 	}
 
 	/**
-	 * Crea una nueva imagen a partir de un MultipartFile guardándola en disco.
-	 * @param multipartFile Fichero subido
-	 * @return Entidad Image con referencia al fichero en disco
+	 * Creates a new image from a MultipartFile saving it to disk.
+	 * @param multipartFile Uploaded file
+	 * @return Image entity with reference to the file on disk
 	 */
 	public Image createImageFromFile(MultipartFile multipartFile) throws IOException {
 		if (multipartFile == null || multipartFile.isEmpty()) {
 			return null;
 		}
 
-		// Guardar fichero en disco
+		// Save file to disk
 		String uniqueFileName = fileStorageService.storeFile(multipartFile);
-		
-		// Crear entidad Image con referencia al fichero
+
+		// Create Image entity with reference to the file
 		Image image = new Image(uniqueFileName, multipartFile.getOriginalFilename());
 		imageRepository.save(image);
 
 		return image;
 	}
 
-	// Devuelve un recurso de solo lectura con el contenido binario de la imagen.
+	// Returns a read-only resource with the binary content of the image.
 	public Resource getImageFile(long id) throws SQLException, IOException {
 
 		Image image = imageRepository.findById(id).orElseThrow();
 
-		// Si tiene fileName (almacenado en disco), devolver desde disco
+		// If it has a fileName (stored on disk), return from disk
 		if (image.getFileName() != null && !image.getFileName().isEmpty()) {
 			return fileStorageService.getFileAsResource(image.getFileName());
 		}
-		// Si no, intentar devolver desde BD (backwards compatibility)
+		// Otherwise, try to return from DB (backwards compatibility)
 		else if (image.getImageFile() != null) {
 			return new InputStreamResource(image.getImageFile().getBinaryStream());
 		} else {
@@ -87,7 +87,7 @@ public class ImageService {
 		}
 	}
 
-	// Reemplaza el contenido de una imagen ya existente.
+	// Replaces the content of an existing image.
 	public Image replaceImageFile(long id, InputStream inputStream) throws IOException {
 
 		Image image = imageRepository.findById(id).orElseThrow();
@@ -104,25 +104,25 @@ public class ImageService {
 	}
 
 	/**
-	 * Reemplaza la imagen de una entidad con un nuevo fichero.
-	 * @param id ID de la imagen
-	 * @param multipartFile Nuevo fichero
-	 * @return Entidad Image actualizada
+	 * Replaces the image of an entity with a new file.
+	 * @param id Image ID
+	 * @param multipartFile New file
+	 * @return Updated Image entity
 	 */
 	public Image replaceImageFile(long id, MultipartFile multipartFile) throws IOException {
 		Image image = imageRepository.findById(id).orElseThrow();
 
-		// Eliminar fichero anterior si existe
+		// Delete previous file if it exists
 		if (image.getFileName() != null && !image.getFileName().isEmpty()) {
 			try {
 				fileStorageService.deleteFile(image.getFileName());
 			} catch (IOException e) {
-				// Log pero continuar
+				// Log but continue
 				System.err.println("Error deleting old file: " + e.getMessage());
 			}
 		}
 
-		// Guardar nuevo fichero
+		// Save new file
 		String uniqueFileName = fileStorageService.storeFile(multipartFile);
 		image.setFileName(uniqueFileName);
 		image.setOriginalFileName(multipartFile.getOriginalFilename());
@@ -132,11 +132,11 @@ public class ImageService {
 		return image;
 	}
 
-	// Borra una imagen de BD y devuelve la entidad eliminada.
+	// Deletes an image from DB and returns the deleted entity.
 	public Image deleteImage(long id) {
 		Image image = imageRepository.findById(id).orElseThrow();
-		
-		// Eliminar fichero del disco si existe
+
+		// Delete file from disk if it exists
 		if (image.getFileName() != null && !image.getFileName().isEmpty()) {
 			try {
 				fileStorageService.deleteFile(image.getFileName());

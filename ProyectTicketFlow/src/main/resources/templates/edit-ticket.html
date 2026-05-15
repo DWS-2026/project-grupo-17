@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Entrada - TicketFlow</title>
+  <title>Edit Ticket - TicketFlow</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -22,7 +22,7 @@
       </div>
 
       <span class="navbar-text text-white fs-5 position-absolute top-50 start-50 translate-middle">
-        Editar entrada
+        Edit ticket
       </span>
 
       <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y"
@@ -38,7 +38,7 @@
 
   <div class="card shadow">
     <div class="card-header bg-primary text-white">
-      <h4 class="mb-0">Editar entrada</h4>
+      <h4 class="mb-0">Edit ticket</h4>
     </div>
 
     <div class="card-body">
@@ -50,7 +50,7 @@
         <input type="hidden" name="_csrf" value="{{token}}">
 
         <div class="mb-3">
-          <label class="form-label">Evento</label>
+          <label class="form-label">Event</label>
           <input type="text"
                  class="form-control"
                  value="{{evento.name}}"
@@ -59,7 +59,7 @@
 
 
         <div class="mb-3">
-          <label class="form-label">Nombre</label>
+          <label class="form-label">Name</label>
           <input type="text"
                  class="form-control"
                  name="name"
@@ -69,7 +69,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Tipo de acceso</label>
+          <label class="form-label">Access type</label>
           <select name="acceso" class="form-control">
             <option value="Normal">Normal</option>
             <option value="VIP">VIP</option>
@@ -77,7 +77,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Incluye</label>
+          <label class="form-label">Includes</label>
           <input type="text"
                  class="form-control"
                  name="incluye"
@@ -87,7 +87,7 @@
         </div>
 
         <div class="mb-4">
-          <label class="form-label">Precio (€)</label>
+          <label class="form-label">Price (€)</label>
           <input type="number"
                  class="form-control"
                  name="precio"
@@ -101,11 +101,11 @@
         <div class="d-flex justify-content-between">
 
           <a href="/eventos/{{evento.id}}/entradas" class="btn btn-outline-secondary">
-            Cancelar
+            Cancel
           </a>
 
           <button type="submit" class="btn btn-primary">
-            Guardar cambios
+            Save changes
           </button>
 
         </div>

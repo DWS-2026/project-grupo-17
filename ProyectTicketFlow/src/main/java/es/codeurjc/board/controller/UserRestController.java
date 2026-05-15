@@ -25,7 +25,7 @@ public class UserRestController {
         this.entradaService = entradaService;
     }
 
-    // LISTADO (solo admin lo controla SecurityConfig)
+    // LISTING (only admin controlled by SecurityConfig)
     @GetMapping
     public ResponseEntity<Page<UserDTO>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
@@ -35,13 +35,13 @@ public class UserRestController {
         return ResponseEntity.ok(users);
     }
 
-    // PERFIL PROPIO O ADMIN
+    // OWN PROFILE OR ADMIN
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id,
                                          Authentication auth) {
 
         if (!userService.canAccessUser(id, auth)) {
-            return ResponseEntity.status(403).body("Acceso denegado");
+            return ResponseEntity.status(403).body("Access denied");
         }
 
         return userService.findUserById(id)
@@ -49,7 +49,7 @@ public class UserRestController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // SOLO ADMIN
+    // ADMIN ONLY
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
 
@@ -73,7 +73,7 @@ public class UserRestController {
         }
     }
 
-    // PERFIL PROPIO O ADMIN
+    // OWN PROFILE OR ADMIN
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,
                                         @RequestBody UserDTO userDTO,
@@ -81,7 +81,7 @@ public class UserRestController {
 
         if (!userService.canAccessUser(id, auth)) {
             return ResponseEntity.status(403)
-                    .body("No puedes editar otro usuario");
+                    .body("You cannot edit another user");
         }
 
         try {
@@ -97,13 +97,13 @@ public class UserRestController {
         }
     }
 
-    // PERFIL PROPIO O ADMIN
+    // OWN PROFILE OR ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id,
                                         Authentication auth) {
 
         if (!userService.canAccessUser(id, auth)) {
-            return ResponseEntity.status(403).body("No puedes borrar otro usuario");
+            return ResponseEntity.status(403).body("You cannot delete another user");
         }
 
         if (userService.deleteUser(id)) {
@@ -113,24 +113,24 @@ public class UserRestController {
         return ResponseEntity.notFound().build();
     }
 
-    // PERFIL PROPIO O ADMIN
+    // OWN PROFILE OR ADMIN
     @GetMapping("/{id}/tickets")
     public ResponseEntity<?> getUserTickets(@PathVariable Long id, Authentication auth) {
 
         if (!userService.canAccessUser(id, auth)) {
-            return ResponseEntity.status(403).body("Acceso denegado");
+            return ResponseEntity.status(403).body("Access denied");
         }
 
         return ResponseEntity.ok(entradaService.findTicketsByUser(id));
     }
 
-    // PERFIL PROPIO O ADMIN
+    // OWN PROFILE OR ADMIN
     @GetMapping("/{id}/image")
     public ResponseEntity<?> getUserAvatar(@PathVariable Long id,
                                            Authentication auth) throws Exception {
 
         if (!userService.canAccessUser(id, auth)) {
-            return ResponseEntity.status(403).body("No puedes ver otra imagen");
+            return ResponseEntity.status(403).body("You cannot view another user's image");
         }
 
         byte[] image = userService.getUserAvatar(id);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TicketFlow - Editar Perfil</title>
+    <title>TicketFlow - Edit Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -20,7 +20,7 @@
                 <a class="navbar-brand" href="/">TicketFlow</a>
             </div>
             <div class="position-absolute start-50 translate-middle-x text-white">
-                Editar perfil
+                Edit profile
             </div>
 
             <a class="btn btn-outline-light position-absolute top-50 end-0 translate-middle-y"
@@ -36,7 +36,7 @@
 
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Modificar Datos de Usuario</h4>
+            <h4 class="mb-0">Modify User Data</h4>
         </div>
         <div class="card-body">
             {{#error}}
@@ -45,7 +45,7 @@
             <form method="post" action="/edit-profile" enctype="multipart/form-data">
                 <input type="hidden" name="_csrf" value="{{token}}">
                 <div class="mb-3">
-                    <label class="form-label">Nombre Completo</label>
+                    <label class="form-label">Full Name</label>
                     <input type="text" name="nombre" class="form-control" value="{{user.nombre}}" required>
                 </div>
 
@@ -56,22 +56,22 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Fecha de Nacimiento</label>
+                        <label class="form-label">Date of Birth</label>
                         <input type="date" name="fechaNacimiento" class="form-control" value="{{user.fechaNacimiento}}" required>
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Modificar Avatar</label>
+                    <label class="form-label">Change Avatar</label>
                     <input type="file" name="avatar" class="form-control" accept="image/*">
                 </div>
 
                 <div class="d-flex justify-content-between">
                     <a href="/profile" class="btn btn-outline-secondary">
-                        Cancelar
+                        Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        Guardar Cambios
+                        Save Changes
                     </button>
                 </div>
 

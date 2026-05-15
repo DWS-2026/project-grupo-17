@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 /**
- * Controlador de entradas:
- * gestiona el listado de entradas de un evento, su alta/edicion/borrado
- * y la compra de entradas por parte de usuarios autenticados.
+ * Ticket controller:
+ * manages the listing of tickets for an event, their creation/editing/deletion
+ * and the purchase of tickets by authenticated users.
  */
 public class EntradaController {
 
@@ -34,7 +34,7 @@ public class EntradaController {
     private EventoService eventoService;
 
     @ModelAttribute
-	// Este metodo se ejecuta antes de cada handler para exponer datos de sesion comunes en las vistas.
+	// This method runs before each handler to expose common session data in views.
 	public void addAttributes(Model model, HttpServletRequest request) {
 
 		Principal principal = request.getUserPrincipal();
@@ -52,7 +52,7 @@ public class EntradaController {
 
 
     @GetMapping("/eventos/{id}/entradas")
-    // Muestra todas las entradas asociadas a un evento concreto.
+    // Displays all tickets associated with a specific event.
     public String showEntradas(@PathVariable Long id, Model model) {
 
         Evento evento = eventoService.findById(id);
@@ -66,7 +66,7 @@ public class EntradaController {
 
 
     @GetMapping("/eventos/{eventoId}/entradas/create")
-    // Carga el formulario de creacion de entrada para un evento.
+    // Loads the ticket creation form for an event.
     public String newEntradaForm(@PathVariable Long eventoId, Model model) {
 
         Evento evento = eventoService.findById(eventoId);
@@ -103,7 +103,7 @@ public class EntradaController {
 
 
     @GetMapping("/entradas/{id}/edit")
-    // Carga la vista de edicion con los datos actuales de la entrada.
+    // Loads the edit view with the current ticket data.
     public String editEntradaForm(@PathVariable long id, Model model) {
 
         Entrada entrada = entradaService.findById(id);
@@ -148,7 +148,7 @@ public class EntradaController {
 
 
     @PostMapping("/entradas/{id}/delete")
-    // Elimina la entrada y la retira de los usuarios que la tuvieran comprada.
+    // Deletes the ticket and removes it from any users who had purchased it.
     public String deleteEntrada(@PathVariable long id) {
 
         Entrada entrada = entradaService.findById(id);
@@ -179,7 +179,7 @@ public class EntradaController {
         String resultado = entradaService.comprarEntrada(id, user);
 
         if ("error_ya_comprada".equals(resultado)) {
-            model.addAttribute("error", "Ya has comprado esta entrada");
+            model.addAttribute("error", "You have already purchased this ticket");
             model.addAttribute("evento", entrada.getEvento());
             model.addAttribute("discoteca", entrada.getEvento().getDiscoteca());
             model.addAttribute("entradas", entradaService.findByEvento(entrada.getEvento().getId()));

@@ -28,9 +28,9 @@ import org.springframework.security.core.Authentication;
 
 @Service
 /**
- * Servicio de usuarios:
- * centraliza la logica de consulta, alta, edicion y borrado de usuarios,
- * junto con la gestion de avatar por defecto o subido por formulario.
+ * User service:
+ * centralizes the logic for querying, creating, editing and deleting users,
+ * along with the management of the default or form-uploaded avatar.
  */
 public class UserService {
 
@@ -40,29 +40,29 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    // Devuelve todos los usuarios persistidos.
+    // Returns all persisted users.
     public Collection<User> findAll() {
         return userRepository.findAll();
     }
 
-    // Busca usuario por id; si no existe devuelve null.
+    // Finds a user by id; returns null if not found.
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    // Busca usuario por email (clave principal de login funcional).
+    // Finds a user by email (main functional login key).
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // Convierte archivo multipart en entidad Image para persistirla en BD.
+    // Converts a multipart file into an Image entity to persist it in DB.
     public Image createImageFromMultipart(MultipartFile file) throws IOException, SQLException {
         byte[] bytes = file.getBytes();
         Blob blob = new SerialBlob(bytes);
         return new Image(blob);
     }
 
-    // Carga una imagen por defecto desde classpath para usuarios sin avatar propio.
+    // Loads a default image from classpath for users without their own avatar.
     public Image getDefaultImage(String classpathResource) throws IOException, SQLException {
         Resource resource = new ClassPathResource(classpathResource);
         byte[] bytes = resource.getInputStream().readAllBytes();
@@ -70,47 +70,47 @@ public class UserService {
         return new Image(blob);
     }
 
-    // Guarda una entidad User ya construida o modificada.
+    // Saves an already built or modified User entity.
     public void saveUser(User user) {
         userRepository.save(user);
     }
 
-    // Elimina usuario por id.
+    // Deletes a user by id.
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
-    // Valida los datos de registro
+    // Validates registration data
     public String validarRegistro(String nombre, String email, String password, String fechaNacimiento) {
         if (isBlank(nombre)) {
-            return "El nombre es obligatorio";
+            return "Name is required";
         }
 
         if (isBlank(email)) {
-            return "El email es obligatorio";
+            return "Email is required";
         }
 
         if (!email.contains("@")) {
-            return "El email no es válido";
+            return "Email is not valid";
         }
 
         if (password == null || password.length() < 4) {
-            return "La contraseña debe tener al menos 4 caracteres";
+            return "Password must be at least 4 characters long";
         }
 
         if (isBlank(fechaNacimiento)) {
-            return "La fecha de nacimiento es obligatoria";
+            return "Date of birth is required";
         }
 
-        // Validar que el email no existe ya
+        // Validate that the email does not already exist
         if (findByEmail(email).isPresent()) {
-            return "El email ya está registrado";
+            return "Email is already registered";
         }
 
         return null;
     }
 
-    // Registra un usuario nuevo con validación completa
+    // Registers a new user with full validation
     public User registroConValidacion(String nombre,
                                       String email,
                                       String password,
@@ -128,18 +128,18 @@ public class UserService {
         );
     }
 
-    // Valida los datos de actualización de perfil
+    // Validates profile update data
     public String validarActualizacionPerfil(String nombre, String email, String fechaNacimiento) {
         if (isBlank(nombre)) {
-            return "El nombre es obligatorio";
+            return "Name is required";
         }
 
         if (isBlank(email) || !email.contains("@")) {
-            return "El email no es valido";
+            return "Email is not valid";
         }
 
         if (isBlank(fechaNacimiento)) {
-            return "La fecha de nacimiento es obligatoria";
+            return "Date of birth is required";
         }
 
         return null;
@@ -218,7 +218,7 @@ public class UserService {
         return Optional.of(userRepository.save(user));
     }
 
-    // Actualiza el perfil del usuario con validación
+    // Updates the user profile with validation
     public Optional<User> actualizarPerfilConValidacion(Long userId,
                                                         String nombre,
                                                         String email,
@@ -236,12 +236,12 @@ public class UserService {
         );
     }
 
-    // Utilidad privada para validar campos de texto obligatorios
+    // Private utility to validate required text fields
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
 
-    // Obtener la lista de usuarios (excepto el actual) para el panel de administración
+    // Get the list of users (except the current one) for the administration panel
     public List<es.codeurjc.board.dto.UserDTO> findAllOtherUsersAsDTO(String emailActual) {
         return userRepository.findAll().stream()
                 .filter(u -> !u.getEmail().equals(emailActual))

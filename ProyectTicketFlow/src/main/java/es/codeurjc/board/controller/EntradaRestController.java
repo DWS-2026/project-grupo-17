@@ -85,13 +85,13 @@ public class EntradaRestController {
     public ResponseEntity<?> purchaseTicket(@PathVariable Long id, Authentication auth) {
 
         if (auth == null || auth.getName() == null) {
-            return ResponseEntity.status(401).body(java.util.Map.of("error", "Debes estar autenticado para comprar una entrada"));
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "You must be authenticated to purchase a ticket"));
         }
 
         User user = userService.findByEmail(auth.getName()).orElse(null);
 
         if (user == null) {
-            return ResponseEntity.status(404).body(java.util.Map.of("error", "Usuario no encontrado"));
+            return ResponseEntity.status(404).body(java.util.Map.of("error", "User not found"));
         }
 
         String resultado = entradaService.comprarEntrada(id, user);
@@ -99,17 +99,17 @@ public class EntradaRestController {
         switch (resultado) {
             case "success":
                 return ResponseEntity.ok(java.util.Map.of(
-                    "message", "Entrada comprada exitosamente",
+                    "message", "Ticket purchased successfully",
                     "ticketId", id
                 ));
             case "error_ya_comprada":
-                return ResponseEntity.status(409).body(java.util.Map.of("error", "Ya has comprado esta entrada"));
+                return ResponseEntity.status(409).body(java.util.Map.of("error", "You have already purchased this ticket"));
             case "error_entrada_no_existe":
-                return ResponseEntity.status(404).body(java.util.Map.of("error", "La entrada no existe"));
+                return ResponseEntity.status(404).body(java.util.Map.of("error", "The ticket does not exist"));
             case "error_usuario_no_existe":
-                return ResponseEntity.status(404).body(java.util.Map.of("error", "Usuario no encontrado"));
+                return ResponseEntity.status(404).body(java.util.Map.of("error", "User not found"));
             default:
-                return ResponseEntity.status(500).body(java.util.Map.of("error", "Error al procesar la compra"));
+                return ResponseEntity.status(500).body(java.util.Map.of("error", "Error processing the purchase"));
         }
     }
 }

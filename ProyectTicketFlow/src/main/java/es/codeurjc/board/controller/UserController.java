@@ -35,7 +35,7 @@ public class UserController {
     public String getLogin(@RequestParam(required = false) String error, Model model) {
 
         if (error != null) {
-            model.addAttribute("error", "Usuario no registrado o contraseña incorrecta");
+            model.addAttribute("error", "Unregistered user or incorrect password");
         }
 
         return "login";
@@ -76,12 +76,12 @@ public class UserController {
 
         } catch (IOException | SQLException e) {
 
-            model.addAttribute("error", "Error al guardar la imagen");
+            model.addAttribute("error", "Error saving the image");
             return "register";
         }
     }
 
-    // 🔹 PERFIL
+    // 🔹 PROFILE
     @GetMapping("/profile")
     public String getProfile(Model model, Principal principal) {
 
@@ -123,7 +123,7 @@ public class UserController {
         return "redirect:/login";
     }
 
-    // 🔹 EDIT PROFILE (POST)  MÉTODO BUENO (SEGURO)
+    // 🔹 EDIT PROFILE (POST)  CORRECT METHOD (SECURE)
     @PostMapping("/edit-profile")
     public String updateProfile(
             @RequestParam String nombre,
@@ -164,7 +164,7 @@ public class UserController {
 
         } catch (IOException | SQLException e) {
 
-            model.addAttribute("error", "Error al guardar la imagen");
+            model.addAttribute("error", "Error saving the image");
             model.addAttribute(
                     "user",
                     userService.findByEmail(principal.getName()).orElse(null)
@@ -220,7 +220,7 @@ public class UserController {
             model.addAttribute("admin", request.isUserInRole("ADMIN"));
         }
 
-        // 🔹 Obtener próximos eventos desde el service
+        // 🔹 Get upcoming events from the service
         List<Evento> eventos = eventoService.findFirst3();
         model.addAttribute("eventos", eventos);
 

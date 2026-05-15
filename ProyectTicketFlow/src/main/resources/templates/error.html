@@ -21,17 +21,17 @@
         <div class="col-md-9 col-lg-7">
             <div class="card shadow border-0">
                 <div class="card-body p-4 p-md-5">
-                    <h1 class="h3 text-danger mb-3">Ha ocurrido un error</h1>
+                    <h1 class="h3 text-danger mb-3">An error has occurred</h1>
                     {{#error}}
                     <p class="text-muted mb-4">{{error}}</p>
                     {{/error}}
                     {{^error}}
-                    <p class="text-muted mb-4">Se ha producido un error inesperado en el servidor.</p>
+                    <p class="text-muted mb-4">An unexpected error has occurred on the server.</p>
                     {{/error}}
 
                     <div class="d-flex gap-2 flex-wrap">
-                        <a href="/" class="btn btn-primary">Volver al inicio</a>
-                        <a href="javascript:history.back()" class="btn btn-outline-secondary">Volver atrás</a>
+                        <a href="/" class="btn btn-primary">Back to home</a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">Go back</a>
                     </div>
                 </div>
             </div>

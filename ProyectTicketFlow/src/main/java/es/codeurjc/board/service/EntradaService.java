@@ -53,7 +53,7 @@ public class EntradaService {
         }
 
         Evento evento = eventoRepository.findById(eventoId)
-                .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + eventoId + " no existe"));
+                .orElseThrow(() -> new IllegalArgumentException("The event with ID " + eventoId + " does not exist"));
 
         Entrada entrada = new Entrada();
         entrada.setName(name);
@@ -88,7 +88,7 @@ public class EntradaService {
 
             if (eventoId != null) {
                 Evento evento = eventoRepository.findById(eventoId)
-                        .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + eventoId + " no existe"));
+                        .orElseThrow(() -> new IllegalArgumentException("The event with ID " + eventoId + " does not exist"));
                 entrada.setEvento(evento);
             }
 
@@ -113,7 +113,7 @@ public class EntradaService {
 
     public String validarCamposEntrada(String name, String acceso, String incluye, Double precio) {
         if (isBlank(name) || isBlank(acceso) || isBlank(incluye) || precio == null || precio < 0) {
-            return "Revisa los campos obligatorios y el precio";
+            return "Please check the required fields and the price";
         }
         return null;
     }

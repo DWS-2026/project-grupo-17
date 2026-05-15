@@ -20,8 +20,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 /**
- * Controlador de discotecas:
- * permite listar, crear, editar, mostrar imagen y eliminar discotecas.
+ * Club controller:
+ * allows listing, creating, editing, displaying images and deleting clubs.
  */
 @Controller
 public class DiscotecaController {
@@ -34,7 +34,7 @@ public class DiscotecaController {
 
 
     @GetMapping("/discotecas")
-    // Lista todas las discotecas y marca en el modelo si el usuario actual es admin.
+    // Lists all clubs and marks in the model whether the current user is an admin.
     public String showDiscotecas(Model model, HttpServletRequest request) {
         model.addAttribute("discotecas", discotecaService.findAll());
         model.addAttribute("admin", request.isUserInRole("ADMIN"));
@@ -42,13 +42,13 @@ public class DiscotecaController {
     }
 
     @GetMapping("/discotecas/create-discotecas")
-    // Muestra el formulario para crear una nueva discoteca.
+    // Displays the form to create a new club.
     public String newDiscotecaForm() {
         return "create-discotecas";
     }
 
     @GetMapping("/discotecas/{id}")
-    // Muestra el detalle de una discoteca concreta.
+    // Displays the detail of a specific club.
     public String detailsDiscoteca(@PathVariable long id, Model model) {
         Discoteca discoteca = discotecaService.findById(id);
         model.addAttribute("discoteca", discoteca);
@@ -56,7 +56,7 @@ public class DiscotecaController {
     }
 
     @GetMapping("/discotecas/edit-discoteca/{id}")
-    // Carga el formulario de edicion de discoteca.
+    // Loads the club edit form.
     public String editDiscotecaForm(@PathVariable long id, Model model) {
 
         Discoteca discoteca = discotecaService.findById(id);
@@ -70,7 +70,7 @@ public class DiscotecaController {
     }
 
     @PostMapping("/discotecas/edit/{id}")
-    // Actualiza una discoteca existente y, opcionalmente, su imagen.
+    // Updates an existing club and, optionally, its image.
     public String editDiscotecaProcess(@PathVariable Long id,
                                        Discoteca discotecaForm,
                                        @RequestParam(required = false) boolean removeImage,
@@ -115,7 +115,7 @@ public class DiscotecaController {
     }
 
     @PostMapping("/discotecas/create-discotecas")
-    // Crea una discoteca nueva asociandola al usuario autenticado como propietario.
+    // Creates a new club associating the authenticated user as its owner.
     public String createDiscotecaProcess(Discoteca discoteca,
                                          @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                          @RequestParam(value = "flyerFile", required = false) MultipartFile flyerFile,
@@ -148,14 +148,14 @@ public class DiscotecaController {
     }
 
     @GetMapping("/discotecas/{id}/image")
-    // Devuelve los bytes de la imagen de una discoteca para pintarla en el front.
+    // Returns the bytes of a club's image to render it on the front end.
     public ResponseEntity<byte[]> showImage(@PathVariable long id) throws SQLException, IOException {
         Discoteca d = discotecaService.findById(id);
         if (d == null || d.getImage() == null) {
             return ResponseEntity.notFound().build();
         }
 
-        // Utiliza el método del servicio que soporta leer desde disco o BD
+        // Uses the service method that supports reading from disk or DB
         byte[] bytes = discotecaService.getClubImage(id);
         
         if (bytes == null) {
@@ -180,7 +180,7 @@ public class DiscotecaController {
     }
 
     @PostMapping("/discotecas/delete/{id}")
-    // Elimina una discoteca por id.
+    // Deletes a club by id.
     public String deleteDiscoteca(@PathVariable long id) {
 
         Discoteca discoteca = discotecaService.findById(id);

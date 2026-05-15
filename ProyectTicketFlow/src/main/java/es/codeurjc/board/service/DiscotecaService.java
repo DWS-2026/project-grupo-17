@@ -94,7 +94,7 @@ public class DiscotecaService {
                                          String descripcion) {
 
         if (isBlank(name) || isBlank(calle) || isBlank(descripcion)) {
-            return "Los campos nombre, descripcion y calle deben estar rellenos";
+            return "The name, description and street fields must be filled in";
         }
 
         return null;
@@ -175,7 +175,7 @@ public class DiscotecaService {
             discoteca.setOwner(owner);
         }
 
-        // Imagen
+        // Image
         if (removeImage) {
 
             if (discoteca.getImage() != null) {
@@ -370,19 +370,19 @@ public class DiscotecaService {
 
         Image image = discoteca.getImage();
         
-        // Si está en disco, leerla desde ahí
+        // If stored on disk, read from there
         if (image.getFileName() != null && !image.getFileName().isEmpty()) {
             try {
-                org.springframework.core.io.Resource resource = 
+                org.springframework.core.io.Resource resource =
                     fileStorageService.getFileAsResource(image.getFileName());
                 return resource.getInputStream().readAllBytes();
             } catch (IOException e) {
                 System.err.println("Error reading file from disk: " + e.getMessage());
-                // Continuar con blob si existe
+                // Continue with blob if it exists
             }
         }
-        
-        // Si está en BD (backwards compatibility)
+
+        // If stored in DB (backwards compatibility)
         if (image.getImageFile() != null) {
             Blob blob = image.getImageFile();
             return blob.getBytes(1, (int) blob.length());
