@@ -77,7 +77,6 @@ public class EntradaController {
 
 
     @PostMapping("/entradas/create-ticket")
-    // Recibe el formulario de alta, valida los datos y guarda la entrada.
     public String createEntrada(@RequestParam String name,
                                 @RequestParam String acceso,
                                 @RequestParam String incluye,
@@ -91,15 +90,13 @@ public class EntradaController {
             return "redirect:/error-403";
         }
 
-        String error = entradaService.validarCamposEntrada(name, acceso, incluye, precio);
-        
-        if (error != null) {
-            model.addAttribute("error", error);
+        try {
+            entradaService.crearEntrada(name, acceso, incluye, precio, eventoId);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("evento", evento);
             return "create-ticket";
         }
-
-        entradaService.createEntradaWithValidation(name, acceso, incluye, precio, evento);
 
         return "redirect:/eventos/" + eventoId + "/entradas";
     }
@@ -111,15 +108,17 @@ public class EntradaController {
 
         Entrada entrada = entradaService.findById(id);
 
+        if (entrada == null) {
+            return "redirect:/error-403";
+        }
+
         model.addAttribute("entrada", entrada);
         model.addAttribute("evento", entrada.getEvento());
 
         return "edit-ticket";
     }
 
-
     @PostMapping("/entradas/{id}/edit")
-    // Aplica cambios sobre una entrada existente tras validar los campos.
     public String updateEntrada(@PathVariable long id,
                                 @RequestParam String name,
                                 @RequestParam String acceso,
@@ -135,16 +134,14 @@ public class EntradaController {
 
         Evento evento = entrada.getEvento();
 
-        String error = entradaService.validarCamposEntrada(name, acceso, incluye, precio);
-        
-        if (error != null) {
-            model.addAttribute("error", error);
+        try {
+            entradaService.actualizarEntrada(id, name, acceso, incluye, precio, evento.getId());
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("entrada", entrada);
             model.addAttribute("evento", evento);
             return "edit-ticket";
         }
-
-        entradaService.updateEntradaWithValidation(id, name, acceso, incluye, precio, evento);
 
         return "redirect:/eventos/" + evento.getId() + "/entradas";
     }

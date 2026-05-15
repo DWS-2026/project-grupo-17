@@ -2,7 +2,6 @@ package es.codeurjc.board.controller;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Blob;
 import java.sql.SQLException;
 
 import es.codeurjc.board.model.Discoteca;
@@ -20,11 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-@Controller
 /**
  * Controlador de discotecas:
  * permite listar, crear, editar, mostrar imagen y eliminar discotecas.
  */
+@Controller
 public class DiscotecaController {
 
     @Autowired
@@ -103,8 +102,17 @@ public class DiscotecaController {
             return "edit-discoteca";
         }
 
-        discotecaService.editDiscotecaWithImage(id, discotecaForm, removeImage, imageFile);
-        discotecaService.editDiscotecaWithFlyer(id, discotecaForm, flyerFile, removeFlyer);
+        discotecaService.actualizarDiscoteca(
+                id,
+                discotecaForm.getName(),
+                discotecaForm.getCalle(),
+                discotecaForm.getDescripcion(),
+                null,
+                imageFile,
+                flyerFile,
+                removeImage,
+                removeFlyer
+        );
 
         return "redirect:/discotecas/" + discoteca.getId();
     }
@@ -131,10 +139,15 @@ public class DiscotecaController {
         String email = principal.getName();
         User currentUser = userService.findByEmail(email).orElse(null);
 
-        discotecaService.createDiscotecaWithImage(discoteca, imageFile, currentUser);
-        discotecaService.createDiscotecaWithFlyer(discoteca, flyerFile, currentUser);
-
-        return "redirect:/discotecas/" + discoteca.getId();
+        Discoteca nuevaDiscoteca = discotecaService.crearDiscoteca(
+                discoteca.getName(),
+                discoteca.getCalle(),
+                discoteca.getDescripcion(),
+                currentUser.getId(),
+                imageFile,
+                flyerFile
+        );
+        return "redirect:/discotecas/" + nuevaDiscoteca.getId();
     }
 
     @GetMapping("/discotecas/{id}/image")

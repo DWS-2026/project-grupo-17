@@ -98,83 +98,144 @@ public class DiscotecaService {
         return null;
     }
 
-    public void createDiscotecaWithImage(Discoteca discoteca,
-                                         MultipartFile imageFile,
-                                         User owner)
-            throws IOException, SQLException {
+    public Discoteca crearDiscoteca(
+            String name,
+            String street,
+            String description,
+            Long ownerId,
+            MultipartFile imageFile,
+            MultipartFile flyerFile
+    ) throws IOException, SQLException {
 
-        discoteca.setOwner(owner);
+        String error =
+                validarCamposDiscoteca(name, street, description);
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
+        Discoteca discoteca = new Discoteca();
+
+        discoteca.setName(name);
+        discoteca.setCalle(street);
+        discoteca.setDescripcion(description);
+
+        if (ownerId != null) {
+            User owner = userService.findById(ownerId);
+            discoteca.setOwner(owner);
+        }
 
         if (imageFile != null && !imageFile.isEmpty()) {
             Image img = imageService.createImageFromFile(imageFile);
             discoteca.setImage(img);
         }
 
-        save(discoteca);
-    }
-
-    public void editDiscotecaWithImage(Long id,
-                                       Discoteca discotecaForm,
-                                       boolean removeImage,
-                                       MultipartFile imageFile)
-            throws IOException, SQLException {
-
-        Discoteca discoteca = findById(id);
-
-        if (discoteca != null) {
-
-            discoteca.setName(discotecaForm.getName());
-            discoteca.setCalle(discotecaForm.getCalle());
-            discoteca.setDescripcion(discotecaForm.getDescripcion());
-
-            if (removeImage) {
-                if (discoteca.getImage() != null) {
-                    imageService.deleteImage(discoteca.getImage().getId());
-                }
-                discoteca.setImage(null);
-            } else if (imageFile != null && !imageFile.isEmpty()) {
-                if (discoteca.getImage() != null) {
-                    imageService.replaceImageFile(discoteca.getImage().getId(), imageFile);
-                } else {
-                    Image img = imageService.createImageFromFile(imageFile);
-                    discoteca.setImage(img);
-                }
-            }
-
-            save(discoteca);
-        }
-    }
-
-    public void createDiscotecaWithFlyer(Discoteca discoteca, MultipartFile flyerFile, User owner) throws IOException {
-        discoteca.setOwner(owner);
         if (flyerFile != null && !flyerFile.isEmpty()) {
-            String flyerName = fileStorageService.storeFile(flyerFile);
+            String flyerName =
+                    fileStorageService.storeFile(flyerFile);
             discoteca.setFlyer(flyerName);
         }
-        save(discoteca);
+
+        return discotecaRepository.save(discoteca);
     }
 
-    public void editDiscotecaWithFlyer(Long id, Discoteca discotecaForm, MultipartFile flyerFile, boolean removeFlyer) throws IOException {
-        Discoteca discoteca = findById(id);
-        if (discoteca != null) {
-            discoteca.setName(discotecaForm.getName());
-            discoteca.setCalle(discotecaForm.getCalle());
-            discoteca.setDescripcion(discotecaForm.getDescripcion());
+    public Optional<Discoteca> actualizarDiscoteca(
+            Long id,
+            String name,
+            String street,
+            String description,
+            Long ownerId,
+            MultipartFile imageFile,
+            MultipartFile flyerFile,
+            boolean removeImage,
+            boolean removeFlyer
+    ) throws IOException, SQLException {
 
-            if (removeFlyer) {
-                if (discoteca.getFlyer() != null) {
-                    fileStorageService.deleteFile(discoteca.getFlyer());
-                }
-                discoteca.setFlyer(null);
-            } else if (flyerFile != null && !flyerFile.isEmpty()) {
-                if (discoteca.getFlyer() != null) {
-                    fileStorageService.deleteFile(discoteca.getFlyer());
-                }
-                String flyerName = fileStorageService.storeFile(flyerFile);
-                discoteca.setFlyer(flyerName);
-            }
-            save(discoteca);
+        Discoteca discoteca = findById(id);
+
+        if (discoteca == null) {
+            return Optional.empty();
         }
+
+        String error =
+                validarCamposDiscoteca(name, street, description);
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
+        discoteca.setName(name);
+        discoteca.setCalle(street);
+        discoteca.setDescripcion(description);
+
+        if (ownerId != null) {
+            User owner = userService.findById(ownerId);
+            discoteca.setOwner(owner);
+        }
+
+        // Imagen
+        if (removeImage) {
+
+            if (discoteca.getImage() != null) {
+                imageService.deleteImage(
+                        discoteca.getImage().getId()
+                );
+            }
+
+            discoteca.setImage(null);
+
+        } else if (imageFile != null &&
+                !imageFile.isEmpty()) {
+
+            if (discoteca.getImage() != null) {
+
+                imageService.replaceImageFile(
+                        discoteca.getImage().getId(),
+                        imageFile
+                );
+
+            } else {
+
+                Image img =
+                        imageService.createImageFromFile(
+                                imageFile
+                        );
+
+                discoteca.setImage(img);
+            }
+        }
+
+        // Flyer
+        if (removeFlyer) {
+
+            if (discoteca.getFlyer() != null) {
+                fileStorageService.deleteFile(
+                        discoteca.getFlyer()
+                );
+            }
+
+            discoteca.setFlyer(null);
+
+        } else if (flyerFile != null &&
+                !flyerFile.isEmpty()) {
+
+            if (discoteca.getFlyer() != null) {
+                fileStorageService.deleteFile(
+                        discoteca.getFlyer()
+                );
+            }
+
+            String flyerName =
+                    fileStorageService.storeFile(
+                            flyerFile
+                    );
+
+            discoteca.setFlyer(flyerName);
+        }
+
+        save(discoteca);
+
+        return Optional.of(discoteca);
     }
 
     private boolean isBlank(String value) {
@@ -193,131 +254,82 @@ public class DiscotecaService {
 
     public DiscotecaDTO createClub(DiscotecaDTO dto) {
 
-        Discoteca discoteca = new Discoteca();
+        try {
 
-        discoteca.setName(dto.getName());
-        discoteca.setCalle(dto.getStreet());
-        discoteca.setDescripcion(dto.getDescription());
+            Discoteca discoteca = crearDiscoteca(
+                    dto.getName(),
+                    dto.getStreet(),
+                    dto.getDescription(),
+                    dto.getOwnerId(),
+                    null,
+                    null
+            );
 
-        if (dto.getOwnerId() != null) {
-            discoteca.setOwner(userService.findById(dto.getOwnerId()));
+            return toDTO(discoteca);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-
-        discotecaRepository.save(discoteca);
-
-        return toDTO(discoteca);
     }
 
-    public DiscotecaDTO createClubWithImageAndFlyer(DiscotecaDTO dto, MultipartFile imageFile, MultipartFile flyerFile) throws IOException {
+    public DiscotecaDTO createClubWithImageAndFlyer(
+            DiscotecaDTO dto,
+            MultipartFile imageFile,
+            MultipartFile flyerFile
+    ) throws IOException, SQLException {
 
-        Discoteca discoteca = new Discoteca();
-        discoteca.setName(dto.getName());
-        discoteca.setCalle(dto.getStreet());
-        discoteca.setDescripcion(dto.getDescription());
+        Discoteca discoteca = crearDiscoteca(
+                dto.getName(),
+                dto.getStreet(),
+                dto.getDescription(),
+                dto.getOwnerId(),
+                imageFile,
+                flyerFile
+        );
 
-        if (dto.getOwnerId() != null) {
-            discoteca.setOwner(userService.findById(dto.getOwnerId()));
-        }
-
-        if (imageFile != null && !imageFile.isEmpty()) {
-            Image img = imageService.createImageFromFile(imageFile);
-            discoteca.setImage(img);
-        }
-
-        if (flyerFile != null && !flyerFile.isEmpty()) {
-            String flyerName = fileStorageService.storeFile(flyerFile);
-            discoteca.setFlyer(flyerName);
-        }
-
-        discotecaRepository.save(discoteca);
         return toDTO(discoteca);
     }
 
     public Optional<DiscotecaDTO> updateClubWithImageAndFlyer(Long id,
-                                                               String name,
-                                                               String street,
-                                                               String description,
-                                                               Long ownerId,
-                                                               MultipartFile imageFile,
-                                                               MultipartFile flyerFile,
-                                                               boolean removeImage,
-                                                               boolean removeFlyer) throws IOException {
+                                                              String name,
+                                                              String street,
+                                                              String description,
+                                                              Long ownerId,
+                                                              MultipartFile imageFile,
+                                                              MultipartFile flyerFile,
+                                                              boolean removeImage,
+                                                              boolean removeFlyer) throws IOException, SQLException {
 
-        Discoteca discoteca = findById(id);
-        if (discoteca == null) {
-            return Optional.empty();
-        }
-
-        if (name != null) {
-            discoteca.setName(name);
-        }
-        if (street != null) {
-            discoteca.setCalle(street);
-        }
-        if (description != null) {
-            discoteca.setDescripcion(description);
-        }
-        if (ownerId != null) {
-            User owner = userService.findById(ownerId);
-            discoteca.setOwner(owner);
-        }
-
-        if (removeImage) {
-            if (discoteca.getImage() != null) {
-                imageService.deleteImage(discoteca.getImage().getId());
-            }
-            discoteca.setImage(null);
-        } else if (imageFile != null && !imageFile.isEmpty()) {
-            if (discoteca.getImage() != null) {
-                imageService.replaceImageFile(discoteca.getImage().getId(), imageFile);
-            } else {
-                Image img = imageService.createImageFromFile(imageFile);
-                discoteca.setImage(img);
-            }
-        }
-
-        if (removeFlyer) {
-            if (discoteca.getFlyer() != null) {
-                fileStorageService.deleteFile(discoteca.getFlyer());
-            }
-            discoteca.setFlyer(null);
-        } else if (flyerFile != null && !flyerFile.isEmpty()) {
-            if (discoteca.getFlyer() != null) {
-                fileStorageService.deleteFile(discoteca.getFlyer());
-            }
-            String flyerName = fileStorageService.storeFile(flyerFile);
-            discoteca.setFlyer(flyerName);
-        }
-
-        save(discoteca);
-        return Optional.of(toDTO(discoteca));
+        return actualizarDiscoteca(
+                id,
+                name,
+                street,
+                description,
+                ownerId,
+                imageFile,
+                flyerFile,
+                removeImage,
+                removeFlyer
+        ).map(this::toDTO);
     }
 
     public Optional<DiscotecaDTO> updateClub(Long id, DiscotecaDTO dto) {
 
-        return discotecaRepository.findById(id).map(discoteca -> {
-
-            if (dto.getName() != null) {
-                discoteca.setName(dto.getName());
-            }
-
-            if (dto.getStreet() != null) {
-                discoteca.setCalle(dto.getStreet());
-            }
-
-            if (dto.getDescription() != null) {
-                discoteca.setDescripcion(dto.getDescription());
-            }
-
-            if (dto.getOwnerId() != null) {
-                User owner = userService.findById(dto.getOwnerId());
-                discoteca.setOwner(owner);
-            }
-
-            discotecaRepository.save(discoteca);
-
-            return toDTO(discoteca);
-        });
+        try {
+            return actualizarDiscoteca(
+                    id,
+                    dto.getName(),
+                    dto.getStreet(),
+                    dto.getDescription(),
+                    dto.getOwnerId(),
+                    null,
+                    null,
+                    false,
+                    false
+            ).map(this::toDTO);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public boolean deleteClub(Long id) {

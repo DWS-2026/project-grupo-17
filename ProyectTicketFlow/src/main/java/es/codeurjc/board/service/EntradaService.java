@@ -43,34 +43,68 @@ public class EntradaService {
                 .toList();
     }
 
-    public void save(String name, String acceso, String incluye,
-                     Double precio, Evento evento) {
+    public Entrada crearEntrada(String name, String acceso, String incluye,
+                                Double precio, Long eventoId) {
+
+        String error = validarCamposEntrada(name, acceso, incluye, precio);
+
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+
+        Evento evento = eventoRepository.findById(eventoId)
+                .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + eventoId + " no existe"));
 
         Entrada entrada = new Entrada();
-
         entrada.setName(name);
         entrada.setAcceso(acceso);
         entrada.setIncluye(incluye);
         entrada.setPrecio(precio);
         entrada.setEvento(evento);
 
-        entradaRepository.save(entrada);
+        return entradaRepository.save(entrada);
     }
 
-    public void update(long id, String name, String acceso,
-                       String incluye, Double precio, Evento evento) {
+    public Optional<Entrada> actualizarEntrada(Long id, String name, String acceso,
+                                               String incluye, Double precio, Long eventoId) {
 
-        Entrada entrada = entradaRepository.findById(id).orElse(null);
+        return entradaRepository.findById(id).map(entrada -> {
 
-        if (entrada != null) {
-            entrada.setName(name);
-            entrada.setAcceso(acceso);
-            entrada.setIncluye(incluye);
-            entrada.setPrecio(precio);
-            entrada.setEvento(evento);
+            if (name != null) {
+                entrada.setName(name);
+            }
 
-            entradaRepository.save(entrada);
-        }
+            if (acceso != null) {
+                entrada.setAcceso(acceso);
+            }
+
+            if (incluye != null) {
+                entrada.setIncluye(incluye);
+            }
+
+            if (precio != null) {
+                entrada.setPrecio(precio);
+            }
+
+            if (eventoId != null) {
+                Evento evento = eventoRepository.findById(eventoId)
+                        .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + eventoId + " no existe"));
+                entrada.setEvento(evento);
+            }
+
+            String error = validarCamposEntrada(
+                    entrada.getName(),
+                    entrada.getAcceso(),
+                    entrada.getIncluye(),
+                    entrada.getPrecio()
+            );
+
+            if (error != null) {
+                throw new IllegalArgumentException(error);
+            }
+
+            return entradaRepository.save(entrada);
+        });
     }
 
     public void delete(long id) {
@@ -84,34 +118,6 @@ public class EntradaService {
         return null;
     }
 
-    public void createEntradaWithValidation(String name, String acceso, String incluye,
-                                            Double precio, Evento evento) {
-
-        Entrada entrada = new Entrada();
-        entrada.setName(name);
-        entrada.setAcceso(acceso);
-        entrada.setIncluye(incluye);
-        entrada.setPrecio(precio);
-        entrada.setEvento(evento);
-
-        entradaRepository.save(entrada);
-    }
-
-    public void updateEntradaWithValidation(long id, String name, String acceso,
-                                            String incluye, Double precio, Evento evento) {
-
-        Entrada entrada = entradaRepository.findById(id).orElse(null);
-
-        if (entrada != null) {
-            entrada.setName(name);
-            entrada.setAcceso(acceso);
-            entrada.setIncluye(incluye);
-            entrada.setPrecio(precio);
-            entrada.setEvento(evento);
-
-            entradaRepository.save(entrada);
-        }
-    }
 
     public String comprarEntrada(Long entradaId, User user) {
 
@@ -181,54 +187,27 @@ public class EntradaService {
 
     public EntradaDTO createTicket(EntradaDTO dto) {
 
-        Entrada entrada = new Entrada();
-
-        entrada.setName(dto.getName());
-        entrada.setAcceso(dto.getAccessType());
-        entrada.setIncluye(dto.getIncludes());
-        entrada.setPrecio(dto.getPrice());
-
-        if (dto.getEventId() != null) {
-            Evento evento = eventoRepository.findById(dto.getEventId())
-                    .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + dto.getEventId() + " no existe"));
-            entrada.setEvento(evento);
-        }
-
-        entradaRepository.save(entrada);
+        Entrada entrada = crearEntrada(
+                dto.getName(),
+                dto.getAccessType(),
+                dto.getIncludes(),
+                dto.getPrice(),
+                dto.getEventId()
+        );
 
         return toDTO(entrada);
     }
 
     public Optional<EntradaDTO> updateTicket(Long id, EntradaDTO dto) {
 
-        return entradaRepository.findById(id).map(entrada -> {
-
-            if (dto.getName() != null) {
-                entrada.setName(dto.getName());
-            }
-
-            if (dto.getAccessType() != null) {
-                entrada.setAcceso(dto.getAccessType());
-            }
-
-            if (dto.getIncludes() != null) {
-                entrada.setIncluye(dto.getIncludes());
-            }
-
-            if (dto.getPrice() != null) {
-                entrada.setPrecio(dto.getPrice());
-            }
-
-            if (dto.getEventId() != null) {
-                Evento evento = eventoRepository.findById(dto.getEventId())
-                        .orElseThrow(() -> new IllegalArgumentException("El evento con ID " + dto.getEventId() + " no existe"));
-                entrada.setEvento(evento);
-            }
-
-            entradaRepository.save(entrada);
-
-            return toDTO(entrada);
-        });
+        return actualizarEntrada(
+                id,
+                dto.getName(),
+                dto.getAccessType(),
+                dto.getIncludes(),
+                dto.getPrice(),
+                dto.getEventId()
+        ).map(this::toDTO);
     }
 
     public boolean deleteTicket(Long id) {

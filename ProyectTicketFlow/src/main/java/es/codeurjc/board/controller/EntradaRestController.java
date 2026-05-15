@@ -44,10 +44,6 @@ public class EntradaRestController {
     @PostMapping
     public ResponseEntity<?> createTicket(@RequestBody EntradaDTO ticketDTO) {
 
-        if (ticketDTO.getName() == null || ticketDTO.getAccessType() == null || ticketDTO.getIncludes() == null || ticketDTO.getPrice() == null || ticketDTO.getEventId() == null) {
-            return ResponseEntity.badRequest().body(java.util.Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, accessType, includes, price y eventId."));
-        }
-
         try {
             EntradaDTO createdTicket = entradaService.createTicket(ticketDTO);
 

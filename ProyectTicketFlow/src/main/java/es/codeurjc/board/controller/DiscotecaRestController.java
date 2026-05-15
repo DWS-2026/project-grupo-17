@@ -48,29 +48,19 @@ public class DiscotecaRestController {
     @PostMapping
     public ResponseEntity<?> createClub(@RequestBody DiscotecaDTO clubDTO) {
 
-        if (clubDTO.getName() == null || clubDTO.getStreet() == null || clubDTO.getDescription() == null || clubDTO.getOwnerId() == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Faltan campos obligatorios. Es necesario incluir name, street, description y ownerId."));
+        try {
+            DiscotecaDTO createdClub = discotecaService.createClub(clubDTO);
+
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdClub.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(createdClub);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-
-        String error = discotecaService.validarCamposDiscoteca(
-                clubDTO.getName(),
-                clubDTO.getStreet(),
-                clubDTO.getDescription()
-        );
-
-        if (error != null) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", error));
-        }
-
-        DiscotecaDTO createdClub = discotecaService.createClub(clubDTO);
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(createdClub.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).body(createdClub);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -83,25 +73,25 @@ public class DiscotecaRestController {
             @RequestParam(required = false) MultipartFile flyerFile
     ) throws Exception {
 
-        String error = discotecaService.validarCamposDiscoteca(name, street, description);
-        if (error != null) {
-            return ResponseEntity.badRequest().body(Map.of("error", error));
-        }
-
         DiscotecaDTO dto = new DiscotecaDTO();
         dto.setName(name);
         dto.setStreet(street);
         dto.setDescription(description);
         dto.setOwnerId(ownerId);
 
-        DiscotecaDTO createdClub = discotecaService.createClubWithImageAndFlyer(dto, imageFile, flyerFile);
+        try {
+            DiscotecaDTO createdClub = discotecaService.createClubWithImageAndFlyer(dto, imageFile, flyerFile);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(createdClub.getId())
-                .toUri();
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdClub.getId())
+                    .toUri();
 
-        return ResponseEntity.created(location).body(createdClub);
+            return ResponseEntity.created(location).body(createdClub);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -117,27 +107,32 @@ public class DiscotecaRestController {
             @RequestParam(required = false) MultipartFile flyerFile
     ) throws Exception {
 
-        String error = discotecaService.validarCamposDiscoteca(name, street, description);
-        if (error != null) {
-            return ResponseEntity.badRequest().body(Map.of("error", error));
+        try {
+            Optional<DiscotecaDTO> updatedClub = discotecaService.updateClubWithImageAndFlyer(
+                    id, name, street, description, ownerId, imageFile, flyerFile,
+                    Boolean.TRUE.equals(removeImage), Boolean.TRUE.equals(removeFlyer)
+            );
+
+            return updatedClub.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-
-        Optional<DiscotecaDTO> updatedClub = discotecaService.updateClubWithImageAndFlyer(
-                id, name, street, description, ownerId, imageFile, flyerFile,
-                Boolean.TRUE.equals(removeImage), Boolean.TRUE.equals(removeFlyer)
-        );
-
-        return updatedClub.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DiscotecaDTO> updateClub(@PathVariable Long id,
-                                                   @RequestBody DiscotecaDTO clubDTO) {
+    public ResponseEntity<?> updateClub(@PathVariable Long id,
+                                        @RequestBody DiscotecaDTO clubDTO) {
 
-        return discotecaService.updateClub(id, clubDTO)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return discotecaService.updateClub(id, clubDTO)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")
