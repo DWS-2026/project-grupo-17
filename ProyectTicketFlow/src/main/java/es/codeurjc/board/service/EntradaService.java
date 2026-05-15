@@ -218,6 +218,14 @@ public class EntradaService {
         return false;
     }
 
+    public List<EntradaDTO> findTicketsByUser(Long userId) {
+        User user = userService.findById(userId);
+        if (user == null) return List.of();
+        return user.getEntradasCompradas().stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     private EntradaDTO toDTO(Entrada entrada) {
 
         EntradaDTO dto = new EntradaDTO();

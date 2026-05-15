@@ -1,6 +1,8 @@
 package es.codeurjc.board.controller;
 
+import es.codeurjc.board.dto.EntradaDTO;
 import es.codeurjc.board.dto.UserDTO;
+import es.codeurjc.board.service.EntradaService;
 import es.codeurjc.board.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +19,11 @@ import java.net.URI;
 public class UserRestController {
 
     private final UserService userService;
+    private final EntradaService entradaService;
 
-    public UserRestController(UserService userService) {
+    public UserRestController(UserService userService, EntradaService entradaService) {
         this.userService = userService;
+        this.entradaService = entradaService;
     }
 
     // LISTADO (solo admin lo controla SecurityConfig)
@@ -93,6 +97,17 @@ public class UserRestController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    // PERFIL PROPIO O ADMIN
+    @GetMapping("/{id}/tickets")
+    public ResponseEntity<?> getUserTickets(@PathVariable Long id, Authentication auth) {
+
+        if (!userService.canAccessUser(id, auth)) {
+            return ResponseEntity.status(403).body("Acceso denegado");
+        }
+
+        return ResponseEntity.ok(entradaService.findTicketsByUser(id));
     }
 
     // PERFIL PROPIO O ADMIN
