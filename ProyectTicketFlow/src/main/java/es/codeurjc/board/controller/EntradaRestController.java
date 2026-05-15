@@ -94,6 +94,10 @@ public class EntradaRestController {
             return ResponseEntity.status(404).body(java.util.Map.of("error", "User not found"));
         }
 
+        if (user.getRoles() != null && user.getRoles().contains("ADMIN")) {
+            return ResponseEntity.status(403).body(java.util.Map.of("error", "Admins cannot purchase tickets"));
+        }
+
         String resultado = entradaService.comprarEntrada(id, user);
 
         switch (resultado) {
