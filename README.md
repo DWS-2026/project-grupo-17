@@ -334,7 +334,8 @@ Diagrama de clases de la aplicación con diferenciación por colores o secciones
 📄 **[Especificación OpenAPI (YAML)](ProyectTicketFlow/api-docs/api-docs.yaml)**
 
 #### **Documentación HTML**
-📖 **[Documentación API REST (HTML)](https://raw.githack.com/DWS-2026/project-grupo-17/main/api-docs/index.html)**
+📖 **[Documentación API REST (HTML)](https://raw.githack.com/DWS-2026/project-grupo-17/main/ProyectTicketFlow/api-docs/index.html
+)**
 
 > La documentación de la API REST se encuentra en la carpeta `/api-docs` del repositorio. Se ha generado automáticamente con SpringDoc a partir de las anotaciones en el código Java.
 
