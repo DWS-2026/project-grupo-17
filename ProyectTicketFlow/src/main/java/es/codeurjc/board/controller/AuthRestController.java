@@ -36,35 +36,25 @@ public class AuthRestController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody SignupRequestDTO request) throws Exception {
+            @RequestBody SignupRequestDTO request) {
 
-        if (request.getPassword() == null || request.getPassword().length() < 4) {
+        try {
+            userService.registroConValidacion(
+                    request.getName(),
+                    request.getEmail(),
+                    request.getPassword(),
+                    request.getBirthDate(),
+                    null
+            );
+            return ResponseEntity.status(201)
+                    .body(Map.of("message", "Usuario registrado correctamente"));
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "La contraseña debe tener al menos 4 caracteres"));
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(Map.of("error", "Error al registrar el usuario"));
         }
-
-        String error = userService.validarRegistro(
-                request.getName(),
-                request.getEmail(),
-                request.getPassword(),
-                request.getBirthDate()
-        );
-
-        if (error != null) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", error));
-        }
-
-        userService.registroConValidacion(
-                request.getName(),
-                request.getEmail(),
-                request.getPassword(),
-                request.getBirthDate(),
-                null
-        );
-
-        return ResponseEntity.status(201)
-                .body(Map.of("message", "Usuario registrado correctamente"));
     }
 
     @PostMapping("/refresh")

@@ -32,9 +32,6 @@ public class DiscotecaController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private es.codeurjc.board.service.FileStorageService fileStorageService;
-
 
     @GetMapping("/discotecas")
     // Lista todas las discotecas y marca en el modelo si el usuario actual es admin.
@@ -172,24 +169,14 @@ public class DiscotecaController {
 
     @GetMapping("/discotecas/{id}/flyer")
     public ResponseEntity<org.springframework.core.io.Resource> getClubFlyer(@PathVariable long id) {
-        Discoteca d = discotecaService.findById(id);
-        if (d == null || d.getFlyer() == null) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                    .header(HttpHeaders.LOCATION, "/discotecas/" + id)
-                    .build();
-        }
-        try {
-            org.springframework.core.io.Resource resource = fileStorageService.getFileAsResource(d.getFlyer());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (IOException e) {
-            // ignore
-        }
-        return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, "/discotecas/" + id)
-                .build();
+        return discotecaService.getClubFlyerResource(id)
+                .map(resource -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .<org.springframework.core.io.Resource>body(resource))
+                .orElse(ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                        .header(HttpHeaders.LOCATION, "/discotecas/" + id)
+                        .build());
     }
 
     @PostMapping("/discotecas/delete/{id}")

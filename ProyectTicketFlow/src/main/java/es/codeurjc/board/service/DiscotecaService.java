@@ -348,6 +348,18 @@ public class DiscotecaService {
         return false;
     }
 
+    public Optional<org.springframework.core.io.Resource> getClubFlyerResource(Long id) {
+        Discoteca discoteca = findById(id);
+        if (discoteca == null || discoteca.getFlyer() == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(fileStorageService.getFileAsResource(discoteca.getFlyer()));
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
     public byte[] getClubImage(Long id) throws SQLException, IOException {
 
         Discoteca discoteca = findById(id);

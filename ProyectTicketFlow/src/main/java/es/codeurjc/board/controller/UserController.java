@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -250,15 +249,8 @@ public class UserController {
     @GetMapping("/users/{id}/avatar")
     @ResponseBody
     public byte[] getUserAvatar(@PathVariable Long id) throws SQLException, IOException {
-        User user = userService.findById(id);
-
-        if (user != null && user.getAvatar() != null) {
-            // Obtenemos los bytes de la imagen
-            Blob blob = user.getAvatar().getImageFile(); // o getImage() según tu clase Image
-            return blob.getBytes(1, (int) blob.length());
-        }
-
-        // Imagen por defecto si el usuario no tiene avatar
+        byte[] avatar = userService.getUserAvatar(id);
+        if (avatar != null) return avatar;
         Resource resource = new ClassPathResource("/posts/avatar.png");
         return resource.getInputStream().readAllBytes();
     }

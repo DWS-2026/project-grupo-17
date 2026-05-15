@@ -19,11 +19,9 @@ import java.util.Optional;
 public class DiscotecaRestController {
 
     private final DiscotecaService discotecaService;
-    private final es.codeurjc.board.service.FileStorageService fileStorageService;
 
-    public DiscotecaRestController(DiscotecaService discotecaService, es.codeurjc.board.service.FileStorageService fileStorageService) {
+    public DiscotecaRestController(DiscotecaService discotecaService) {
         this.discotecaService = discotecaService;
-        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping
@@ -161,22 +159,11 @@ public class DiscotecaRestController {
 
     @GetMapping("/{id}/flyer")
     public ResponseEntity<org.springframework.core.io.Resource> getClubFlyer(@PathVariable Long id) {
-        java.util.Optional<DiscotecaDTO> optClub = discotecaService.findClubById(id);
-        if (optClub.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        DiscotecaDTO club = optClub.get();
-        if (club.getFlyerFileName() == null) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            org.springframework.core.io.Resource resource = fileStorageService.getFileAsResource(club.getFlyerFileName());
-            return ResponseEntity.ok()
-                    .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/pdf")
-                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return discotecaService.getClubFlyerResource(id)
+                .map(resource -> ResponseEntity.ok()
+                        .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/pdf")
+                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .<org.springframework.core.io.Resource>body(resource))
+                .orElse(ResponseEntity.notFound().build());
     }
 }
