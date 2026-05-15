@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
-
 @Entity
 /**
  * Entidad Discoteca.
@@ -47,13 +44,13 @@ public class Discoteca {
     public Discoteca(String name, String calle, String descripcion) {
         this.name = name;
         this.calle = calle;
-        this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null;
+        this.descripcion = descripcion;
     }
 
     public Discoteca(String name, String calle, String descripcion, User owner) {
         this.name = name;
         this.calle = calle;
-        this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null;
+        this.descripcion = descripcion;
         this.owner = owner;
     }
 
@@ -75,7 +72,7 @@ public class Discoteca {
     public void setCalle(String calle) { this.calle = calle; }
 
     public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion != null ? Jsoup.clean(descripcion, Safelist.relaxed()) : null; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
     public String getFlyer() { return flyer; }
     public void setFlyer(String flyer) { this.flyer = flyer; }

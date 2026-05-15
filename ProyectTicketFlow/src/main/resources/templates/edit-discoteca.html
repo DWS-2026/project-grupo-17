@@ -71,9 +71,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">Cambia la descripción </label>
-                        <!-- Quill editor container -->
-                        <div id="editor-container">{{{discoteca.descripcion}}}</div>
-                        <!-- Hidden input that will hold the HTML from Quill -->
+                        <div id="editor-container"></div>
+                        <div id="initial-content" style="display:none">{{discoteca.descripcion}}</div>
                         <input type="hidden" id="descripcion" name="descripcion">
                     </div>
 
@@ -126,6 +125,11 @@
                 ]
             }
         });
+
+        var existingContent = document.getElementById('initial-content').textContent;
+        if (existingContent.trim()) {
+            quill.clipboard.dangerouslyPasteHTML(existingContent);
+        }
 
         document.getElementById('editDiscotecaForm').addEventListener('submit', function (e) {
             var html = quill.root.innerHTML;

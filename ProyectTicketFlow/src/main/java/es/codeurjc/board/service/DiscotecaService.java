@@ -7,6 +7,8 @@ import es.codeurjc.board.model.Evento;
 import es.codeurjc.board.model.Image;
 import es.codeurjc.board.model.User;
 import es.codeurjc.board.repositories.DiscotecaRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -118,7 +120,7 @@ public class DiscotecaService {
 
         discoteca.setName(name);
         discoteca.setCalle(street);
-        discoteca.setDescripcion(description);
+        discoteca.setDescripcion(sanitizarTextoEnriquecido(description));
 
         if (ownerId != null) {
             User owner = userService.findById(ownerId);
@@ -166,7 +168,7 @@ public class DiscotecaService {
 
         discoteca.setName(name);
         discoteca.setCalle(street);
-        discoteca.setDescripcion(description);
+        discoteca.setDescripcion(sanitizarTextoEnriquecido(description));
 
         if (ownerId != null) {
             User owner = userService.findById(ownerId);
@@ -240,6 +242,10 @@ public class DiscotecaService {
 
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private String sanitizarTextoEnriquecido(String texto) {
+        return texto != null ? Jsoup.clean(texto, Safelist.relaxed()) : null;
     }
 
     // ================= REST API =================
