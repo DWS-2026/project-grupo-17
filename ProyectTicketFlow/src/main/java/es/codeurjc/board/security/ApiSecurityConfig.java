@@ -52,6 +52,7 @@ public class ApiSecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/v1/events/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/events/**").hasRole("ADMIN")
 
+                .requestMatchers(HttpMethod.POST, "/api/v1/tickets/*/purchase").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/tickets/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/tickets/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/tickets/**").hasRole("ADMIN")
